@@ -1,0 +1,15 @@
+<div class="container">
+    Membership
+    <span class="right">
+        <?= user.subscription.toUpperCase() ?>
+    </span><br>
+    <b>
+        <?= datas.urls.count ?> out of
+        <? if(datas.plan.url_limit <= 0) { ?>
+        <span style="font-size: 18px;line-height: 0;">&infin;</span>
+        <? } else { ?>
+        <?= new Intl.NumberFormat('en-US').format(datas.plan.url_limit) ?>
+        <? } ?>
+        URLs
+    </b>
+</div>

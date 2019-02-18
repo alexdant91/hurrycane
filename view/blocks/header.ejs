@@ -1,0 +1,28 @@
+<div class="menu-top">
+    <div class="row">
+        <div class="container">
+            <div class="left-side">
+                <div class="logo-container"><a href="/" class="white-text"><i class="fal fa-hurricane white-text"></i> Hurrycane.io</a></div>
+            </div>
+            <div class="right-side">
+                <div class="menu-container">
+                    <ol>
+                        <li class="<? if(page == 'index') { ?>active<? } ?>"><a href="/">Home</a></li>
+                        <? if(!session) { ?>
+                        <li class="<? if(page == 'products') { ?>active<? } ?>"><a href="/products">Products</a></li>
+                        <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
+                        <li class="<? if(page == 'advertiser') { ?>active<? } ?>"><a href="/advertiser">Advertiser</a></li>
+                        <li class="<? if(page == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in white-text"></i> Login</a></li>
+                        <li class="<? if(page == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button white-button">Get Started</a></li>
+                        <? } else { ?>
+                        <li><a href="/dashboard"><i class="fal fa-user white-text"></i> Hi
+                                <?= user.name ?>!</a></li>
+                        <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/upgrade" class="butt main-button white-button"><i class="fal fa-star"></i> Upgrade</a></li>
+                        <li><a href="/logout"><i class="fal fa-sign-out white-text"></i> logout</a></li>
+                        <? } ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

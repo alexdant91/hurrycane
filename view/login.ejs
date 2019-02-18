@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+
+        <!-- Facebook login logic -->
+        <script type="text/javascript" src="/js/fb-login.js?v=1.0.0"></script>
+    </head>
+
+    <body class="login-body">
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="row">
+            <div class="container">
+                <div class="login-wrapper left">
+                    <form class="form" method="POST" action="" name="login" id="login">
+                        <div class="row">
+                            <div class="container text-center">
+                                <h4 class="text-center"><i class="fal fa-sign-in"></i> Login</h4>
+                            </div>
+                        </div>
+                        <div class="input field first">
+                            <label><b>What's your email?</b></label>
+                            <input type="email" id="email" name="email" placeholder="Email..." />
+                        </div>
+                        <div class="input field">
+                            <label><b>And your password?</b></label>
+                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." />
+                        </div>
+                        <div class="row">
+                            <div class="container text-right little-info-form">
+                                <a href="/register" class="left"><i class="fal fa-user"></i> New user?</a> <a href="#">Password lost?</a>
+                            </div>
+                        </div>
+                        <div class="input field text-center first">
+                            <button type="submit" class="butt login-button blue-button"><i class="fal fa-lock white-text"></i> Login</button>
+                        </div>
+                        <div class="row">
+                            <div class="container">
+                                <div class="divider">
+                                    <span>or</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container text-center social-login-wrapper">
+                                <a href="" class="fb-share-button share-button full" onclick="GetFbUserObject(); return false;"><i class="fab fa-facebook-square"></i> Login with facebook</a>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="container text-center social-login-wrapper">
+                                <a href="" class="tw-share-button share-button full" onclick="GetTwUserObject(); return false;"><i class="fab fa-twitter"></i> Login with twitter</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <?- include('./blocks/footer.ejs') -?>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script>
+            const SerializeFormData = form => JSON.stringify(
+                Array.from(new FormData(form).entries()).reduce((m, [key, value]) => Object.assign(m, {
+                    [key]: value
+                }), {})
+            );
+
+            $('form').on('submit', function () {
+                let json = SerializeFormData(this);
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    dataType: 'json',
+                    data: json,
+                    success: function (data) {
+                        if (data.Error) alert(data.Error);
+                        if (data.Status === 'done') location.href = '/dashboard';
+                    },
+                    error: function (a, b, c) {
+                        console.log(a, b, c);
+                    }
+                });
+                return false;
+            });
+        </script>
+    </body>
+
+</html>

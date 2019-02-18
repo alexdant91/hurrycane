@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+            <?- include('./blocks/index.ejs') -?>
+        </div>
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+    </body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Shorten.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+    </head>
+
+    <body class="login-body">
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="row">
+            <div class="container">
+                <div class="login-wrapper">
+                    <form class="form" method="POST" action="/p/verify" name="alias" id="alias">
+                        <input type="hidden" name="alias" value="<?= alias ?>" />
+                        <div class="row">
+                            <div class="container text-center">
+                                <h4 class="text-center"><i class="fal fa-lock"></i> Password Protect</h4>
+                            </div>
+                        </div>
+                        <div class="input field first">
+                            <label><b>What's the secret password?</b></label>
+                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." required />
+                        </div>
+                        <div class="input field text-center first">
+                            <button type="submit" class="butt login-button blue-button"><i class="fal fa-lock white-text"></i> Verify</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <?- include('./blocks/footer.ejs') -?>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    </body>
+
+</html>
