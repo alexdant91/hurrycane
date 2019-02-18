@@ -8,6 +8,9 @@ class Config {
             requestTimeLimitRange: 60 * 60 * 1000,
             requestNumberLimit: process.env.REQUEST_NUMBER_LIMIT || 2
         }
+        this.stripe = {
+            secretKey: "sk_test_Y7gX79Tue6uErVfdl0uooR6y"
+        }
     }
 
 }

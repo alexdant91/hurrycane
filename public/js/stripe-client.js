@@ -41,25 +41,42 @@
    * Payment Request Element
    */
   var paymentRequest = stripe.paymentRequest({
-    country: "US",
-    currency: "usd",
+    country: "IT",
+    currency: "eur",
     total: {
-      amount: 2500,
+      amount: 0,
       label: "Total"
-    },
-    requestShipping: true,
-    shippingOptions: [{
-      id: "free-shipping",
-      label: "Free shipping",
-      detail: "Arrives in 5 to 7 days",
-      amount: 0
-    }]
+    }
   });
   paymentRequest.on("token", function (result) {
-    var example = document.querySelector(".example5");
-    example.querySelector(".token").innerText = result.token.id;
-    example.classList.add("submitted");
-    result.complete("success");
+    // var example = document.querySelector(".example5");
+    // example.querySelector(".token").innerText = result.token.id;
+    // example.classList.add("submitted");
+    // result.complete("success");
+    // We have the token to send
+    // $.ajax({
+    //   url: '/upgrade/premium',
+    //   method: 'POST',
+    //   data: {
+    //     token_id: result.token.id
+    //   },
+    //   success: function (data) {
+    //     console.log(data);
+    //     if (data.Error) {
+    //       iziToast.error({
+    //         position: 'topRight',
+    //         title: 'Oops!',
+    //         message: data.Error
+    //       });
+    //     }
+    //     if (data.Status === 'done') {
+    //       location.href = '/dashboard?new=1&p=premium';
+    //     }
+    //   },
+    //   error: function (a, b, c) {
+    //     console.log(a, b, c);
+    //   }
+    // });
   });
 
   var paymentRequestElement = elements.create("paymentRequestButton", {

@@ -8,6 +8,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const socketio = require('socket.io');
+const PaymentSystem = require('./modules/payment-system/v1');
 const app = express();
 
 const isUrl = require('is-url');
@@ -117,11 +118,15 @@ app.get('/login', verifySessionInverse, (req, res) => {
             type: null,
             title: null,
             text: null
+        },
+        query: {
+            ref: req.query.ref != '' && req.query.ref != undefined && req.query.ref != null ? req.query.ref : undefined
         }
     });
 });
 
 app.post('/login', (req, res, next) => {
+    const ref = req.body.ref != '' && req.body.ref != null && req.body.ref != undefined ? req.body.ref : undefined;
     passport.authenticate('local', (err, user, info) => {
         if (info) {
             return res.send(info.message)
@@ -138,7 +143,8 @@ app.post('/login', (req, res, next) => {
             if (err) return next(err);
             req.session.user = user;
             return res.json({
-                'Status': 'done'
+                'Status': 'done',
+                'ref': ref
             });
         })
     })(req, res, next);
@@ -166,6 +172,7 @@ app.post('/auth/facebook', (req, res) => {
     const password = req.body.password != '' && req.body.password != undefined ? bcrypt.hashSync(req.body.password) : uuid().replace(/-/i, "").substring(0, 9);
     const subscription = req.body.subscription != '' && req.body.subscription != null && req.body.subscription != undefined ? req.body.subscription : 'BASIC';
     const avatar = req.body.avatar != '' && req.body.avatar != null && req.body.avatar != undefined ? req.body.avatar : null;
+    const ref = req.body.ref != '' && req.body.ref != null && req.body.ref != undefined ? req.body.ref : undefined;
     const secretKey = uuid();
     db.User.countDocuments({
         email: email
@@ -173,11 +180,15 @@ app.post('/auth/facebook', (req, res) => {
         if (count > 0) {
             // User exist
             db.User.updateOne({
+                email: email
+            }, {
                 facebook_id: facebook_id
             }, err => {
-                if (err) res.json({
-                    'Error': 'Error during data updating.'
-                });;
+                if (err) {
+                    res.json({
+                        'Error': 'Error during data updating.'
+                    });
+                }
                 db.User.find({
                     email: email
                 }, (err, user) => {
@@ -187,7 +198,8 @@ app.post('/auth/facebook', (req, res) => {
                         });;
                         req.session.user = user[0];
                         return res.json({
-                            'Status': 'done'
+                            'Status': 'done',
+                            'ref': ref
                         });
                     })
                 });
@@ -208,19 +220,55 @@ app.post('/auth/facebook', (req, res) => {
                     if (err) res.json({
                         'Error': 'Error during data saving.'
                     });
-                    // Async Send confirmation email
-                    mailer.set({
-                        from: 'info@eatita.it',
-                        to: 'alexdant91@gmail.com',
-                        subject: 'Welcome Alessandro!',
-                        text: 'Hi Alessandro, welcome to hurrycane.io',
-                        html: '<p>Hi Alessandro, welcome to hurrycane.io</p>',
-                    }).send((err, info) => {
-                        console.log(err);
-                    });
-                    // END Async Send confirmation email
-                    res.json({
-                        'Status': 'done'
+                    // Create the customer for Stripe payment system
+                    new PaymentSystem(config.stripe.secretKey).createCustomer({
+                        email: email
+                    }, (err, customer) => {
+                        if (err) {
+                            res.json({
+                                'Error': 'Error during customer creation.'
+                            });
+                        } else {
+                            // Update the customer id in user schema
+                            db.User.updateOne({
+                                email: email
+                            }, {
+                                customer_id: customer.id
+                            }, err => {
+                                if (err) {
+                                    res.json({
+                                        'Error': 'Error during data updating.'
+                                    });
+                                } else {
+                                    // Async Send confirmation email
+                                    mailer.set({
+                                        from: 'info@eatita.it',
+                                        to: email,
+                                        subject: 'Welcome Alessandro!',
+                                        text: 'Hi Alessandro, welcome to hurrycane.io',
+                                        html: `<p>Hi ${name}, welcome to hurrycane.io</p>`,
+                                    }).send((err, info) => {
+                                        console.log(err);
+                                    });
+                                    // END Async Send confirmation email
+                                    db.User.find({
+                                        email: email
+                                    }, (err, user) => {
+                                        req.login(user[0], (err) => {
+                                            if (err) res.json({
+                                                'Error': 'Error during user login.'
+                                            });;
+                                            req.session.user = user[0];
+                                            return res.json({
+                                                'Status': 'done',
+                                                'ref': ref
+                                            });
+                                        })
+                                    });
+                                }
+
+                            });
+                        }
                     });
                 });
             } else {
@@ -260,19 +308,44 @@ app.post('/register', (req, res) => {
                         if (err) res.json({
                             'Error': 'Error during data saving.'
                         });
-                        // Async Send confirmation email
-                        mailer.set({
-                            from: 'info@eatita.it',
-                            to: email,
-                            subject: 'Welcome Alessandro!',
-                            text: 'Hi Alessandro, welcome to hurrycane.io',
-                            html: `<p>Hi ${name}, welcome to hurrycane.io</p>`,
-                        }).send((err, info) => {
-                            console.log(err);
-                        });
-                        // END Async Send confirmation email
-                        res.json({
-                            'Status': 'done'
+                        // Create the customer for Stripe payment system
+                        new PaymentSystem(config.stripe.secretKey).createCustomer({
+                            email: email
+                        }, (err, customer) => {
+                            if (err) {
+                                res.json({
+                                    'Error': 'Error during data saving.'
+                                });
+                            } else {
+                                // Update the customer id in user schema
+                                db.User.updateOne({
+                                    email: email
+                                }, {
+                                    customer_id: customer.id
+                                }, err => {
+                                    if (err) {
+                                        res.json({
+                                            'Error': 'Error during data saving.'
+                                        });
+                                    } else {
+                                        // Async Send confirmation email
+                                        mailer.set({
+                                            from: 'info@eatita.it',
+                                            to: email,
+                                            subject: 'Welcome Alessandro!',
+                                            text: 'Hi Alessandro, welcome to hurrycane.io',
+                                            html: `<p>Hi ${name}, welcome to hurrycane.io</p>`,
+                                        }).send((err, info) => {
+                                            console.log(err);
+                                        });
+                                        // END Async Send confirmation email
+                                        res.json({
+                                            'Status': 'done'
+                                        });
+                                    }
+
+                                });
+                            }
                         });
                     });
                 } else {
@@ -545,32 +618,271 @@ app.post('/p/verify', (req, res) => {
     }
 });
 
+// GET /pricing with the plan table
+app.get('/pricing', (req, res) => {
+    const session = req.isAuthenticated();
+    if (session) {
+        const license = req.session.user.license_id != '' && req.session.user.license_id != null && req.session.user.license_id != undefined ? req.session.user.license_id : false;
+        verifyLicenseMiddleware(license, (err, validLicense) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.render('upgrade', {
+                    session: req.isAuthenticated(),
+                    user: req.session.user,
+                    page: 'pricing',
+                    license: {
+                        valid: validLicense
+                    },
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
+                    }
+                });
+            }
+        });
+    } else {
+        res.render('upgrade', {
+            session: req.isAuthenticated(),
+            user: req.session.user,
+            page: 'pricing',
+            license: {
+                valid: false
+            },
+            messages: {
+                type: null,
+                title: null,
+                text: null
+            }
+        });
+    }
+});
+
 // GET /upgrade with the plan table
 app.get('/upgrade', (req, res) => {
-    res.render('upgrade', {
-        session: req.isAuthenticated(),
-        user: req.session.user,
-        page: 'login',
-        messages: {
-            type: null,
-            title: null,
-            text: null
-        }
-    });
+    const session = req.isAuthenticated();
+    if (session) {
+        const license = req.session.user.license_id != '' && req.session.user.license_id != null && req.session.user.license_id != undefined ? req.session.user.license_id : false;
+        verifyLicenseMiddleware(license, (err, validLicense) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.render('upgrade', {
+                    session: req.isAuthenticated(),
+                    user: req.session.user,
+                    page: 'pricing',
+                    license: {
+                        valid: validLicense
+                    },
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
+                    }
+                });
+            }
+        });
+    } else {
+        res.render('upgrade', {
+            session: req.isAuthenticated(),
+            user: req.session.user,
+            page: 'pricing',
+            license: {
+                valid: false
+            },
+            messages: {
+                type: null,
+                title: null,
+                text: null
+            }
+        });
+    }
+    // if (license) {
+    //     db.License.find({
+    //         license_id: license
+    //     }, (err, license) => {
+    //         const license_status = license[0].active;
+    //         const license_expiration = license[0].expiration_time;
+    //         const time_now = Math.round(Date.now() / 1000);
+    //         const validLicense = license_status && license_expiration > time_now ? true : false;
+    //         res.render('upgrade', {
+    //             session: req.isAuthenticated(),
+    //             user: req.session.user,
+    //             page: 'pricing',
+    //             license: {
+    //                 valid: validLicense
+    //             },
+    //             messages: {
+    //                 type: null,
+    //                 title: null,
+    //                 text: null
+    //             }
+    //         });
+    //     });
+    // }
 });
 
 // GET /upgrade premium
-app.get('/upgrade/premium', (req, res) => {
-    res.render('upgrade-premium', {
-        session: req.isAuthenticated(),
-        user: req.session.user,
-        page: 'login',
-        messages: {
-            type: null,
-            title: null,
-            text: null
+app.get('/upgrade/premium', verifySessionUpgrade, (req, res) => {
+    // Block the access if the user have a regular license
+    const license = req.session.user.license_id != '' && req.session.user.license_id != null && req.session.user.license_id != undefined ? req.session.user.license_id : false;
+    verifyLicenseMiddleware(license, (err, validLicense) => {
+        if (err) throw err;
+        if (validLicense) {
+            res.redirect('/upgrade');
+        } else {
+            res.render('upgrade-premium', {
+                session: req.isAuthenticated(),
+                user: req.session.user,
+                page: 'login',
+                messages: {
+                    type: null,
+                    title: null,
+                    text: null
+                }
+            });
         }
     });
+    // if (license) {
+    //     db.License.find({
+    //         license_id: license
+    //     }, (err, license) => {
+    //         const license_status = license[0].active;
+    //         const license_expiration = license[0].expiration_time;
+    //         const time_now = Math.round(Date.now() / 1000);
+    //         if (license_status && license_expiration > time_now) {
+    //             // Valid license
+    //             res.redirect('/upgrade');
+    //         } else {
+    //             res.render('upgrade-premium', {
+    //                 session: req.isAuthenticated(),
+    //                 user: req.session.user,
+    //                 page: 'login',
+    //                 messages: {
+    //                     type: null,
+    //                     title: null,
+    //                     text: null
+    //                 }
+    //             });
+    //         }
+    //     });
+    // }
+});
+
+// POST the subscriptio
+app.post('/upgrade/premium', verifySessionUpgrade, (req, res) => {
+    const license = req.session.user.license_id != '' && req.session.user.license_id != null && req.session.user.license_id != undefined ? req.session.user.license_id : false;
+    const user_id = req.session.user._id;
+    const customer_id = req.session.user.customer_id;
+    const token = req.body.token_id != '' && req.body.token_id != null && req.body.token_id != undefined ? req.body.token_id : false;
+    const ref = req.body.ref != '' && req.body.ref != null && req.body.ref != undefined ? req.body.ref : undefined;
+    const plan_id = 'plan_EYF7etS9d0ieWA';
+    const plan = 'PREMIUM';
+    const active = true;
+
+    verifyLicenseMiddleware(license, (err, validLicense) => {
+        if (err) throw err;
+        if (validLicense) {
+            res.json({
+                'Error': 'Your license is still valid.'
+            });
+        } else {
+            // License inesistent, expired or invalid
+            if (token) {
+                // Create a card with the token provided by stripe elements
+                new PaymentSystem(config.stripe.secretKey).set({
+                    customer_id: customer_id
+                }).createCard({
+                    source: token // Required source parameter, it's a token retrieved by Stripe.js elements
+                }, (err, card) => {
+                    if (err) {
+                        res.json({
+                            'Error': 'Error during the confirmation of the provided credit card.'
+                        });
+                    } else if (card) {
+                        // Init the subscription
+                        new PaymentSystem(config.stripe.secretKey).set({
+                            customer_id: customer_id
+                        }).createSubscription({
+                            plan: plan_id
+                        }, (err, subscription) => {
+                            if (err) {
+                                res.json({
+                                    'Error': 'Error during the payment.'
+                                });
+                            } else {
+                                // Payment is ok
+                                const license_id = subscription.id != '' && subscription.id != null && subscription.id != undefined ? subscription.id : false;
+                                const last_update = subscription.current_period_start;
+                                const expiration_time = subscription.current_period_end;
+                                const creation_time = subscription.created;
+                                if (license_id) {
+                                    // Register a new premium license for the user
+                                    db.License({
+                                        user_id,
+                                        license_id,
+                                        plan,
+                                        active,
+                                        expiration_time,
+                                        last_update,
+                                        creation_time
+                                    }).save(err => {
+                                        if (err) {
+                                            res.json({
+                                                'Error': 'Error during the creation of a new premium license.'
+                                            });
+                                        } else {
+                                            // We have just create a new premium license for the current user
+                                            // Update the permissions in user schema
+                                            db.User.updateOne({
+                                                _id: user_id
+                                            }, {
+                                                subscription: plan,
+                                                license_id: license_id,
+                                                license_expiration: expiration_time
+                                            }, (err) => {
+                                                if (err) {
+                                                    res.json({
+                                                        'Error': 'Error during the activation of a new premium license.'
+                                                    });
+                                                } else {
+                                                    db.User.find({
+                                                        _id: user_id
+                                                    }, (err, user) => {
+                                                        req.login(user[0], (err) => {
+                                                            if (err) res.json({
+                                                                'Error': 'Error during user login.'
+                                                            });;
+                                                            req.session.user = user[0];
+                                                            return res.json({
+                                                                'Status': 'done',
+                                                                'ref': ref
+                                                            });
+                                                        })
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    res.json({
+                                        'Error': 'Error during the registration of your\'s premium license.'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+
+            } else {
+                res.json({
+                    'Error': 'No one card provided.'
+                });
+            }
+        }
+    });
+
 });
 
 // app.get('/authrequired', verifySession, (req, res) => {
@@ -667,6 +979,15 @@ function verifySessionInverse(req, res, next) {
     }
 }
 
+// Verify the session to protect upgrade routers
+function verifySessionUpgrade(req, res, next) {
+    if (!req.isAuthenticated()) {
+        res.redirect('/login?ref=/upgrade/premium');
+    } else {
+        next();
+    }
+}
+
 function extractHostname(url) {
     let hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname
@@ -723,5 +1044,22 @@ function ValidateOrigin(req, res, next) {
         });
     } else {
         return res.status(500).send('Bad request.');
+    }
+}
+
+// Verify if the license is valid
+function verifyLicenseMiddleware(license, done) {
+    if (license) {
+        db.License.find({
+            license_id: license
+        }, (err, license) => {
+            if (err) return done(err, false);
+            const license_status = license[0].active;
+            const license_expiration = license[0].expiration_time;
+            const time_now = Math.round(Date.now() / 1000);
+            return done(null, license_status && license_expiration > time_now ? true : false);
+        });
+    } else {
+        return done(null, false);
     }
 }

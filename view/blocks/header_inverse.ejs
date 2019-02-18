@@ -17,7 +17,11 @@
                         <? } else { ?>
                         <li><a href="/dashboard"><i class="fal fa-user white-text"></i> Hi
                                 <?= user.name ?>!</a></li>
+                        <? if(user.subscription == 'PREMIUM') { ?>
+                        <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/dashboard/subscription" class="butt main-button white-button"><i class="fal fa-star"></i> My Premium</a></li>
+                        <? } else { ?>
                         <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/upgrade" class="butt main-button white-button"><i class="fal fa-star"></i> Upgrade</a></li>
+                        <? } ?>
                         <li><a href="/logout"><i class="fal fa-sign-out white-text"></i> logout</a></li>
                         <? } ?>
                     </ol>

@@ -47,7 +47,11 @@
                                     <li> <i class="fal fa-check" aria-hidden="true"></i> Remove Ads program </li>
                                 </ul>
                             </div>
-                            <a href="/upgrade/premium">Order Now </a>
+                            <? if(license.valid) { ?>
+                            <a href="#"><i class="fal fa-check"></i> It's yours</a>
+                            <? } else { ?>
+                            <a href="/upgrade/premium">Order Now</a>
+                            <? } ?>
                         </div>
                     </div>
                 </div>

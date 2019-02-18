@@ -14,7 +14,7 @@
         <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
 
         <!-- Facebook login logic -->
-        <script type="text/javascript" src="/js/fb-login.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/fb-login.js?v=1.0.5"></script>
     </head>
 
     <body class="login-body">
@@ -63,6 +63,7 @@
                                 <a href="" class="tw-share-button share-button full" onclick="GetTwUserObject(); return false;"><i class="fab fa-twitter"></i> Login with twitter</a>
                             </div>
                         </div>
+                        <input type="hidden" value="<?= query.ref ?>" name="ref" id="ref" />
                     </form>
                 </div>
             </div>
@@ -72,34 +73,7 @@
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
-        <script>
-            const SerializeFormData = form => JSON.stringify(
-                Array.from(new FormData(form).entries()).reduce((m, [key, value]) => Object.assign(m, {
-                    [key]: value
-                }), {})
-            );
-
-            $('form').on('submit', function () {
-                let json = SerializeFormData(this);
-                $.ajax({
-                    url: '/login',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    dataType: 'json',
-                    data: json,
-                    success: function (data) {
-                        if (data.Error) alert(data.Error);
-                        if (data.Status === 'done') location.href = '/dashboard';
-                    },
-                    error: function (a, b, c) {
-                        console.log(a, b, c);
-                    }
-                });
-                return false;
-            });
-        </script>
+        <script type="text/javascript" src="/js/login.js?v=1.0.5"></script>
     </body>
 
 </html>

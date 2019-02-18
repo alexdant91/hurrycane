@@ -14,9 +14,15 @@ const userSchema = Schema({
     password: String,
     secret_key: String,
     subscription: String,
+    license_id: String,
+    license_expiration: String,
     avatar: String,
     facebook_id: String,
     last_name: String,
+    customer_id: {
+        type: String,
+        default: null
+    },
     active: {
         type: Boolean,
         default: true,
@@ -63,12 +69,51 @@ const planSchema = Schema({
     timestamp: String
 });
 
+const walletSchema = Schema({
+
+});
+
+const licenseSchema = Schema({
+    user_id: {
+        type: String,
+        required: true
+    },
+    license_id: {
+        type: String,
+        required: true
+    },
+    plan: {
+        type: String,
+        required: true
+    },
+    active: {
+        type: Boolean,
+        default: true
+    },
+    expiration_time: {
+        type: String,
+        required: true
+    },
+    last_update: {
+        type: String,
+        required: true
+    },
+    creation_time: {
+        type: String,
+        required: true
+    }
+});
+
 userSchema.plugin(mongoosePaginate);
 urlSchema.plugin(mongoosePaginate);
 planSchema.plugin(mongoosePaginate);
+walletSchema.plugin(mongoosePaginate);
+licenseSchema.plugin(mongoosePaginate);
 
 models.User = mongoose.model('User', userSchema);
 models.Url = mongoose.model('Url', urlSchema);
 models.Plan = mongoose.model('Plan', planSchema);
+models.Wallet = mongoose.model('Wallet', walletSchema);
+models.License = mongoose.model('License', licenseSchema);
 
 module.exports = models;

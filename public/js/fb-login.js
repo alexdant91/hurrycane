@@ -23,13 +23,6 @@ function GetFbUserObject() {
     FB.login(function (response) {
         if (response.authResponse) {
             FB.api('/me?fields=id,name,first_name,last_name,email,picture.height(960)', function (response) {
-                console.log(JSON.stringify({
-                    facebook_id: response.id,
-                    name: response.first_name,
-                    last_name: response.last_name,
-                    avatar: response.picture.data.url,
-                    email: response.email
-                }));
                 $.ajax({
                     url: '/auth/facebook',
                     method: 'POST',
@@ -42,11 +35,20 @@ function GetFbUserObject() {
                         name: response.first_name,
                         last_name: response.last_name,
                         avatar: response.picture.data.url,
-                        email: response.email
+                        email: response.email,
+                        ref: document.getElementById('ref').value
                     }),
                     success: function (data) {
-                        if (data.Error) alert(data.Error);
-                        if (data.Status === 'done') location.href = '/dashboard';
+                        // console.log(data);
+                        if (data.Error) {
+                            iziToast.error({
+                                position: 'topRight',
+                                title: 'Oops!',
+                                message: data.Error
+                            });
+                        };
+                        if (data.Status === 'done' && data.ref == undefined) location.href = '/dashboard';
+                        if (data.Status === 'done' && data.ref != undefined) location.href = data.ref;
                     },
                     error: function (a, b, c) {
                         console.log(a, b, c);

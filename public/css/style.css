@@ -226,6 +226,11 @@ h1.url-title {
     border: 1px solid #2b3440;
 }
 
+.menu-top.inverse .menu-container ol li.active a {
+    border-radius: 100px;
+    border: 1px solid #2b3440;
+}
+
 .menu-container ol li.active a {
     border-radius: 100px;
     border: 1px solid #ffffff;
