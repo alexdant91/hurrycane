@@ -7,7 +7,7 @@ const db = require('./models/db');
 const express = require('express');
 const bodyParser = require('body-parser');
 const socketio = require('socket.io');
-const PaymentSystem = require('./modules/payment-system/v1');
+const PaymentSystem = require('./modules/payment-system/v1')(config.stripe.secretKey);
 const app = express();
 
 const isUrl = require('is-url');
@@ -58,9 +58,9 @@ app.use(helmet());
 app.use(csp({
     directives: {
         scriptSrc: ["'self'", "'unsafe-inline'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
-        defaultSrc: ["'self'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com', (req, res) => `'nonce-${res.locals.nonce}'`],
+        defaultSrc: ["'self'", 'localhost', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com', (req, res) => `'nonce-${res.locals.nonce}'`],
         styleSrc: ["'self'", "'unsafe-inline'", '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
-        frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://staticxx.facebook.com/'],
+        frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
         imgSrc: ['*', "'self'", 'data:'],
         //sandbox: ['allow-forms', 'allow-scripts'],
         reportUri: '/report-violation',
@@ -278,7 +278,8 @@ app.post('/auth/facebook', (req, res) => {
                         'Error': 'Error during data saving.'
                     });
                     // Create the customer for Stripe payment system
-                    new PaymentSystem(config.stripe.secretKey).createCustomer({
+                    // new PaymentSystem(config.stripe.secretKey).createCustomer({
+                    PaymentSystem.createCustomer({
                         email: email
                     }, (err, customer) => {
                         if (err) {
@@ -367,7 +368,8 @@ app.post('/register', (req, res) => {
                             'Error': 'Error during data saving.'
                         });
                         // Create the customer for Stripe payment system
-                        new PaymentSystem(config.stripe.secretKey).createCustomer({
+                        // new PaymentSystem(config.stripe.secretKey).createCustomer({
+                        PaymentSystem.createCustomer({
                             email: email
                         }, (err, customer) => {
                             if (err) {
@@ -850,7 +852,8 @@ app.post('/upgrade/premium', verifySessionUpgrade, (req, res) => {
             // License not exist, expired or invalid
             if (token) {
                 // Create a card with the token provided by stripe elements
-                new PaymentSystem(config.stripe.secretKey).set({
+                // new PaymentSystem(config.stripe.secretKey).set({
+                PaymentSystem.set({
                     customer_id: customer_id
                 }).createCard({
                     source: token // Required source parameter, it's a token retrieved by Stripe.js elements
@@ -861,7 +864,8 @@ app.post('/upgrade/premium', verifySessionUpgrade, (req, res) => {
                         });
                     } else if (card) {
                         // Init the subscription
-                        new PaymentSystem(config.stripe.secretKey).set({
+                        // new PaymentSystem(config.stripe.secretKey).set({
+                        PaymentSystem.set({
                             customer_id: customer_id
                         }).createSubscription({
                             plan: plan_id

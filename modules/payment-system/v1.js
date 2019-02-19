@@ -492,6 +492,29 @@ class Payments {
         }
     }
 
+    async updateSubscription(params, done) {
+        const subscription_id = this.subscription_id != '' && this.subscription_id != null && this.subscription_id != null ? this.subscription_id : false;
+        if (subscription_id) {
+            if (typeof params === "object") {
+                await this.stripe.subscriptions.update(source_id, params).then(subscription => {
+                    // asynchronously called
+                    return done(null, subscription);
+                }).catch(err => {
+                    // asynchronously called
+                    return done(err);
+                });
+            } else {
+                return await done({
+                    'err': 'Parameters data must be formatted as an object.'
+                });
+            }
+        } else {
+            return await done({
+                'err': 'Missing required subscription_id parameter.'
+            });
+        }
+    }
+
     async cancelSubscription(done) {
         const subscription_id = this.subscription_id != '' && this.subscription_id != null && this.subscription_id != null ? this.subscription_id : false;
         if (subscription_id) {
@@ -509,9 +532,37 @@ class Payments {
         }
     }
 
+    async cancelSubscriptionAtPeriodEnd(done) {
+        const subscription_id = this.subscription_id != '' && this.subscription_id != null && this.subscription_id != null ? this.subscription_id : false;
+        if (subscription_id) {
+            await this.stripe.subscriptions.update(subscription_id, {
+                cancel_at_period_end: true
+            }).then(subscription => {
+                // asynchronously called
+                return done(null, subscription);
+            }).catch(err => {
+                // asynchronously called
+                return done(err);
+            });
+        } else {
+            return await done({
+                'err': 'Missing required subscription_id parameter.'
+            });
+        }
+    }
+
 }
 
-module.exports = Payments;
+function init(secretKey) {
+    if (secretKey != '' && secretKey != null && secretKey != undefined) {
+        return new Payments(secretKey);
+    } else {
+        return Payments;
+    }
+}
+
+// module.exports = Payments;
+module.exports = init;
 
 /* 
  * This is a class that provide easy conversation with

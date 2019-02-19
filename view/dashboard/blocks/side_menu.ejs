@@ -9,8 +9,10 @@
             <div class="overlay-edit-avatar"><i class="fal fa-pencil"></i></div>
         </div>
         <div class="user-side-name text-center">
-            <? if(user.subscription == 'PREMIUM') { ?> <i class="fal fa-star premium-star"></i>
-            <? } ?>Hi
+            <? if(user.subscription == 'PREMIUM') { ?>
+            <i class="fal fa-star premium-star"></i>
+            <? } ?>
+            Hi
             <?= user.name ?>! <i class="fal fa-pencil edit-name pointer"></i>
         </div>
     </div>
@@ -38,9 +40,11 @@
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'settings') { ?> active <? } ?>" href="/dashboard/settings"><i class="fal fa-hand-holding-usd"></i> Ads Program</a>
         </div>
+        <? if(user.subscription == 'PREMIUM') { ?>
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'subscription') { ?> active <? } ?>" href="/dashboard/subscription"><i class="fal fa-star"></i> My Premium</a>
         </div>
+        <? } ?>
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'settings') { ?> active <? } ?>" href="/dashboard/settings"><i class="fal fa-cog"></i> Profile Settimgs</a>
         </div>
