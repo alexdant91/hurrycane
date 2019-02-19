@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+            <div class="row">
+                <div class="container">
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="general-box-wrapper relative">
+                                <span class="info-box absolute">
+                                    <i class="fal fa-info-circle"></i>
+                                </span>
+                                <h6 class="text-center">
+                                    <i class="fal fa-star"></i>
+                                    <?= (license.plan.toLowerCase()).charAt(0).toUpperCase() + (license.plan.toLowerCase()).slice(1) ?> subscription
+                                </h6>
+                                <p class="text-center">
+                                    <?
+                                date = new Date(license.expiration_time * 1000),
+                                datevalues = [
+                                    date.getDate(),
+                                    date.getMonth()+1,
+                                    date.getFullYear(),
+                                ];
+                                ?>
+                                    Your subscription will automatically renew on
+                                    <b>
+                                        <?= `${datevalues[0]}/${datevalues[1]}/${datevalues[2]}` ?></b> for <b>€ 9.90</b>
+                                </p>
+                                <div class="row">
+                                    <div class="container text-center">
+                                        <button class="butt main-button blue-button"><i class="fal fa-ban white-text"></i> Cancel Membership</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="general-box-wrapper relative">
+                                <span class="info-box absolute">
+                                    <i class="fal fa-info-circle"></i>
+                                </span>
+                                <h6 class="text-center">
+                                    <i class="fal fa-credit-card"></i> Payment method
+                                </h6>
+                                <div class="row">
+                                    <div class="container">
+                                        <div class="card-container left">
+                                            <div class="card-brand left">
+                                                <img class="card-brand" alt="<?= card.brand ?>" src="/img/cards/<?= card.brand ?>.png" />
+                                            </div>
+                                            <div class="card-name left">
+                                                <?= card.brand ?>
+                                                ****
+                                                <?= card.last4 ?>
+                                            </div>
+                                            <br>
+                                            <div class="card-expire left">
+                                                Expires
+                                                <?= `${card.exp_month}/${card.exp_year}` ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container text-center">
+                                        <button class="butt main-button blue-button"><i class="fal fa-pencil white-text"></i> Edit Card</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/urls.js?v=1.0.0"></script>
+    </body>
+
+</html>

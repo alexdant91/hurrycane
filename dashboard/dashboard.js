@@ -1,7 +1,10 @@
+const Config = require('../config/config');
+const config = new Config();
 const express = require('express');
 const db = require('../models/db');
 const isUrl = require('is-url');
 const router = express.Router();
+const PaymentSystem = require('../modules/payment-system/v1')(config.stripe.secretKey);
 
 // GET /dashboard/
 router.get('/', (req, res) => {
@@ -83,6 +86,56 @@ router.get('/urls', (req, res) => {
         });
     }).catch(err => {
         res.json(err);
+    });
+});
+
+// GET /dashboard/subscription
+router.get('/subscription', (req, res) => {
+    db.Url.countDocuments({
+        user_id: req.session.user._id
+    }, (err, count) => {
+        if (err) throw err;
+        db.Plan.find({
+            name: req.session.user.subscription
+        }, (err, docs) => {
+            if (err) throw err;
+            // If the avatar is an url (facebook, twitter) remove the directory from path
+            let user = req.session.user;
+            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            db.License.find({
+                license_id: req.session.user.license_id
+            }, (err, licens) => {
+                if (err) throw err;
+                PaymentSystem.set({
+                    customer_id: req.session.user.customer_id
+                }).listAllCards((err, cards) => {
+                    if (err) throw err;
+                    // Retrieved the card for the payment
+                    res.render('./dashboard/subscription', {
+                        session: req.isAuthenticated(),
+                        user: user,
+                        license: licens[0],
+                        card: cards.data[0],
+                        datas: {
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            },
+                            urls: {
+                                data: {},
+                                count: count
+                            }
+                        },
+                        page: 'subscription',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
+                        }
+                    });
+                });
+            });
+        });
     });
 });
 

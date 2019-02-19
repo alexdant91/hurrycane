@@ -694,7 +694,9 @@ h1.url-title {
     line-height: 0;
 }
 
-.social-login-wrapper {}
+/* .social-login-wrapper {
+
+} */
 
 @media screen and (min-width: 1488px) {
     form.url-input {

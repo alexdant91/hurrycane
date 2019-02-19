@@ -551,6 +551,25 @@ class Payments {
         }
     }
 
+    async reactivateSubscriptionBeforePeriodEnd(done) {
+        const subscription_id = this.subscription_id != '' && this.subscription_id != null && this.subscription_id != null ? this.subscription_id : false;
+        if (subscription_id) {
+            await this.stripe.subscriptions.update(subscription_id, {
+                cancel_at_period_end: false
+            }).then(subscription => {
+                // asynchronously called
+                return done(null, subscription);
+            }).catch(err => {
+                // asynchronously called
+                return done(err);
+            });
+        } else {
+            return await done({
+                'err': 'Missing required subscription_id parameter.'
+            });
+        }
+    }
+
 }
 
 function init(secretKey) {

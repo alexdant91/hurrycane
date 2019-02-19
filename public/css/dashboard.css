@@ -454,6 +454,65 @@ span.relative .verbal-select {
     background: #fbf9f9;
 }
 
+.general-box-wrapper {
+    background: #ffffff;
+    float: left;
+    width: 100%;
+    padding: 25px;
+    border-radius: 10px;
+    transition: box-shadow 0.25s;
+    -webkit-transition: box-shadow 0.25s;
+    -moz-transition: box-shadow 0.25s;
+}
+
+.general-box-wrapper:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+}
+
+.general-box-wrapper p {
+    float: left;
+    margin: 15px 0;
+    width: 100%;
+    font-size: 14px;
+    line-height: 26px;
+}
+
+.card-container {
+    margin-top: 20px;
+    float: left;
+    width: auto;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 6px;
+    background: #f3f3f3;
+}
+
+.card-container .card-brand {
+    margin-right: 10px;
+}
+
+.card-container .card-brand img {
+    width: 46px;
+    height: auto;
+}
+
+.card-container .card-name {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.card-container .card-expire {
+    font-size: 11px;
+    font-weight: 300;
+}
+
+.info-box {
+    top: 15px;
+    left: 17px;
+    font-size: 16px;
+    cursor: help;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;

@@ -114,10 +114,6 @@ const mailer = new Mailer({
     }
 });
 
-const expressServer = app.listen(config.port, () => {
-    console.log(`Server is listening on port ${config.port}...`);
-});
-
 // const io = socketio(expressServer, {
 //     transports: ['websocket'],
 //     pingTimeout: 60000
@@ -805,30 +801,6 @@ app.get('/upgrade/premium', verifySessionUpgrade, (req, res) => {
             });
         }
     });
-    // if (license) {
-    //     db.License.find({
-    //         license_id: license
-    //     }, (err, license) => {
-    //         const license_status = license[0].active;
-    //         const license_expiration = license[0].expiration_time;
-    //         const time_now = Math.round(Date.now() / 1000);
-    //         if (license_status && license_expiration > time_now) {
-    //             // Valid license
-    //             res.redirect('/upgrade');
-    //         } else {
-    //             res.render('upgrade-premium', {
-    //                 session: req.isAuthenticated(),
-    //                 user: req.session.user,
-    //                 page: 'login',
-    //                 messages: {
-    //                     type: null,
-    //                     title: null,
-    //                     text: null
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
 });
 
 // POST the subscriptio
@@ -948,16 +920,6 @@ app.post('/upgrade/premium', verifySessionUpgrade, (req, res) => {
 
 });
 
-// app.get('/authrequired', verifySession, (req, res) => {
-//     res.send('you hit the authentication endpoint\n')
-//     // console.log(req.isAuthenticated());
-//     // if (req.isAuthenticated()) {
-//     //     res.send('you hit the authentication endpoint\n')
-//     // } else {
-//     //     res.redirect('/')
-//     // }
-// });
-
 app.get('/logout', verifySession, function (req, res) {
     req.session.destroy(function (err) {
         req.logout();
@@ -974,36 +936,6 @@ app.get('/logout', verifySession, function (req, res) {
 app.get('*', function (req, res) {
     res.status(404).send('<h1>ERROR 404</h1><p>Page not fouded.</p>');
 });
-
-// app.get('/is', function (req, res) {
-//     res.json({
-//         session: req.isAuthenticated()
-//     });
-// });
-
-// app.get('/urls/:page', (req, res) => {
-//     db.Url.paginate({}, {
-//         page: req.params.page,
-//         limit: 5,
-//         sort: {
-//             short_url: 'asc'
-//         }
-//     }).then(response => {
-//         /**
-//          * Response looks like:
-//          * {
-//          *   docs: [...] // array of Posts
-//          *   total: 42   // the total number of Posts
-//          *   limit: 10   // the number of Posts returned per page
-//          *   page: 2     // the current page of Posts returned
-//          *   pages: 5    // the total number of pages
-//          * }
-//          */
-//         res.json(response);
-//     }).catch(err => {
-//         res.json(err);
-//     });
-// });
 
 // Combine the limiter and the origin middleware controls for api requests
 // CM.setMiddlewareFunction(apiLimiter);
@@ -1027,10 +959,21 @@ const sslOptions = {
     cert: fs.readFileSync('./ssl/cert.pem'),
     key: fs.readFileSync('./ssl/key.pem')
 };
+
 const servers = https.createServer(sslOptions, app).listen(443, () => {
     console.log('Server https is listening on port 443...');
 });
 // End get the https required modules
+
+const expressServer = app.listen(config.port, () => {
+    console.log(`Server http is listening on port ${config.port}...`);
+});
+
+/*
+ *
+ *   ALL UTILS FUNCTIONS
+ *
+ */
 
 // Verify the session to protect private routers
 function verifySession(req, res, next) {
