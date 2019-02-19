@@ -442,8 +442,9 @@ h1.url-title {
 }
 
 .register-wrapper {
+    float: left;
     width: 400px;
-    margin: 150px 50%;
+    margin: 100px 50%;
     transform: translateX(-50%);
     padding: 45px;
     border-radius: 15px;

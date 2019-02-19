@@ -6,7 +6,6 @@ const ejs = require('ejs');
 const db = require('./models/db');
 const express = require('express');
 const bodyParser = require('body-parser');
-const helmet = require('helmet');
 const socketio = require('socket.io');
 const PaymentSystem = require('./modules/payment-system/v1');
 const app = express();
@@ -19,6 +18,15 @@ const bcrypt = require('bcrypt-nodejs');
 const MongoStore = require('connect-mongo')(session);
 const ScrapingPage = require('./modules/scraping/v1');
 const HtmlParser = require('./models/html-parser');
+
+// Security
+const helmet = require('helmet');
+const csp = require('helmet-csp');
+
+// Server utility for performance
+const minify = require('express-minify');
+const compression = require('compression');
+const minifyHTML = require('express-minify-html');
 
 // Combine middleware class model
 const CombineMiddleware = require('./models/combine-middleware');
@@ -43,8 +51,25 @@ ejs.delimiter = '?';
 app.use(bodyParser.urlencoded({
     extended: false
 }))
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    type: ['json', 'application/csp-report']
+}));
 app.use(helmet());
+app.use(csp({
+    directives: {
+        scriptSrc: ["'self'", "'unsafe-inline'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
+        defaultSrc: ["'self'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com', (req, res) => `'nonce-${res.locals.nonce}'`],
+        styleSrc: ["'self'", "'unsafe-inline'", '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
+        frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://staticxx.facebook.com/'],
+        imgSrc: ['*', "'self'", 'data:'],
+        //sandbox: ['allow-forms', 'allow-scripts'],
+        reportUri: '/report-violation',
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: true,
+        workerSrc: false
+    }
+}));
+// , (req, res) => `'nonce-${res.locals.nonce}'`
 app.use(session({
     genid: (req) => {
         return uuid() // use UUIDs for session IDs
@@ -56,9 +81,23 @@ app.use(session({
     secret: process.env.SESSION_SECRET || config.sessionSecretKey, // SESSION_SECRET=sessionsecretkey npm start
     resave: false,
     saveUninitialized: true
-}))
+}));
+app.use(minifyHTML({
+    override: true,
+    exception_url: false,
+    htmlMinifier: {
+        removeComments: true,
+        collapseWhitespace: true,
+        collapseBooleanAttributes: true,
+        removeAttributeQuotes: true,
+        removeEmptyAttributes: true,
+        minifyJS: true
+    }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(compression());
+app.use(minify());
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/view');
 app.set('view engine', 'ejs');
@@ -83,6 +122,21 @@ const expressServer = app.listen(config.port, () => {
 //     transports: ['websocket'],
 //     pingTimeout: 60000
 // });
+
+app.use(function (req, res, next) {
+    res.locals.nonce = uuid();
+    next();
+})
+
+app.post('/report-violation', (req, res) => {
+    if (req.body) {
+        console.log('CSP Violation: ', req.body)
+    } else {
+        console.log('CSP Violation: No data received!')
+    }
+
+    res.status(204).end()
+})
 
 // The api logic
 app.use('/api', api);
@@ -160,6 +214,9 @@ app.get('/register', verifySessionInverse, (req, res) => {
             type: null,
             title: null,
             text: null
+        },
+        query: {
+            ref: req.query.ref != '' && req.query.ref != undefined && req.query.ref != null ? req.query.ref : undefined
         }
     });
 });
@@ -286,6 +343,7 @@ app.post('/register', (req, res) => {
     const password = req.body.password != '' && req.body.password != undefined ? bcrypt.hashSync(req.body.password) : false;
     const subscription = req.body.subscription != '' && req.body.subscription != null && req.body.subscription != undefined ? req.body.subscription : 'BASIC';
     const avatar = req.body.avatar != '' && req.body.avatar != null && req.body.avatar != undefined ? req.body.avatar : null;
+    const ref = req.body.ref != '' && req.body.ref != null && req.body.ref != undefined ? req.body.ref : undefined;
     const secretKey = uuid();
     if (name && email && password && secretKey) {
         db.User.find({
@@ -340,7 +398,8 @@ app.post('/register', (req, res) => {
                                         });
                                         // END Async Send confirmation email
                                         res.json({
-                                            'Status': 'done'
+                                            'Status': 'done',
+                                            'ref': ref
                                         });
                                     }
 
@@ -400,7 +459,7 @@ app.post('/shorten', (req, res) => {
                 user_id: user_id
             }, (err, count) => {
                 if (err) throw err;
-                if (!(count >= url_limit)) {
+                if (count < url_limit || url_limit == 0) {
                     if (long_url) {
                         db.Url.find({
                             alias: alias
@@ -788,7 +847,7 @@ app.post('/upgrade/premium', verifySessionUpgrade, (req, res) => {
                 'Error': 'Your license is still valid.'
             });
         } else {
-            // License inesistent, expired or invalid
+            // License not exist, expired or invalid
             if (token) {
                 // Create a card with the token provided by stripe elements
                 new PaymentSystem(config.stripe.secretKey).set({
@@ -900,6 +959,16 @@ app.get('/logout', verifySession, function (req, res) {
         req.logout();
         res.redirect('/');
     });
+});
+
+/*
+ *
+ *   DEFINE THE LAST ROOT AS 404
+ *
+ */
+
+app.get('*', function (req, res) {
+    res.status(404).send('<h1>ERROR 404</h1><p>Page not fouded.</p>');
 });
 
 // app.get('/is', function (req, res) {

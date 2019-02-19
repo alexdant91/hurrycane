@@ -77,17 +77,3 @@ $(document).on('click', '#newShortenUrl', function () {
     $('#expire').val('');
     $this.attr('id', 'shortenUrl').html('Let\'s Go!').prop('style', false);
 });
-
-var typed = new Typed("#typed", {
-    strings: [
-        '<i class="fal fa-link"></i> Get more from your links!',
-        '<i class="fal fa-chart-line"></i> Track your traffics!',
-        '<i class="fal fa-hand-holding-usd"></i> Get fees every page view!'
-    ],
-    typeSpeed: 40,
-    backSpeed: 20,
-    backDelay: 2000,
-    startDelay: 1000,
-    showCursor: true,
-    loop: true
-});
