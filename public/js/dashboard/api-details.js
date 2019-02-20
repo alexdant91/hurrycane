@@ -124,14 +124,47 @@ $(document).on('submit', '#update-api', function (e) {
                     progressBarColor: 'rgb(0, 255, 184)'
                 });
             }
-            $button.html('<i class="fal fa-save"></i> Save');
+            $button.html('<i class="fal fa-save white-text"></i> Save');
         },
         error: function (a, b, c) {
             console.log(a, b, c);
-            $button.html('<i class="fal fa-save"></i> Save');
+            $button.html('<i class="fal fa-save white-text"></i> Save');
         }
     });
 
     return false;
 
+});
+
+$(document).on('click', '.application-main-delete-trigger', function (e) {
+    if (confirm('Are you sure you want to delete this application?')) {
+        const $this = $(this);
+        const application_id = $this.data('id');
+        const counter = $('body').find('.active-application-wrapper').length;
+        $.ajax({
+            url: '/dashboard/api/delete',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: JSON.stringify({
+                application_id: application_id
+            }),
+            success: function (data) {
+                if (data.Error) {
+                    iziToast.error({
+                        position: 'topRight',
+                        title: data.title,
+                        message: data.text
+                    });
+                } else if (data.Status == 'done') {
+                    location.href = '/dashboard/api';
+                }
+            },
+            error: function (a, b, c) {
+                console.log(a, b, c);
+            }
+        });
+    }
 });

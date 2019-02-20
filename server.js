@@ -6,6 +6,7 @@ const ejs = require('ejs');
 const db = require('./models/db');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const socketio = require('socket.io');
 const PaymentSystem = require('./modules/payment-system/v1')(config.stripe.secretKey);
 const app = express();
@@ -54,6 +55,30 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({
     type: ['json', 'application/csp-report']
 }));
+app.use(cookieParser());
+app.use(function setUniqVisitor(req, res, next) {
+    // check if client sent cookie
+    let cookie = req.cookies.uniqueVisitor;
+    if (cookie === undefined) {
+        const expires = Math.round(new Date().setHours(23, 59, 59) / 1000);
+        res.cookie('uniqueVisitor', uuid(), {
+            maxAge: expires,
+            httpOnly: true
+        });
+    } else {
+        const expired = req.cookies.uniqueVisitor;
+        if (Math.round(Date.now() / 1000) > expired) {
+            // Expired
+            const expires = Math.round(new Date().setHours(23, 59, 59) / 1000);
+            res.clearCookie('uniqueVisitor');
+            res.cookie('uniqueVisitor', uuid(), {
+                maxAge: expires,
+                httpOnly: true
+            });
+        }
+    }
+    next();
+});
 app.use(helmet());
 app.use(csp({
     directives: {

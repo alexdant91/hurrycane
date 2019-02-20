@@ -223,6 +223,10 @@ h1.url-title {
     color: #ffffff !important;
 }
 
+.butt.max {
+    font-size: 18px !important;
+}
+
 .menu-top {
     position: absolute;
     top: 0;

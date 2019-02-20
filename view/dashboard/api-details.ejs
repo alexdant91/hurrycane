@@ -109,13 +109,40 @@
                                             <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required><?= origins ?></textarea>
                                         </div>
                                         <div class="row">
-                                            <div class="container pad-25 text-center">
+                                            <div class="container text-center" style="padding: 25px 25px 0 25px;">
                                                 <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
                                                 <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative" style="border: 1px solid red;">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 ">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-exclamation-triangle"></i> Danger zone
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                        <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                        <a href="#delete" class="url-actions application-main-delete-trigger butt main-button red-button max" data-id="<?= datas.applications.data._id ?>"><i class="fal fa-trash"></i> Delete This Application</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
