@@ -104,16 +104,54 @@ const licenseSchema = Schema({
     }
 });
 
+const applicationSchema = Schema({
+    user_id: {
+        type: String,
+        required: true
+    },
+    secret_key: {
+        type: String,
+        required: true
+    },
+    allowed_origins: {
+        type: Array,
+        default: []
+    },
+    name: String,
+    active: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    creation_time: {
+        type: String,
+        required: true
+    }
+});
+
+const applicationEventSchema = Schema({
+    application_id: String,
+    event_description: String,
+    event_request: String,
+    event_response: String,
+    request_origin: String,
+    creation_time: String
+});
+
 userSchema.plugin(mongoosePaginate);
 urlSchema.plugin(mongoosePaginate);
 planSchema.plugin(mongoosePaginate);
 walletSchema.plugin(mongoosePaginate);
 licenseSchema.plugin(mongoosePaginate);
+applicationSchema.plugin(mongoosePaginate);
+applicationEventSchema.plugin(mongoosePaginate);
 
 models.User = mongoose.model('User', userSchema);
 models.Url = mongoose.model('Url', urlSchema);
 models.Plan = mongoose.model('Plan', planSchema);
 models.Wallet = mongoose.model('Wallet', walletSchema);
 models.License = mongoose.model('License', licenseSchema);
+models.Application = mongoose.model('Application', applicationSchema);
+models.ApplicationEvent = mongoose.model('ApplicationEvent', applicationEventSchema);
 
 module.exports = models;

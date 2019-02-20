@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+
+            <div class="row">
+                <div class="container">
+
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 active-urls-container">
+                        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                            <div class="active-applications-wrapper relative">
+                                <div class="row">
+                                    <div class="container pad-25">
+                                        <h6 class="text-center">
+                                            Create a new Application
+                                        </h6>
+                                    </div>
+                                </div>
+                                <form action="/dashboard/api/new" method="POST" id="new-api">
+                                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+                                        <img src="/img/api-logo.png" class="url-icon" alt="Api application logo" style="height: 64px;" />
+                                    </div>
+                                    <div class="col-xl-9 col-lg-9 col-md-10 col-sm-12 col-xs-12 form-new-application">
+                                        <div class="input field">
+                                            <label for="name">What's the name of your application?</label>
+                                            <input type="text" name="name" id="name" value="" placeholder="Appliaction name..." required />
+                                        </div>
+                                        <div class="input field">
+                                            <label for="allowed_origins">Which origin do you want to authorize? Separated by a ";" sign.</label>
+                                            <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container pad-25 text-center">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button">Let's go!</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/api-new.js?v=1.0.0"></script>
+    </body>
+
+</html>

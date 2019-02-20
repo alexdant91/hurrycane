@@ -433,6 +433,91 @@ span.relative .verbal-select {
     line-height: 0;
 }
 
+.active-new-application-wrapper {
+    background: #ffffff;
+    float: left;
+    width: 100%;
+    padding: 26px;
+    border-radius: 10px;
+    transition: box-shadow 0.25s;
+    -webkit-transition: box-shadow 0.25s;
+    -moz-transition: box-shadow 0.25s;
+}
+
+.active-new-application-wrapper:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+}
+
+.active-new-application-wrapper .url-icon {
+    height: 30px;
+    width: auto;
+}
+
+.active-new-application-wrapper .url-actions {
+    font-size: 11px;
+}
+
+.active-new-application-wrapper .url-external {
+    font-size: 20px;
+    line-height: 0;
+}
+
+.active-applications-wrapper {
+    background: #ffffff;
+    float: left;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    transition: box-shadow 0.25s;
+    -webkit-transition: box-shadow 0.25s;
+    -moz-transition: box-shadow 0.25s;
+}
+
+.active-applications-wrapper:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+}
+
+.active-applications-wrapper .url-icon {
+    height: 48px;
+    width: auto;
+}
+
+.active-applications-wrapper .url-actions {
+    font-size: 11px;
+}
+
+.active-applications-wrapper .url-external {
+    font-size: 18px;
+    line-height: 0;
+}
+
+.active-applications-wrapper .application-name {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.active-applications-wrapper .application-active.active {
+    height: 12px;
+    width: 12px;
+    background: #8ce266;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+}
+
+.active-applications-wrapper .application-active.disabled {
+    height: 12px;
+    width: 12px;
+    background: #fd3d00;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+}
+
 .box-pagination-wrapper {
     float: left;
     margin-left: 50%;
@@ -511,6 +596,19 @@ span.relative .verbal-select {
     left: 17px;
     font-size: 16px;
     cursor: help;
+}
+
+.form-new-application .input {
+    margin: 10px 0;
+}
+
+.form-new-application .input label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-new-application .input input {
+    margin: 10px 0 0 0;
 }
 
 @media screen and (min-width: 1488px) {

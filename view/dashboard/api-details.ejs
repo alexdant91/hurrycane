@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+
+            <div class="row">
+                <div class="container">
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Switching the button you can activating or disabling your application. When the app is disabled the api request return with an error.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+                                <img src="/img/api-logo.png" class="url-icon" alt="Api application logo" style="height: 64px;" />
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 form-new-application">
+                                <h4 class="application-main-title">
+                                    <?= `${datas.applications.data.name}` ?>
+                                </h4>
+                                <div class="app-sub-title">
+                                    ID:
+                                    <?= `${datas.applications.data._id}` ?>
+                                </div>
+                                <div class="input field" style="margin-top: 20px;">
+                                    <label for="secret_key">Secret key</label>
+                                    <div class="button-input">
+                                        <input type="text" name="secret_key" class="blurred" style="text-align: center !important;font-size: 15px;" id="secret_key" value="fakesecr-etfak-esek-retf-akesecretfak" placeholder="Appliaction name..." unselectable="on" disabled />
+                                        <button id="show-secret-key"><i class="fal fa-eye"></i> Show</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                <div class="onoffswitch">
+                                    <? if(datas.applications.data.active) { ?>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="application_status" value="<? if(datas.applications.data.active) { ?>on<? } else { ?>off<? } ?>" checked="checked">
+                                    <? } else { ?>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="application_status" value="<? if(datas.applications.data.active) { ?>on<? } else { ?>off<? } ?>">
+                                    <? } ?>
+                                    <label class="onoffswitch-label" for="application_status">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
+
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 ">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            Application details & settings
+                                        </h6>
+                                    </div>
+                                </div>
+                                <form action="/dashboard/api/update" method="POST" id="update-api">
+                                    <div class="form-new-application">
+                                        <div class="input field">
+                                            <label for="name">What's the name of your application?</label>
+                                            <input type="text" name="name" id="name" value="<?= datas.applications.data.name ?>" placeholder="Appliaction name..." required />
+                                        </div>
+                                        <div class="input field">
+                                            <label for="allowed_origins">Which origin do you want to authorize? Separated by a ";" sign.</label>
+                                            <?
+                                            let origins = '';
+                                            datas.applications.data.allowed_origins.forEach(element => {
+                                                origins += element+'; '
+                                            });
+                                            ?>
+                                            <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required><?= origins ?></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container pad-25 text-center">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <input type="hidden" id="application_id" value="<?= datas.applications.data._id ?>" />
+
+        </div>
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/api-details.js?v=1.0.0"></script>
+    </body>
+
+</html>

@@ -36,9 +36,10 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="general-box-wrapper relative">
-                                <span class="info-box absolute">
+                                <div class="info-box absolute tooltip">
+                                    <span class="tooltiptext">By canceling your subscription this will remain active until the day of its expiration.</span>
                                     <i class="fal fa-info-circle"></i>
-                                </span>
+                                </div>
                                 <h6 class="text-center">
                                     <i class="fal fa-star"></i>
                                     <?= (license.plan.toLowerCase()).charAt(0).toUpperCase() + (license.plan.toLowerCase()).slice(1) ?> subscription
@@ -66,9 +67,10 @@
 
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="general-box-wrapper relative">
-                                <span class="info-box absolute">
+                                <div class="info-box absolute tooltip">
+                                    <span class="tooltiptext">To protect your privacy we do not store your credit card information.</span>
                                     <i class="fal fa-info-circle"></i>
-                                </span>
+                                </div>
                                 <h6 class="text-center">
                                     <i class="fal fa-credit-card"></i> Payment method
                                 </h6>
@@ -119,6 +121,18 @@
         <script type="text/javascript" src="/js/iziModal.min.js"></script>
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/urls.js?v=1.0.0"></script>
+        <script>
+            var tooltip = document.querySelectorAll('.coupontooltip');
+
+            document.addEventListener('mousemove', fn, false);
+
+            function fn(e) {
+                for (var i = tooltip.length; i--;) {
+                    tooltip[i].style.left = e.pageX + 'px';
+                    tooltip[i].style.top = e.pageY + 'px';
+                }
+            }
+        </script>
     </body>
 
 </html>

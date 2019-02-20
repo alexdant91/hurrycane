@@ -36,6 +36,62 @@ input {
     height: 56px !important;
 }
 
+input.blurred {
+    color: transparent !important;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #dededf;
+    position: relative;
+    z-index: 999;
+    padding: 10px 14px;
+    font-size: 13px;
+    outline: none;
+    margin-top: 10px;
+    border-radius: 2px;
+}
+
+.button-input input {
+    width: 80% !important;
+    margin-right: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+
+.button-input button {
+    padding: 18px 0;
+    box-shadow: none;
+    border: 1px solid #0064fd;
+    outline: none;
+    height: 56px;
+    line-height: 0;
+    width: 20%;
+    float: right;
+    margin-top: 10px;
+    font-size: 16px;
+    background: #0064fd;
+    color: #ffffff;
+    cursor: pointer;
+    border-left: 0;
+    border-top-right-radius: 2px !important;
+    border-bottom-right-radius: 2px !important;
+}
+
+.button-input button i {
+    color: #ffffff;
+}
+
 section.hero {
     background: rgba(0, 0, 0, 0) linear-gradient(150deg, rgb(85, 51, 255) 15%, rgb(5, 213, 255) 70%, rgb(166, 255, 203) 94%) repeat scroll 0% 0% / auto padding-box border-box;
     position: relative;
@@ -133,6 +189,38 @@ h1.url-title {
     -webkit-border-radius: 100px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
     letter-spacing: 0;
+}
+
+.butt.main-button.green-button {
+    cursor: pointer;
+    padding: 10px 15px;
+    font-size: 13px;
+    background-color: #00e8ba;
+    color: #283541 !important;
+    border: 0;
+    border-radius: 100px;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 100px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+    letter-spacing: 0;
+}
+
+.butt.main-button.red-button {
+    cursor: pointer;
+    padding: 10px 15px;
+    font-size: 13px;
+    background-color: #fd3d00;
+    color: #ffffff !important;
+    border: 0;
+    border-radius: 100px;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 100px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+    letter-spacing: 0;
+}
+
+.butt.main-button.red-button i {
+    color: #ffffff !important;
 }
 
 .menu-top {
@@ -692,6 +780,136 @@ h1.url-title {
     top: -10px;
     background: white;
     line-height: 0;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip i {
+    color: #9E9E9E;
+}
+
+.tooltip:hover i {
+    color: #2F3641;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    height: auto;
+    min-width: 100px;
+    max-width: 400px;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 110%;
+    margin-left: 5px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.onoffswitch {
+    position: relative;
+    width: 102px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.onoffswitch-checkbox {
+    display: none;
+}
+
+.onoffswitch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #999999;
+    border-radius: 20px;
+}
+
+.onoffswitch-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 30px;
+    padding: 0;
+    line-height: 30px;
+    font-size: 14px;
+    letter-spacing: 0;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.onoffswitch-inner:before {
+    content: "Active";
+    padding-left: 10px;
+    background-color: #46D10B;
+    color: #FFFFFF;
+}
+
+.onoffswitch-inner:after {
+    content: "Disabled";
+    padding-right: 10px;
+    background-color: #EEEEEE;
+    color: #999999;
+    text-align: right;
+}
+
+.onoffswitch-switch {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin: 5px;
+    background: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 67px;
+    border: 1px solid #999;
+    border-radius: 20px;
+    transition: all .3s ease-in 0s;
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+    right: 0px;
 }
 
 /* .social-login-wrapper {
