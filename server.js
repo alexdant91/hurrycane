@@ -106,9 +106,12 @@ app.use(session({
         return uuid() // use UUIDs for session IDs
     },
     // store: new FileStore(),
-    store: new MongoStore({
-        url: 'mongodb://localhost:27017/url_shortner_sessions'
-    }),
+    // store: new MongoStore({
+    //     url: 'mongodb://localhost:27017/url_shortner'
+    // }),
+    // store: new MongoStore({
+    //     url: 'mongodb+srv://alexdant91:18Gmgaa2@clusterhurrycane-nebin.mongodb.net/url_shortner'
+    // }),
     secret: process.env.SESSION_SECRET || config.sessionSecretKey, // SESSION_SECRET=sessionsecretkey npm start
     resave: false,
     saveUninitialized: true

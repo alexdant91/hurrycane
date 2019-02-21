@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const Schema = mongoose.Schema;
 
-mongoose.connect('mongodb://localhost:27017/url_shortner', {
+// Local host
+// mongoose.connect('mongodb://localhost:27017/url_shortner', {
+//     useNewUrlParser: true
+// });
+mongoose.connect('mongodb+srv://alexdant91:18Gmgaa2@clusterhurrycane-nebin.mongodb.net/url_shortner', {
     useNewUrlParser: true
 });
 
