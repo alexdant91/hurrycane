@@ -44,6 +44,12 @@ router.get('/', (req, res) => {
     });
 });
 
+/*
+ * 
+ * SET THE URLS FUNCTIONALITY
+ *  
+ * */
+
 // GET /dashboard/archive
 router.get('/urls', (req, res) => {
     const page = req.query.page != '' && req.query.page != undefined && req.query.page != null && req.query.page > 0 ? req.query.page : 1;
@@ -89,6 +95,12 @@ router.get('/urls', (req, res) => {
         res.json(err);
     });
 });
+
+/*
+ * 
+ * SET THE SUBSCRITION FUNCTIONALITY
+ *  
+ * */
 
 // GET /dashboard/subscription
 router.get('/subscription', (req, res) => {
@@ -139,6 +151,12 @@ router.get('/subscription', (req, res) => {
         });
     });
 });
+
+/*
+ * 
+ * SET THE APPLICATION FUNCTIONALITY
+ *  
+ * */
 
 // GET /dashboard/api
 router.get('/api', (req, res) => {
@@ -505,5 +523,65 @@ router.post('/api/update', (req, res) => {
         }
     }
 });
+
+/*
+ *   TEST PASSED.
+ *   Verify if the license is valid
+ */
+function verifyLicenseMiddleware(license, done) {
+    if (license) {
+        db.License.find({
+            license_id: license
+        }, (err, license) => {
+            if (err) return done(err, false);
+            const license_status = license[0].active;
+            const license_expiration = license[0].expiration_time;
+            const time_now = Math.round(Date.now() / 1000);
+            return done(null, license_status && license_expiration > time_now ? true : false);
+        });
+    } else {
+        return done(null, false);
+    }
+}
+
+/*
+ *   TEST PASSED.
+ *   Verify if the license is valid
+ */
+function verifyLicense(req, res, next) {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const license = user_id ? req.session.user.license_id : false;
+    if (user_id && license) {
+        db.License.find({
+            user_id: user_id,
+            license_id: license
+        }, (err, license) => {
+            if (err) {
+                return res.status(500).json(err);
+            } else {
+                if (license.length > 0) {
+                    const license_status = license[0].active;
+                    const license_expiration = license[0].expiration_time;
+                    const time_now = Math.round(Date.now() / 1000);
+                    if (license_status && license_expiration > time_now) {
+                        return next();
+                    } else {
+                        return res.status(500).json({
+                            'Error': 'License expired.'
+                        });
+                    }
+                } else {
+                    return res.status(500).json({
+                        'Error': 'License ID not exist.'
+                    });
+                }
+            }
+        });
+    } else {
+        return res.status(403).json({
+            'Error': 'Access denied.'
+        });
+    }
+}
 
 module.exports = router;

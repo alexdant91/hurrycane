@@ -78,17 +78,61 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Switching the button you can pass from test to live application and vice versa. Make all the tests you want in test mode. Se the <a href="#" style="text-decoration: underline;color:#fff !important;">docs</a> for all information.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center"></div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 form-new-application">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-plug"></i> Live or Testing mode
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="input field" style="margin-top: 20px;">
+                                    <label for="test_endpoint">Sandbox endpoint for testing</label>
+                                    <div class="button-input">
+                                        <input type="text" name="test_endpoint" id="test_endpoint" value="https://hurrycane.io/test/api" readonly />
+                                        <button class="copy-to-clip" data-target="test_endpoint"><i class="fal fa-copy"></i> Copy</button>
+                                    </div>
+                                </div>
+                                <div class="input field" style="margin-top: 20px;">
+                                    <label for="live_endpoint">Live endpoint for production</label>
+                                    <div class="button-input">
+                                        <input type="text" name="live_endpoint" id="live_endpoint" value="https://hurrycane.io/live/api" readonly />
+                                        <button class="copy-to-clip" data-target="live_endpoint"><i class="fal fa-copy"></i> Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                <div class="onoffswitch application_env">
+                                    <? if(datas.applications.data.production) { ?>
+                                    <input type="checkbox" name="application_env" class="onoffswitch-checkbox" id="application_env" value="<? if(datas.applications.data.production) { ?>on<? } else { ?>off<? } ?>" checked="checked">
+                                    <? } else { ?>
+                                    <input type="checkbox" name="application_env" class="onoffswitch-checkbox" id="application_env" value="<? if(datas.applications.data.production) { ?>on<? } else { ?>off<? } ?>">
+                                    <? } ?>
+                                    <label class="onoffswitch-label" for="application_env">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
-
-                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center"></div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 ">
                                 <div class="row">
                                     <div class="container pad-20">
                                         <h6 class="text-center">
-                                            Application details & settings
+                                            <i class="fal fa-info-square"></i> Application details & settings
                                         </h6>
                                     </div>
                                 </div>
@@ -123,12 +167,10 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative" style="border: 1px solid red;">
                             <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
+                                <span class="tooltiptext">Danger! Deleting your application you will lost all the API's funztionality and the registered events related to this app.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
-
-                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center"></div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 ">
                                 <div class="row">
                                     <div class="container pad-20">
@@ -169,6 +211,29 @@
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/api-details.js?v=1.0.0"></script>
+        <script>
+            $(document).on('click', '.copy-to-clip', function () {
+                const id = $(this).data('target');
+                const copyText = document.getElementById(id);
+                copyText.focus()
+                copyText.select();
+                if (document.execCommand("copy")) {
+                    iziToast.show({
+                        theme: 'dark',
+                        icon: 'fal fa-check',
+                        position: 'topRight',
+                        title: 'Well',
+                        message: 'Text copied to clipboard.',
+                        progressBarColor: 'rgb(0, 255, 184)'
+                    });
+                } else {
+                    iziToast.error({
+                        title: 'Opps!',
+                        message: 'An error occurred. Try again later.'
+                    });
+                }
+            });
+        </script>
     </body>
 
 </html>

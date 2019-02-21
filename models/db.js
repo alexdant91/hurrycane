@@ -127,6 +127,11 @@ const applicationSchema = Schema({
         required: true,
         default: true
     },
+    production: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     creation_time: {
         type: String,
         required: true

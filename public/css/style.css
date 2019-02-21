@@ -278,9 +278,8 @@ h1.url-title {
 .menu-container ol li {
     list-style: none;
     display: inline-block;
-    margin: 0;
+    margin: 0 2px;
     padding: 0;
-    margin: 0;
 }
 
 .menu-container ol li a {
@@ -835,7 +834,14 @@ h1.url-title {
     visibility: visible;
 }
 
+/*
+*
+* ON/OFF SWITCH ACTIVE/DISABLEDE
+*
+*/
+
 .onoffswitch {
+    float: right;
     position: relative;
     width: 102px;
     -webkit-user-select: none;
@@ -916,9 +922,93 @@ h1.url-title {
     right: 0px;
 }
 
-/* .social-login-wrapper {
+/*
+*
+* ON/OFF SWITCH LIVE/TEST
+*
+*/
 
-} */
+.onoffswitch.application_env {
+    float: right;
+    position: relative;
+    width: 70px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.onoffswitch.application_env .onoffswitch-checkbox {
+    display: none;
+}
+
+.onoffswitch.application_env .onoffswitch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #999999;
+    border-radius: 20px;
+}
+
+.onoffswitch.application_env .onoffswitch-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch.application_env .onoffswitch-inner:before,
+.onoffswitch.application_env .onoffswitch-inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 30px;
+    padding: 0;
+    line-height: 30px;
+    font-size: 14px;
+    letter-spacing: 0;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.onoffswitch.application_env .onoffswitch-inner:before {
+    content: "Live";
+    padding-left: 10px;
+    background-color: #46D10B;
+    color: #FFFFFF;
+}
+
+.onoffswitch.application_env .onoffswitch-inner:after {
+    content: "Test";
+    padding-right: 10px;
+    background-color: #EEEEEE;
+    color: #999999;
+    text-align: right;
+}
+
+.onoffswitch.application_env .onoffswitch-switch {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin: 5px;
+    background: #fff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 37px;
+    border: 1px solid #999;
+    border-radius: 20px;
+    transition: all .3s ease-in 0s;
+}
+
+.onoffswitch.application_env .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch.application_env .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
 
 @media screen and (min-width: 1488px) {
     form.url-input {
