@@ -1,4 +1,5 @@
 // const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+let secretKeyTimeout;
 $(document).on('click', '#show-secret-key', function () {
     const $this = $(this);
     const $secret_key = $('#secret_key');
@@ -26,6 +27,10 @@ $(document).on('click', '#show-secret-key', function () {
                 } else if (data.Status == 'done') {
                     $this.html('<i class="fal fa-eye-slash"></i> Hide');
                     $secret_key.val(data.secret_key).removeClass('blurred');
+                    secretKeyTimeout = setTimeout(function () {
+                        $this.html('<i class="fal fa-eye"></i> Show');
+                        $secret_key.addClass('blurred').val('fakesecr-etfak-esek-retf-akesecretfak');
+                    }, 60000);
                 }
 
             },
@@ -37,6 +42,7 @@ $(document).on('click', '#show-secret-key', function () {
     } else {
         $this.html('<i class="fal fa-eye"></i> Show');
         $secret_key.addClass('blurred').val('fakesecr-etfak-esek-retf-akesecretfak');
+        clearTimeout(secretKeyTimeout);
     }
 });
 

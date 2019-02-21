@@ -23,6 +23,7 @@ const HtmlParser = require('./models/html-parser');
 // Security
 const helmet = require('helmet');
 const csp = require('helmet-csp');
+const crypto = require('crypto');
 
 // Server utility for performance
 const minify = require('express-minify');
@@ -79,11 +80,16 @@ app.use(function setUniqVisitor(req, res, next) {
     }
     next();
 });
+// Set the nonce CPS Security protection
+// app.use((req, res, next) => {
+//     res.locals.nonce = uuid().toString('base64');; //uuid();
+//     next();
+// });
 app.use(helmet());
 app.use(csp({
     directives: {
-        scriptSrc: ["'self'", "'unsafe-inline'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
-        defaultSrc: ["'self'", 'localhost', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com', (req, res) => `'nonce-${res.locals.nonce}'`],
+        defaultSrc: ["'self'", 'localhost', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
         styleSrc: ["'self'", "'unsafe-inline'", '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
         frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
         imgSrc: ['*', "'self'", 'data:'],
@@ -143,11 +149,6 @@ const mailer = new Mailer({
 //     transports: ['websocket'],
 //     pingTimeout: 60000
 // });
-
-app.use(function (req, res, next) {
-    res.locals.nonce = uuid();
-    next();
-})
 
 app.post('/report-violation', (req, res) => {
     if (req.body) {
@@ -666,7 +667,19 @@ app.get('/s/:alias', (req, res) => {
                     }
                 });
             } else {
-                res.redirect(docs[0].long_url);
+                res.render('s', {
+                    session: req.isAuthenticated(),
+                    user: req.session.user,
+                    page: 's',
+                    alias: alias,
+                    long_url: docs[0].long_url,
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
+                    }
+                });
+                // res.redirect(docs[0].long_url);
             }
         });
     } else {
