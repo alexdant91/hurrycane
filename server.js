@@ -1006,7 +1006,7 @@ app.get('*', function (req, res) {
 // });
 // End get the https required modules
 
-const expressServer = app.listen(config.port, () => {
+const expressServer = app.listen(process.env.PORT || config.port, () => {
     console.log(`Server http is listening on port ${config.port}...`);
 });
 
