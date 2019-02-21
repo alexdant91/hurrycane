@@ -993,14 +993,14 @@ app.get('*', function (req, res) {
 // });
 
 // Get the https required modules
-const sslOptions = {
-    cert: fs.readFileSync('./ssl/cert.pem'),
-    key: fs.readFileSync('./ssl/key.pem')
-};
+// const sslOptions = {
+//     cert: fs.readFileSync('./ssl/cert.pem'),
+//     key: fs.readFileSync('./ssl/key.pem')
+// };
 
-const servers = https.createServer(sslOptions, app).listen(443, () => {
-    console.log('Server https is listening on port 443...');
-});
+// const servers = https.createServer(sslOptions, app).listen(443, () => {
+//     console.log('Server https is listening on port 443...');
+// });
 // End get the https required modules
 
 const expressServer = app.listen(config.port, () => {
