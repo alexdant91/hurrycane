@@ -5,7 +5,9 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node server.js",
+        "start": "NODE_ENV=production node server.js",
+        "start:s": "NODE_ENV=staging nodemon server.js",
+        "start:p": "NODE_ENV=production server.js",
         "json:server": "json-server --watch ./db.json --port 5000"
     },
     "author": "Alessandro D'Antoni",

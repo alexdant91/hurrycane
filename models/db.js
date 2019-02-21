@@ -1,12 +1,12 @@
+const Config = require('../config/config');
+const config = new Config();
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const Schema = mongoose.Schema;
 
-// Local host
-// mongoose.connect('mongodb://localhost:27017/url_shortner', {
-//     useNewUrlParser: true
-// });
-mongoose.connect('mongodb+srv://alexdant91:18Gmgaa2@clusterhurrycane-nebin.mongodb.net/url_shortner', {
+const url_connection = config.NODE_ENV === 'staging' ? 'mongodb://localhost:27017/url_shortner' : `mongodb+srv://${config.mongoDbAtlas.user.username}:${config.mongoDbAtlas.user.password}@clusterhurrycane-nebin.mongodb.net/url_shortner`;
+
+mongoose.connect(url_connection, {
     useNewUrlParser: true
 });
 

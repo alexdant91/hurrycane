@@ -1,15 +1,22 @@
 class Config {
 
     constructor() {
+        this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
         this.host = 'http://localhost:80';
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
             requestTimeLimitRange: 60 * 60 * 1000,
             requestNumberLimit: process.env.REQUEST_NUMBER_LIMIT || 2
-        }
+        };
         this.stripe = {
             secretKey: "sk_test_Y7gX79Tue6uErVfdl0uooR6y"
+        };
+        this.mongoDbAtlas = {
+            user: {
+                username: 'alexdant91',
+                password: '18Gmgaa2'
+            }
         }
     }
 

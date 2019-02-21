@@ -41,6 +41,13 @@ const dashboard = require('./dashboard/dashboard');
 // Protect functions with CORS
 const cors = require('cors');
 
+// Mongoose connection for session storage in Atlas
+const mongoose = require('mongoose');
+const url_connection = config.NODE_ENV === 'staging' ? 'mongodb://localhost:27017/url_shortner' : `mongodb+srv://${config.mongoDbAtlas.user.username}:${config.mongoDbAtlas.user.password}@clusterhurrycane-nebin.mongodb.net/url_shortner`;
+mongoose.connect(url_connection, {
+    useNewUrlParser: true
+});
+
 // Limit the request from the same ip address
 // The limit is set and stored for all rout, the counter not start from 0 if it is used on more then one rout
 const rateLimit = require("express-rate-limit");
@@ -100,18 +107,18 @@ app.use(csp({
         workerSrc: false
     }
 }));
-// , (req, res) => `'nonce-${res.locals.nonce}'`
 app.use(session({
     genid: (req) => {
         return uuid() // use UUIDs for session IDs
     },
-    // store: new FileStore(),
+    // Store il localhost
     // store: new MongoStore({
     //     url: 'mongodb://localhost:27017/url_shortner'
     // }),
-    // store: new MongoStore({
-    //     url: 'mongodb+srv://alexdant91:18Gmgaa2@clusterhurrycane-nebin.mongodb.net/url_shortner'
-    // }),
+    // Store il MongoDB Atlas
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    }),
     secret: process.env.SESSION_SECRET || config.sessionSecretKey, // SESSION_SECRET=sessionsecretkey npm start
     resave: false,
     saveUninitialized: true
