@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 // GET /api/
 router.get('/', (req, res) => {
-    res.render('api', {
+    res.json({
         api: 'API'
     });
 });

@@ -453,74 +453,115 @@ router.post('/api/update', (req, res) => {
     const user_id = req.isAuthenticated() ? req.session.user._id : false;
     const application_id = req.body.application_id != '' && req.body.application_id != null && req.body.application_id != undefined ? req.body.application_id : false;
     const active = req.body.application_status != '' && req.body.application_status != null && req.body.application_status != undefined ? req.body.application_status : false;
+    const production = req.body.application_env != '' && req.body.application_env != null && req.body.application_env != undefined ? req.body.application_env : false;
 
     // Update the other informations
     const allowed_origins = Array.isArray(req.body.allowed_origins) && req.body.allowed_origins != '' && req.body.allowed_origins != null && req.body.allowed_origins != undefined ? req.body.allowed_origins : false;
     const name = req.body.name != '' && req.body.name != null && req.body.name != undefined ? req.body.name : false;
 
-    if (active) {
-        if (application_id && user_id) {
-            db.Application.updateOne({
-                _id: application_id,
-                user_id: user_id
-            }, {
-                active: active == 'on' ? true : false
-            }).then(confirm => {
-                if (confirm) {
+    // Set the case control
+    const action = req.query.action != '' & req.query.action != null && req.query.action != undefined ? req.query.action : false;
+
+    if (action) {
+        if (action == 'ChangeStatusMode') {
+            if (application_id && user_id) {
+                db.Application.updateOne({
+                    _id: application_id,
+                    user_id: user_id
+                }, {
+                    active: active == 'on' ? true : false
+                }).then(confirm => {
+                    if (confirm) {
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': `Application ${active == 'on' ? 'activated' : 'disabled'}.`
+                            }
+                        });
+                    }
+                }).catch(err => {
                     res.json({
-                        'Status': 'done',
-                        'messages': {
-                            'title': 'Well!',
-                            'text': `Application ${active == 'on' ? 'activated' : 'disabled'}.`
-                        }
+                        'Error': err,
+                        'title': 'Oops!',
+                        'text': 'We can not update this application.'
                     });
-                }
-            }).catch(err => {
+                });
+            } else {
                 res.json({
                     'Error': err,
-                    'title': 'Oops!',
-                    'text': 'We can not update this application.'
+                    'title': 'Fatal!',
+                    'text': 'You are not authorized.'
+                })
+            }
+        } else if (action == 'UpdateApplicationInfo') {
+            if (application_id && user_id) {
+                db.Application.updateOne({
+                    _id: application_id,
+                    user_id: user_id
+                }, {
+                    name: name,
+                    allowed_origins: allowed_origins
+                }).then(confirm => {
+                    if (confirm) {
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': `Application info updated.`
+                            }
+                        });
+                    }
+                }).catch(err => {
+                    res.json({
+                        'Error': err,
+                        'title': 'Oops!',
+                        'text': 'We can not update this application.'
+                    });
                 });
-            });
-        } else {
-            res.json({
-                'Error': err,
-                'title': 'Fatal!',
-                'text': 'You are not authorized.'
-            })
+            } else {
+                res.json({
+                    'Error': true,
+                    'title': 'Fatal!',
+                    'text': 'You are not authorized.'
+                })
+            }
+        } else if (action == 'ChangeSandboxStatus') {
+            if (application_id && user_id) {
+                db.Application.updateOne({
+                    _id: application_id,
+                    user_id: user_id
+                }, {
+                    production: production == 'on' ? true : false
+                }).then(confirm => {
+                    if (confirm) {
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': `Application in ${production == 'on' ? 'live' : 'test'} mode.`
+                            }
+                        });
+                    }
+                }).catch(err => {
+                    res.json({
+                        'Error': err,
+                        'title': 'Oops!',
+                        'text': 'We can not update this application.'
+                    });
+                });
+            } else {
+                res.json({
+                    'Error': err,
+                    'title': 'Fatal!',
+                    'text': 'You are not authorized.'
+                })
+            }
         }
     } else {
-        if (application_id && user_id) {
-            db.Application.updateOne({
-                _id: application_id,
-                user_id: user_id
-            }, {
-                name: name,
-                allowed_origins: allowed_origins
-            }).then(confirm => {
-                if (confirm) {
-                    res.json({
-                        'Status': 'done',
-                        'messages': {
-                            'title': 'Well!',
-                            'text': `Application info updated.`
-                        }
-                    });
-                }
-            }).catch(err => {
-                res.json({
-                    'Error': err,
-                    'title': 'Oops!',
-                    'text': 'We can not update this application.'
-                });
-            });
-        } else {
-            res.json({
-                'Error': true,
-                'title': 'Fatal!',
-                'text': 'You are not authorized.'
-            })
-        }
+        res.status(500).json({
+            'Error': 'Bad request.'
+        });
     }
 });
 

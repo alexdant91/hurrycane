@@ -93,14 +93,14 @@
                                 <div class="input field" style="margin-top: 20px;">
                                     <label for="test_endpoint">Sandbox endpoint for testing</label>
                                     <div class="button-input">
-                                        <input type="text" name="test_endpoint" id="test_endpoint" value="https://hurrycane.io/test/api" readonly />
+                                        <input type="text" name="test_endpoint" id="test_endpoint" value="<?= host ?>/test/api/v1/" readonly />
                                         <button class="copy-to-clip" data-target="test_endpoint"><i class="fal fa-copy"></i> Copy</button>
                                     </div>
                                 </div>
                                 <div class="input field" style="margin-top: 20px;">
                                     <label for="live_endpoint">Live endpoint for production</label>
                                     <div class="button-input">
-                                        <input type="text" name="live_endpoint" id="live_endpoint" value="https://hurrycane.io/live/api" readonly />
+                                        <input type="text" name="live_endpoint" id="live_endpoint" value="<?= host ?>/api/v1/" readonly />
                                         <button class="copy-to-clip" data-target="live_endpoint"><i class="fal fa-copy"></i> Copy</button>
                                     </div>
                                 </div>

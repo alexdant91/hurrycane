@@ -3,7 +3,7 @@ class Config {
     constructor() {
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
-        this.host = 'http://localhost:80';
+        this.host = 'http://localhost';
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
             requestTimeLimitRange: 60 * 60 * 1000,
@@ -17,6 +17,9 @@ class Config {
                 username: 'alexdant91',
                 password: '18Gmgaa2'
             }
+        };
+        this.api = {
+            version: 'v1'
         }
     }
 

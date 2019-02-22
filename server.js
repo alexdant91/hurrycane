@@ -35,7 +35,7 @@ const CombineMiddleware = require('./models/combine-middleware');
 const CM = new CombineMiddleware();
 
 // Routers for api and dashboard
-const api = require('./api/api');
+const api = require(`./api/${config.api.version}`);
 const dashboard = require('./dashboard/dashboard');
 
 // Protect functions with CORS
@@ -55,6 +55,26 @@ const apiLimiter = rateLimit({
     windowMs: config.api.requestTimeLimitRange, // 60 minutes
     max: config.api.requestNumberLimit // process.env.REQUEST_NUMBER_LIMIT || 1000
 });
+
+// Subdomain virtual host
+// Set a subdomain for serving routers like api
+// app.use((req, res, next) => {
+//     const host = req.headers.host.split('.')[0];
+//     const origin = req.headers.origin;
+//     console.log(host, req.headers);
+//     next()
+// });
+// const vhost = (hostname, app) => (req, res, next) => {
+//     const host = req.headers.host.split('.')[0];
+//     console.log('[DEBUG]: ' + host, hostname);
+//     if (host === hostname) {
+//         return app(req, res, next);
+//     } else {
+//         next();
+//     }
+// };
+// app.use(vhost('api', api));
+// End api subdomain
 
 ejs.delimiter = '?';
 app.use(bodyParser.urlencoded({
@@ -85,6 +105,7 @@ app.use(function setUniqVisitor(req, res, next) {
             });
         }
     }
+    res.locals.host = config.host;
     next();
 });
 // Set the nonce CPS Security protection
@@ -168,10 +189,12 @@ app.post('/report-violation', (req, res) => {
     }
 
     res.status(204).end()
-})
+});
 
-// The api logic
-app.use('/api', api);
+// The live API logic
+app.use(`/api/${config.api.version}`, api);
+// The test API logic
+app.use(`/test/api/${config.api.version}`, api);
 
 // The dashboard logic
 app.use('/dashboard', verifySession, dashboard);
@@ -1013,7 +1036,7 @@ app.get('*', function (req, res) {
 // });
 // End get the https required modules
 
-const expressServer = app.listen(process.env.PORT || config.port, () => {
+app.listen(process.env.PORT || config.port, () => {
     console.log(`Server http is listening on port ${config.port}...`);
 });
 

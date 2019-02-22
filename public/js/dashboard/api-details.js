@@ -51,7 +51,7 @@ $(document).on('change', '#application_status', function () {
     const application_id = $('#application_id').val();
     $this.val() == 'on' ? $this.val('off') : $this.val('on');
     $.ajax({
-        url: '/dashboard/api/update',
+        url: '/dashboard/api/update?action=ChangeStatusMode',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ $(document).on('change', '#application_status', function () {
             console.log(a, b, c);
         }
     });
-})
+});
 
 $(document).on('submit', '#update-api', function (e) {
     e.preventDefault();
@@ -101,7 +101,7 @@ $(document).on('submit', '#update-api', function (e) {
     });
 
     $.ajax({
-        url: '/dashboard/api/update',
+        url: '/dashboard/api/update?action=UpdateApplicationInfo',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -140,6 +140,45 @@ $(document).on('submit', '#update-api', function (e) {
 
     return false;
 
+});
+
+$(document).on('change', '#application_env', function () {
+    const $this = $(this);
+    const application_id = $('#application_id').val();
+    $this.val() == 'on' ? $this.val('off') : $this.val('on');
+    $.ajax({
+        url: '/dashboard/api/update?action=ChangeSandboxStatus',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
+        data: JSON.stringify({
+            application_id: application_id,
+            application_env: $this.val()
+        }),
+        success: function (data) {
+            if (data.Error) {
+                iziToast.error({
+                    position: 'topRight',
+                    title: data.title,
+                    message: data.text
+                });
+            } else if (data.Status == 'done') {
+                iziToast.show({
+                    theme: 'dark',
+                    icon: 'fal fa-check',
+                    position: 'topRight',
+                    title: data.messages.title,
+                    message: data.messages.text,
+                    progressBarColor: 'rgb(0, 255, 184)'
+                });
+            }
+        },
+        error: function (a, b, c) {
+            console.log(a, b, c);
+        }
+    });
 });
 
 $(document).on('click', '.application-main-delete-trigger', function (e) {
