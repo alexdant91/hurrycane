@@ -591,9 +591,16 @@ span.relative .verbal-select {
     font-weight: 300;
 }
 
-.info-box {
+.info-box.absolute {
     top: 15px;
     left: 17px;
+    font-size: 16px;
+    cursor: help;
+}
+
+.info-box.relative.inline {
+    left: 0;
+    top: 2px;
     font-size: 16px;
     cursor: help;
 }

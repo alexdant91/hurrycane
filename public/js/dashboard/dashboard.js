@@ -5,6 +5,10 @@ const SerializeFormData = form => JSON.stringify(
     }), {})
 );
 
+$(document).on('click', '.a-link', function () {
+    location.href = $(this).data('href');
+});
+
 $(document).find('div.lazy-load').each(function (i, elem) {
     let lazy = $(this);
     let src = lazy.attr('data-src');

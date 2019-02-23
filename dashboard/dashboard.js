@@ -369,29 +369,39 @@ router.get('/api/details/:id', (req, res) => {
                         user_id: req.session.user._id
                     }, (err, count) => {
                         if (err) throw err;
-                        res.render('./dashboard/api-details', {
-                            session: req.isAuthenticated(),
-                            user: user,
-                            datas: {
-                                plan: {
-                                    name: docs.name,
-                                    url_limit: docs[0].url_limit
+                        // Find webhook endpoint
+                        db.Webhook.find({
+                            user_id: req.session.user._id,
+                            application_id: application_id
+                        }, (err, webhooks) => {
+                            res.render('./dashboard/api-details', {
+                                session: req.isAuthenticated(),
+                                user: user,
+                                datas: {
+                                    plan: {
+                                        name: docs.name,
+                                        url_limit: docs[0].url_limit
+                                    },
+                                    applications: {
+                                        data: response[0]
+                                    },
+                                    urls: {
+                                        data: {},
+                                        count: count
+                                    },
+                                    webhooks: {
+                                        data: webhooks
+                                    }
                                 },
-                                applications: {
-                                    data: response[0]
-                                },
-                                urls: {
-                                    data: {},
-                                    count: count
+                                page: 'api',
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
                                 }
-                            },
-                            page: 'api',
-                            messages: {
-                                type: null,
-                                title: null,
-                                text: null
-                            }
+                            });
                         });
+
                     });
                 });
             } else {
@@ -408,13 +418,15 @@ router.get('/api/details/:id', (req, res) => {
 
 });
 
+// GET /dashboard/api/protected-requests
 router.post('/api/protected-requests', (req, res) => {
     const action = req.body.action != '' && req.body.action != null && req.body.action != undefined ? req.body.action : false;
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const application_id = req.body.application_id != '' && req.body.application_id != null && req.body.application_id != undefined ? req.body.application_id : false;
+    const webhook_self_id = req.body.webhook_self_id;
     if (action) {
         switch (action) {
             case 'revealSecretKey':
-                const user_id = req.isAuthenticated() ? req.session.user._id : false;
-                const application_id = req.body.application_id != '' && req.body.application_id != null && req.body.application_id != undefined ? req.body.application_id : false;
                 if (application_id && user_id) {
                     db.Application.find({
                         user_id: user_id,
@@ -424,6 +436,33 @@ router.post('/api/protected-requests', (req, res) => {
                             res.json({
                                 'Status': 'done',
                                 secret_key: docs[0].secret_key
+                            });
+                        } else {
+                            res.json({
+                                'Error': 'No application founded.',
+                                'title': 'Oops!',
+                                'text': 'No application founded.'
+                            })
+                        }
+                    }).catch(err => {
+                        if (err) throw err;
+                    });
+                } else {
+                    res.sendStatus(403);
+                }
+                break;
+            case 'retrieveWebhooks':
+                if (application_id && user_id) {
+                    db.Webhook.find({
+                        _id: webhook_self_id,
+                        user_id: user_id,
+                        application_id: application_id
+                    }).then(docs => {
+                        if (docs.length > 0) {
+                            res.json({
+                                'Status': 'done',
+                                'endpoint': docs[0].endpoint,
+                                'webhook_self_signature': docs[0].webhook_self_signature
                             });
                         } else {
                             res.json({
@@ -489,7 +528,7 @@ router.post('/api/update', (req, res) => {
                 });
             } else {
                 res.json({
-                    'Error': err,
+                    'Error': 'You are not authorized.',
                     'title': 'Fatal!',
                     'text': 'You are not authorized.'
                 })
@@ -561,6 +600,217 @@ router.post('/api/update', (req, res) => {
     } else {
         res.status(500).json({
             'Error': 'Bad request.'
+        });
+    }
+});
+
+// GET /dashboard/api/webhooks/new
+router.get('/api/webhooks/:application_id/new', (req, res) => {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const application_id = req.params.application_id != '' && req.params.application_id != null && req.params.application_id != undefined ? req.params.application_id : false;
+    if (application_id) {
+        db.Application.find({
+            user_id: req.session.user._id,
+            _id: application_id,
+            user_id: user_id
+        }).then(response => {
+            if (response.length > 0) {
+                // res.json(response);
+                db.Plan.find({
+                    name: req.session.user.subscription
+                }, (err, docs) => {
+                    if (err) throw err;
+                    // If the avatar is an url (facebook, twitter) remove the directory from path
+                    let user = req.session.user;
+                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    db.Url.countDocuments({
+                        user_id: req.session.user._id
+                    }, (err, count) => {
+                        if (err) throw err;
+                        res.render('./dashboard/webhooks-new', {
+                            session: req.isAuthenticated(),
+                            user: user,
+                            datas: {
+                                plan: {
+                                    name: docs.name,
+                                    url_limit: docs[0].url_limit
+                                },
+                                applications: {
+                                    data: response[0]
+                                },
+                                urls: {
+                                    data: {},
+                                    count: count
+                                }
+                            },
+                            page: 'api',
+                            messages: {
+                                type: null,
+                                title: null,
+                                text: null
+                            }
+                        });
+                    });
+                });
+            } else {
+                res.json({
+                    'Error': `No application fouded with ${application_id} id.`
+                });
+            }
+        }).catch(err => {
+            res.json(err);
+        });
+    } else {
+        res.redirect('/dashboard/api');
+    }
+});
+
+// POST /dashboard/api/webhooks/new
+router.post('/api/webhooks/:application_id/new', (req, res) => {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const application_id = req.params.application_id != '' && req.params.application_id != null && req.params.application_id != undefined ? req.params.application_id : false;
+    const endpoint = req.body.endpoint != '' && req.body.endpoint != null && req.body.endpoint != undefined ? req.body.endpoint : false;
+    const api_version = req.body.api_version != '' && req.body.api_version != null && req.body.api_version != undefined ? req.body.api_version : false;
+    const events = req.body.events != '' && req.body.events != null && req.body.events != undefined && Array.isArray(req.body.events) ? req.body.events : false;
+    if (user_id && application_id && endpoint && api_version && events) {
+        db.Webhook({
+            user_id,
+            application_id,
+            endpoint,
+            api_version,
+            events
+        }).save(err => {
+            if (err) {
+                res.json({
+                    'Error': 'Error saving data.'
+                });
+            } else {
+                res.json({
+                    'Status': 'done'
+                });
+            }
+        });
+    } else {
+        res.json({
+            'Error': 'Missing required data.'
+        });
+    }
+});
+
+// GET /dashboard/api/webhooks/:application_id/details
+router.get('/api/webhooks/:application_id/details', (req, res) => {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const application_id = req.params.application_id != '' && req.params.application_id != null && req.params.application_id != undefined ? req.params.application_id : false;
+    const webhook_self_id = req.query.webhook_self_id != '' && req.query.webhook_self_id != null && req.query.webhook_self_id != undefined ? req.query.webhook_self_id : false;
+    if (user_id && application_id && webhook_self_id) {
+        db.Application.find({
+            user_id: req.session.user._id,
+            _id: application_id,
+            user_id: user_id
+        }).then(response => {
+            if (response.length > 0) {
+                // res.json(response);
+                db.Plan.find({
+                    name: req.session.user.subscription
+                }, (err, docs) => {
+                    if (err) throw err;
+                    // If the avatar is an url (facebook, twitter) remove the directory from path
+                    let user = req.session.user;
+                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    db.Url.countDocuments({
+                        user_id: req.session.user._id
+                    }, (err, count) => {
+                        if (err) throw err;
+                        db.Webhook.find({
+                            _id: webhook_self_id,
+                            user_id: user_id,
+                            application_id: application_id
+                        }, (err, webhooks) => {
+                            if (err) throw err;
+                            res.render('./dashboard/webhooks-details', {
+                                session: req.isAuthenticated(),
+                                user: user,
+                                datas: {
+                                    plan: {
+                                        name: docs.name,
+                                        url_limit: docs[0].url_limit
+                                    },
+                                    applications: {
+                                        data: response[0]
+                                    },
+                                    urls: {
+                                        data: {},
+                                        count: count
+                                    },
+                                    webhooks: {
+                                        data: webhooks[0]
+                                    }
+                                },
+                                page: 'api',
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                        });
+                    });
+                });
+            } else {
+                res.json({
+                    'Error': `No application fouded with ${application_id} id.`
+                });
+            }
+        }).catch(err => {
+            res.json(err);
+        });
+    } else {
+        res.redirect('/dashboard/api');
+    }
+});
+
+// POST /dashboard/api/webhooks/:application_id/details
+router.post('/api/webhooks/:application_id/details', (req, res) => {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const application_id = req.params.application_id != '' && req.params.application_id != null && req.params.application_id != undefined ? req.params.application_id : false;
+    const webhook_self_id = req.body.webhook_self_id != '' && req.body.webhook_self_id != null && req.body.webhook_self_id != undefined ? req.body.webhook_self_id : false;
+    const endpoint = req.body.endpoint != '' && req.body.endpoint != null && req.body.endpoint != undefined ? req.body.endpoint : false;
+    const api_version = req.body.api_version != '' && req.body.api_version != null && req.body.api_version != undefined ? req.body.api_version : false;
+    const events = req.body.events != '' && req.body.events != null && req.body.events != undefined && Array.isArray(req.body.events) ? req.body.events : false;
+
+    // console.log(user_id, application_id, webhook_self_id, endpoint, api_version, events);
+
+    if (user_id && application_id && webhook_self_id && endpoint && api_version && events) {
+        db.Webhook.updateOne({
+            _id: webhook_self_id,
+            user_id: user_id,
+            application_id: application_id
+        }, {
+            endpoint,
+            api_version,
+            events
+        }, (err => {
+            if (err) {
+                res.json({
+                    'Error': 'Error during data update.',
+                    'title': 'Oops!',
+                    'text': 'Error during data update.'
+                });
+            } else {
+                res.json({
+                    'Status': 'done',
+                    'messages': {
+                        'title': 'Well!',
+                        'text': 'Endpoint specifications updated.'
+                    }
+                });
+            }
+        }));
+    } else {
+        res.json({
+            'Error': 'Missing required data.',
+            'title': 'Oops!',
+            'text': 'Missing required data.'
         });
     }
 });

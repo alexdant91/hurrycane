@@ -14,6 +14,7 @@
         <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
         <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/css/iziModal.min.css" />
         <script>
             String.prototype.toCapitalize = function () {
                 return this.charAt(0).toUpperCase() + this.slice(1);
@@ -52,7 +53,7 @@
                                     <?= `${datas.applications.data._id}` ?>
                                 </div>
                                 <div class="input field" style="margin-top: 20px;">
-                                    <label for="secret_key">Secret key</label>
+                                    <label for="secret_key">Secret key <span class="sign-timer right"></span></label>
                                     <div class="button-input">
                                         <input type="text" name="secret_key" class="blurred" style="text-align: center !important;font-size: 15px;" id="secret_key" value="fakesecr-etfak-esek-retf-akesecretfak" placeholder="Appliaction name..." unselectable="on" disabled />
                                         <button id="show-secret-key"><i class="fal fa-eye"></i> Show</button>
@@ -124,6 +125,59 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Insert the endpoint for the webhook. Every event info will be posted as JSON parsed string with a digital signature.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="row">
+                                <div class="container pad-20">
+                                    <h6 class="text-center">
+                                        <i class="fal fa-sync"></i> Set Webhook's endpoints
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+                                <table class="table hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">Url</th>
+                                            <th class="text-center">Version</th>
+                                            <th class="text-center">Events</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <? if(datas.webhooks.data.length > 0) { ?>
+                                        <? for(let i = 0; i < datas.webhooks.data.length; i++) { ?>
+                                        <tr>
+                                            <td class=" a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>">
+                                                <?= datas.webhooks.data[i].endpoint ?>
+                                            </td>
+                                            <td class="text-center a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>">v1</td>
+                                            <td class="text-center a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>"><span class="label label-orange">All</span></td>
+                                            <td class="webhook_self" data-self-id="<?= datas.webhooks.data[i]._id ?>">
+                                                <i class="fal fa-eye"></i>
+                                            </td>
+                                        </tr>
+                                        <? } ?>
+                                        <? } else { ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center"><b>No Weebhooks defined.</b></td>
+                                        </tr>
+                                        <? } ?>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                        <a href="/dashboard/api/webhooks/<?= datas.applications.data._id ?>/new" class="butt main-button blue-button"><i class="fal fa-plus white-text"></i> New endpoint</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
@@ -132,7 +186,7 @@
                                 <div class="row">
                                     <div class="container pad-20">
                                         <h6 class="text-center">
-                                            <i class="fal fa-info-square"></i> Application details & settings
+                                            <i class="fal fa-info-circle"></i> Application details & settings
                                         </h6>
                                     </div>
                                 </div>
@@ -203,36 +257,130 @@
             <option id="width_tmp_option"></option>
         </select>
 
+        <div id="webhooks_modal" class="iziModal"></div>
+
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/js/iziModal.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
-        <script type="text/javascript" src="/js/iziModal.min.js"></script>
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/api-details.js?v=1.0.0"></script>
         <script>
-            $(document).on('click', '.copy-to-clip', function () {
-                const id = $(this).data('target');
-                const copyText = document.getElementById(id);
-                copyText.focus()
-                copyText.select();
-                if (document.execCommand("copy")) {
-                    iziToast.show({
-                        theme: 'dark',
-                        icon: 'fal fa-check',
-                        position: 'topRight',
-                        title: 'Well',
-                        message: 'Text copied to clipboard.',
-                        progressBarColor: 'rgb(0, 255, 184)'
+            $(document).ready(function () {
+
+                $(document).on('click', '.copy-to-clip', function () {
+                    const id = $(this).data('target');
+                    const copyText = document.getElementById(id);
+                    copyText.focus()
+                    copyText.select();
+                    if (document.execCommand("copy")) {
+                        iziToast.show({
+                            theme: 'dark',
+                            icon: 'fal fa-check',
+                            position: 'topRight',
+                            title: 'Well',
+                            message: 'Text copied to clipboard.',
+                            progressBarColor: 'rgb(0, 255, 184)'
+                        });
+                    } else {
+                        iziToast.error({
+                            title: 'Opps!',
+                            message: 'An error occurred. Try again later.'
+                        });
+                    }
+                });
+
+                $(document).on('click', '.webhook_self', function () {
+                    const $this = $(this);
+                    const $secret_key = $('#secret_key');
+                    const application_id = $('#application_id').val();
+                    const webhook_self_id = $this.data('self-id');
+
+                    $.ajax({
+                        url: '/dashboard/api/protected-requests',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            action: 'retrieveWebhooks',
+                            application_id: application_id,
+                            webhook_self_id: webhook_self_id
+                        }),
+                        success: function (data) {
+                            if (data.Error) {
+                                iziToast.error({
+                                    position: 'topRight',
+                                    title: data.title,
+                                    message: data.text
+                                });
+                            } else if (data.Status == 'done') {
+                                console.log(data);
+                                $("#webhooks_modal").iziModal({
+                                    title: 'Manage your webhook',
+                                    headerColor: '#88A0B9',
+                                    onClosed: function () {
+                                        $("#webhooks_modal .iziModal-content").html('');
+                                    }
+                                });
+                                $("#webhooks_modal .iziModal-content").html(`
+                                    <div class="row">
+                                        <div class="container pad-20">
+                                            <div class="row">
+                                                <div class="container">
+                                                    <div class="input field">
+                                                        <label for="webhook_url"><b>The webhook's url callback endpoint</b></label>
+                                                        <div class="button-input">
+                                                            <input type="text" name="webhook_url" id="webhook_url" value="${data.endpoint}" readonly style="margin-top: 10px;" />
+                                                            <button class="copy-to-clip" data-target="webhook_url"><i class="fal fa-copy"></i> Copy</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="container">
+                                                    <div class="input field" style="margin-top: 20px;">
+                                                        <label for="webhook_sign">
+                                                            <b>
+                                                                <div class="info-box relative inline tooltip">
+                                                                    <span class="tooltiptext">The signature allows you to verify the authenticity of the request. Check in your backend that the signature matches to confirm its origin.</span>
+                                                                    <i class="fal fa-info-circle"></i>
+                                                                </div> The webhook's unique signature
+                                                            </b>
+                                                        </label>
+                                                        <div class="button-input">
+                                                            <input type="text" name="webhook_sign" id="webhook_sign" value="${data.webhook_self_signature}" readonly style="margin-top: 10px;" />
+                                                            <button class="copy-to-clip" data-target="webhook_sign"><i class="fal fa-copy"></i> Copy</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="container text-center" style="padding: 20px 0 10px 0 !important;">
+                                                    <div class="wrapper left text-center" style="width: 100%;    margin-top: 20px;">
+                                                        <a href="/dashboard/api/webhooks/${application_id}/details?webhook_self_id=${webhook_self_id}" class="butt main-button blue-button"><i class="fal fa-cog white-text"></i> Settings</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>    
+                                    </div>
+                                `);
+                                $("#webhooks_modal").iziModal('open');
+                                // modal.stopLoading();
+                            }
+
+                        },
+                        error: function (a, b, c) {
+                            console.log(a, b, c);
+                            $this.html('<i class="fal fa-eye"></i> Show');
+                        }
                     });
-                } else {
-                    iziToast.error({
-                        title: 'Opps!',
-                        message: 'An error occurred. Try again later.'
-                    });
-                }
-            });
+
+                });
+            })
         </script>
     </body>
 

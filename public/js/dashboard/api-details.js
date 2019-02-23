@@ -1,5 +1,6 @@
 // const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 let secretKeyTimeout;
+let secretKeyInterval;
 $(document).on('click', '#show-secret-key', function () {
     const $this = $(this);
     const $secret_key = $('#secret_key');
@@ -27,6 +28,17 @@ $(document).on('click', '#show-secret-key', function () {
                 } else if (data.Status == 'done') {
                     $this.html('<i class="fal fa-eye-slash"></i> Hide');
                     $secret_key.val(data.secret_key).removeClass('blurred');
+                    let timer = 60;
+                    $('.sign-timer').html(`Hide in ${timer}s`);
+                    secretKeyInterval = setInterval(function () {
+                        if (timer > 0) {
+                            timer--;
+                            $('.sign-timer').html(`Hide in ${timer}s`);
+                        } else {
+                            $('.sign-timer').html('');
+                            clearInterval(secretKeyInterval);
+                        }
+                    }, 1000);
                     secretKeyTimeout = setTimeout(function () {
                         $this.html('<i class="fal fa-eye"></i> Show');
                         $secret_key.addClass('blurred').val('fakesecr-etfak-esek-retf-akesecretfak');
@@ -40,9 +52,11 @@ $(document).on('click', '#show-secret-key', function () {
             }
         });
     } else {
+        $('.sign-timer').html('');
         $this.html('<i class="fal fa-eye"></i> Show');
         $secret_key.addClass('blurred').val('fakesecr-etfak-esek-retf-akesecretfak');
         clearTimeout(secretKeyTimeout);
+        clearInterval(secretKeyInterval);
     }
 });
 

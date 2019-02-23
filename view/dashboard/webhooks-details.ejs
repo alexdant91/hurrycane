@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/css/iziModal.min.css" />
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+
+            <div class="row">
+                <div class="container">
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Switching the button you can activating or disabling your application. When the app is disabled the api request return with an error.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+                                <h6 class="application-main-title">
+                                    <?= `${datas.webhooks.data.endpoint}` ?>
+                                </h6>
+                                <div class="app-sub-title">
+                                    Application ID:
+                                    <a href="/dashboard/api/details/<?= `${datas.applications.data._id}` ?>">
+                                        <?= `${datas.applications.data._id}` ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12"></div>
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                <div class="input field">
+                                    <label for="secret_key"><b>Endpoint self signature</b><span class="sign-timer right"></span></label>
+                                    <div class="button-input">
+                                        <input type="text" name="webhook_self_signature" class="blurred" style="text-align: center !important;font-size: 15px;margin-top: 10px;" id="webhook_self_signature" value="fakesecr-etfak-esek-retf-akesecretfak" placeholder="" unselectable="on" disabled />
+                                        <button id="show-secret-key" style="margin-top: 10;"><i class="fal fa-eye"></i> Show</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                                <button class="butt main-button blue-button"><i class="fal fa-redo white-text" data-fa-transform="flip-h"></i> Send test webhook</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">You can edit the URL endpoint, the events listening and the api version.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12 "></div>
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 ">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-plug"></i> Endpoint specifications
+                                        </h6>
+                                    </div>
+                                </div>
+                                <form action="/dashboard/api/webhooks/<?= datas.applications.data._id ?>/details?webhook_self_id=<?= datas.webhooks.data._id ?>" method="POST" id="update-webhooks">
+                                    <div class="form-new-application">
+                                        <div class="input field">
+                                            <label for="name">What's the URL endpoint?</label>
+                                            <input type="text" name="endpoint" id="endpoint" value="<?= datas.webhooks.data.endpoint ?>" placeholder="URL endpoint..." required />
+                                        </div>
+                                        <div class="input field custom-radio">
+                                            <div class="row">
+                                                <div class="container">
+                                                    <b>What's your API version?</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="container" style="margin-top: 10px !important;">
+                                                    <? if(datas.webhooks.data.api_version == 'v1') { ?>
+                                                    <input type="radio" name="version" id="api_version" value="v1" checked required />
+                                                    <? } else { ?>
+                                                    <input type="radio" name="version" id="api_version" value="v1" required />
+                                                    <? } ?>
+                                                    <label for="api_version"><span>v1</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="input field custom-radio">
+                                            <div class="row">
+                                                <div class="container">
+                                                    <b>What event you want to listen for?</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="container" style="margin-top: 10px !important;">
+                                                    <? if(datas.webhooks.data.events.indexOf('all') > -1) { ?>
+                                                    <input class="all-checks events" type="checkbox" name="events" id="all_events" value="all" checked required />
+                                                    <? } else { ?>
+                                                    <input class="all-checks events" type="checkbox" name="events" id="all_events" value="all" required />
+                                                    <? } ?>
+                                                    <label for="rb1"><span>All events</span></label>
+                                                    <!-- <input class="item-checks events" type="checkbox" name="events" value="" id="rb2" />
+                                                    <label for="rb2"><span>link.create</span></label>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="" id="rb3" />
+                                                    <label for="rb3"><span>link.delete</span></label> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">See all the endpoint webhook events.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="row">
+                                <div class="container pad-20">
+                                    <h6 class="text-center">
+                                        <i class="fal fa-sync"></i> Endpoint Logs
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+                                <table class="table hover">
+                                    <tbody>
+                                        <!-- @TODO: logic for endpoints pagination async mode -->
+                                        <tr>
+                                            <td><span class="label label-green">200 OK</span></td>
+                                            <td><b>POST</b> /v1/link_created</td>
+                                            <td><span class="label label-orange">link_created</span></td>
+                                            <td class="text-right">23/02/2019, 12:23:04</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="label label-green">200 OK</span></td>
+                                            <td><b>POST</b> /v1/link_deleted</td>
+                                            <td><span class="label label-orange">link_deleted</span></td>
+                                            <td class="text-right">23/02/2019, 14:03:31</td>
+                                        </tr>
+                                        <!-- @TODO: logic for endpoints pagination async mode -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative" style="border: 1px solid red;">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Danger! Deleting your endpoint you will lost all the API's webhook events and the registered events related to this endpoint specifications.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center"></div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 ">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-exclamation-triangle"></i> Danger zone
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                        <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                        <a href="#delete" class="url-actions webhook-main-delete-trigger butt main-button red-button max" data-id="<?= datas.webhooks.data._id ?>"><i class="fal fa-trash"></i> Delete This Endpoint</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <input type="hidden" id="application_id" value="<?= datas.applications.data._id ?>" />
+            <input type="hidden" id="webhook_self_id" value="<?= datas.webhooks.data._id ?>" />
+
+        </div>
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <div id="webhooks_modal" class="iziModal"></div>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/webhooks-details.js?v=1.0.1"></script>
+        <script>
+            $(document).ready(function () {
+
+                $(document).on('click', '.copy-to-clip', function () {
+                    const id = $(this).data('target');
+                    const copyText = document.getElementById(id);
+                    copyText.focus()
+                    copyText.select();
+                    if (document.execCommand("copy")) {
+                        iziToast.show({
+                            theme: 'dark',
+                            icon: 'fal fa-check',
+                            position: 'topRight',
+                            title: 'Well',
+                            message: 'Text copied to clipboard.',
+                            progressBarColor: 'rgb(0, 255, 184)'
+                        });
+                    } else {
+                        iziToast.error({
+                            title: 'Opps!',
+                            message: 'An error occurred. Try again later.'
+                        });
+                    }
+                });
+
+            })
+        </script>
+    </body>
+
+</html>
