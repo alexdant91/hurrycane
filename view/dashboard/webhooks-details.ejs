@@ -114,16 +114,20 @@
                                             </div>
                                             <div class="row">
                                                 <div class="container" style="margin-top: 10px !important;">
-                                                    <? if(datas.webhooks.data.events.indexOf('all') > -1) { ?>
-                                                    <input class="all-checks events" type="checkbox" name="events" id="all_events" value="all" checked required />
+                                                    <input class="all-checks allevents" type="checkbox" name="allevents" id="all_events" value="all" />
+                                                    <label for="all_events"><span>All events</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_created') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_created" id="link_created" checked />
                                                     <? } else { ?>
-                                                    <input class="all-checks events" type="checkbox" name="events" id="all_events" value="all" required />
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_created" id="link_created" />
                                                     <? } ?>
-                                                    <label for="rb1"><span>All events</span></label>
-                                                    <!-- <input class="item-checks events" type="checkbox" name="events" value="" id="rb2" />
-                                                    <label for="rb2"><span>link.create</span></label>
-                                                    <input class="item-checks events" type="checkbox" name="events" value="" id="rb3" />
-                                                    <label for="rb3"><span>link.delete</span></label> -->
+                                                    <label for="link_created"><span>link_created</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_deleted') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_deleted" id="link_deleted" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_deleted" id="link_deleted" />
+                                                    <? } ?>
+                                                    <label for="link_deleted"><span>link_deleted</span></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,24 +157,67 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+
                                 <table class="table hover">
-                                    <tbody>
+                                    <tbody class="async-endpoint-logs">
                                         <!-- @TODO: logic for endpoints pagination async mode -->
+                                        <? if(datas.webhookEvents.data.docs.length > 0) { ?>
+                                        <? for(let i = 0; i < datas.webhookEvents.data.docs.length; i++) {
+                                        let options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                                        let date = new Date(datas.webhookEvents.data.docs[i].creation_time*1000);
+                                        let local = localLanguage.split(".")[0].replace(/_/ig, "-");
+                                        let timeToLocale = date.toLocaleDateString(local, options);
+                                        ?>
                                         <tr>
-                                            <td><span class="label label-green">200 OK</span></td>
-                                            <td><b>POST</b> /v1/link_created</td>
-                                            <td><span class="label label-orange">link_created</span></td>
-                                            <td class="text-right">23/02/2019, 12:23:04</td>
+                                            <td>
+                                                <span class="label label-green">
+                                                    <?= datas.webhookEvents.data.docs[i].request_response ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <b>
+                                                    <?= datas.webhookEvents.data.docs[i].request_method ?>
+                                                </b>
+                                                <?= datas.webhookEvents.data.docs[i].endpoint ?>
+                                            </td>
+                                            <td>
+                                                <span class="label label-orange">
+                                                    <?= datas.webhookEvents.data.docs[i].event_type ?>
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                <?= timeToLocale ?>
+                                            </td>
                                         </tr>
+                                        <? } ?>
+                                        <? } else { ?>
                                         <tr>
-                                            <td><span class="label label-green">200 OK</span></td>
-                                            <td><b>POST</b> /v1/link_deleted</td>
-                                            <td><span class="label label-orange">link_deleted</span></td>
-                                            <td class="text-right">23/02/2019, 14:03:31</td>
+                                            <td class="text-center">No endpoint logs avaiable.</td>
                                         </tr>
+                                        <? } ?>
+
                                         <!-- @TODO: logic for endpoints pagination async mode -->
                                     </tbody>
                                 </table>
+
+                                <div class="row" style="margin-top:20px;">
+                                    <div class="container text-center">
+                                        <div class="box-pagination-wrapper">
+                                            <? if(datas.webhookEvents.data.hasPrevPage) { ?>
+                                            <a href="<?= `/dashboard/${page}?page=1` ?>" class="pagination-item first">First</a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.prevPage}` ?>" class="pagination-item prev"><i class="fal fa-arrow-left"></i></a>
+                                            <? } ?>
+                                            <a class="pagination-item number">
+                                                <?= datas.webhookEvents.data.page ?> of
+                                                <?= datas.webhookEvents.data.totalPages ?>
+                                            </a>
+                                            <? if(datas.webhookEvents.data.hasNextPage) { ?>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.nextPage}` ?>" class="pagination-item next"><i class="fal fa-arrow-right"></i></a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.totalPages}` ?>" class="pagination-item last">Last</a>
+                                            <? } ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -193,7 +240,7 @@
                                 <div class="row">
                                     <div class="container text-center" style="padding: 25px 25px 0 25px;">
                                         <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
-                                        <a href="#delete" class="url-actions webhook-main-delete-trigger butt main-button red-button max" data-id="<?= datas.webhooks.data._id ?>"><i class="fal fa-trash"></i> Delete This Endpoint</a>
+                                        <a href="#delete" class="url-actions webhooks-main-delete-trigger butt main-button red-button max" data-id="<?= datas.webhooks.data._id ?>"><i class="fal fa-trash"></i> Delete This Endpoint</a>
                                     </div>
                                 </div>
                             </div>
@@ -227,6 +274,20 @@
         <script type="text/javascript" src="/js/dashboard/webhooks-details.js?v=1.0.1"></script>
         <script>
             $(document).ready(function () {
+
+                const $allCheck = $('.all-checks');
+                const $itemCheck = $('.item-checks');
+
+                $('.item-checks:checked').length == $itemCheck.length ? $allCheck.prop('checked', true) : $allCheck.prop('checked', false);
+
+                $allCheck.on('click', function () {
+                    const state = $(this).prop('checked');
+                    state ? $itemCheck.prop('checked', true) : $itemCheck.prop('checked', false);
+                });
+
+                $itemCheck.on('click', function () {
+                    $('.item-checks:checked').length == $itemCheck.length ? $allCheck.prop('checked', true) : $allCheck.prop('checked', false);
+                });
 
                 $(document).on('click', '.copy-to-clip', function () {
                     const id = $(this).data('target');

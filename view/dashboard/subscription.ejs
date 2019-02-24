@@ -46,13 +46,13 @@
                                 </h6>
                                 <p class="text-center">
                                     <?
-                                date = new Date(license.expiration_time * 1000),
-                                datevalues = [
-                                    date.getDate(),
-                                    date.getMonth()+1,
-                                    date.getFullYear(),
-                                ];
-                                ?>
+                                    date = new Date(license.expiration_time * 1000),
+                                    datevalues = [
+                                        date.getDate(),
+                                        date.getMonth()+1,
+                                        date.getFullYear(),
+                                    ];
+                                    ?>
                                     Your subscription will automatically renew on
                                     <b>
                                         <?= `${datevalues[0]}/${datevalues[1]}/${datevalues[2]}` ?></b> for <b>€ 9.90</b>

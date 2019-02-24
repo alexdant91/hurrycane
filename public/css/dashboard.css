@@ -614,7 +614,7 @@ span.relative .verbal-select {
     font-weight: 600;
 }
 
-.form-new-application .input input {
+.form-new-application .input input:not([type="textarea"]) {
     margin: 10px 0 0 0;
 }
 

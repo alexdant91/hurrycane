@@ -107,8 +107,9 @@ $(document).on('submit', '#update-api', function (e) {
 
     let allowed_origins = [];
     const name = $(this).find('#name').val();
-    const origins = $(this).find('#allowed_origins').val();
-    origins.replace(/s+/i, "").split(";").forEach(element => {
+    const origins = $(this).find('.selectize-input').find('div');
+    origins.each((i, elem) => {
+        const element = $(elem).data('value');
         if (element != '' && element != undefined && element != null) {
             allowed_origins.push(element.trim());
         }

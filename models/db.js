@@ -191,7 +191,7 @@ const applicationWebhooksEndpointsEvents = Schema({
         type: String,
         required: true
     },
-    webhooks_id: {
+    webhook_id: {
         type: String,
         required: true
     },
@@ -246,6 +246,6 @@ models.License = mongoose.model('License', licenseSchema);
 models.Application = mongoose.model('Application', applicationSchema);
 models.ApplicationEvent = mongoose.model('ApplicationEvent', applicationEventSchema);
 models.Webhook = mongoose.model('Webhook', applicationWebhooksEndpoints);
-models.WebhookEvent = mongoose.model('WebhookEvent', applicationWebhooksEndpointsEvents);
+models.WebhookEvent = mongoose.model('Webhook_event', applicationWebhooksEndpointsEvents);
 
 module.exports = models;

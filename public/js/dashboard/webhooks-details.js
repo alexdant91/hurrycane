@@ -65,7 +65,6 @@ $(document).on('click', '#show-secret-key', function () {
 $(document).on('submit', '#update-webhooks', function (e) {
     e.preventDefault();
     const $this = $(this);
-    const application_id = $('#application_id').val();
     const webhook_self_id = $('#webhook_self_id').val();
     const $button = $(this).find('button[type="submit"]');
     $button.html(loaderHTML);
@@ -119,83 +118,35 @@ $(document).on('submit', '#update-webhooks', function (e) {
 
 });
 
-// $.ajax({
-//     url: '/dashboard/api/protected-requests',
-//     method: 'POST',
-//     headers: {
-//         'Content-Type': 'application/json'
-//     },
-//     dataType: 'json',
-//     data: JSON.stringify({
-//         action: 'retrieveWebhooks',
-//         application_id: application_id,
-//         webhook_self_id: webhook_self_id
-//     }),
-//     success: function (data) {
-//         if (data.Error) {
-//             iziToast.error({
-//                 position: 'topRight',
-//                 title: data.title,
-//                 message: data.text
-//             });
-//         } else if (data.Status == 'done') {
-//             console.log(data);
-//             $("#webhooks_modal").iziModal({
-//                 title: 'Manage your webhook',
-//                 headerColor: '#88A0B9',
-//                 onClosed: function () {
-//                     $("#webhooks_modal .iziModal-content").html('');
-//                 }
-//             });
-//             $("#webhooks_modal .iziModal-content").html(`
-//                                     <div class="row">
-//                                         <div class="container pad-20">
-//                                             <div class="row">
-//                                                 <div class="container">
-//                                                     <div class="input field">
-//                                                         <label for="webhook_url"><b>The webhook's url callback endpoint</b></label>
-//                                                         <div class="button-input">
-//                                                             <input type="text" name="webhook_url" id="webhook_url" value="${data.endpoint}" readonly style="margin-top: 10px;" />
-//                                                             <button class="copy-to-clip" data-target="webhook_url"><i class="fal fa-copy"></i> Copy</button>
-//                                                         </div>
-//                                                     </div>
-//                                                 </div>
-//                                             </div>
-//                                             <div class="row">
-//                                                 <div class="container">
-//                                                     <div class="input field" style="margin-top: 20px;">
-//                                                         <label for="webhook_sign">
-//                                                             <b>
-//                                                                 <div class="info-box relative inline tooltip">
-//                                                                     <span class="tooltiptext">The signature allows you to verify the authenticity of the request. Check in your backend that the signature matches to confirm its origin.</span>
-//                                                                     <i class="fal fa-info-circle"></i>
-//                                                                 </div> The webhook's unique signature
-//                                                             </b>
-//                                                         </label>
-//                                                         <div class="button-input">
-//                                                             <input type="text" name="webhook_sign" id="webhook_sign" value="${data.webhook_self_signature}" readonly style="margin-top: 10px;" />
-//                                                             <button class="copy-to-clip" data-target="webhook_sign"><i class="fal fa-copy"></i> Copy</button>
-//                                                         </div>
-//                                                     </div>
-//                                                 </div>
-//                                             </div>
-//                                             <div class="row">
-//                                                 <div class="container text-center" style="padding: 20px 0 10px 0 !important;">
-//                                                     <div class="wrapper left text-center" style="width: 100%;    margin-top: 20px;">
-//                                                         <a href="/dashboard/api/webhooks/${application_id}/details?webhook_self_id=${webhook_self_id}" class="butt main-button blue-button"><i class="fal fa-cog white-text"></i> Settings</a>
-//                                                     </div>
-//                                                 </div>
-//                                             </div>
-//                                         </div>    
-//                                     </div>
-//                                 `);
-//             $("#webhooks_modal").iziModal('open');
-//             // modal.stopLoading();
-//         }
-
-//     },
-//     error: function (a, b, c) {
-//         console.log(a, b, c);
-//         $this.html('<i class="fal fa-eye"></i> Show');
-//     }
-// });
+$(document).on('click', '.webhooks-main-delete-trigger', function (e) {
+    const application_id = $('#application_id').val();
+    if (confirm('Are you sure you want to delete this endpoint?')) {
+        const $this = $(this);
+        const webhook_id = $this.data('id');
+        $.ajax({
+            url: '/dashboard/api/webhooks/delete',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: JSON.stringify({
+                webhook_id: webhook_id
+            }),
+            success: function (data) {
+                if (data.Error) {
+                    iziToast.error({
+                        position: 'topRight',
+                        title: data.title,
+                        message: data.text
+                    });
+                } else if (data.Status == 'done') {
+                    location.href = `/dashboard/api/details/${application_id}`;
+                }
+            },
+            error: function (a, b, c) {
+                console.log(a, b, c);
+            }
+        });
+    }
+});

@@ -302,7 +302,7 @@ router.post('/api/new', (req, res) => {
     }
 });
 
-// POST /dashboard/api/new
+// POST /dashboard/api/delete
 router.post('/api/delete', (req, res) => {
     const user_id = req.isAuthenticated() ? req.session.user._id : false;
     const application_id = req.body.application_id != '' && req.body.application_id != null && req.body.application_id != undefined ? req.body.application_id : false;
@@ -534,6 +534,7 @@ router.post('/api/update', (req, res) => {
                 })
             }
         } else if (action == 'UpdateApplicationInfo') {
+            console.log(allowed_origins);
             if (application_id && user_id) {
                 db.Application.updateOne({
                     _id: application_id,
@@ -727,31 +728,54 @@ router.get('/api/webhooks/:application_id/details', (req, res) => {
                             application_id: application_id
                         }, (err, webhooks) => {
                             if (err) throw err;
-                            res.render('./dashboard/webhooks-details', {
-                                session: req.isAuthenticated(),
-                                user: user,
-                                datas: {
-                                    plan: {
-                                        name: docs.name,
-                                        url_limit: docs[0].url_limit
-                                    },
-                                    applications: {
-                                        data: response[0]
-                                    },
-                                    urls: {
-                                        data: {},
-                                        count: count
-                                    },
-                                    webhooks: {
-                                        data: webhooks[0]
-                                    }
-                                },
-                                page: 'api',
-                                messages: {
-                                    type: null,
-                                    title: null,
-                                    text: null
+                            db.WebhookEvent.paginate({
+                                webhook_id: webhook_self_id,
+                                user_id: user_id,
+                                application_id: application_id
+                            }, {
+                                page: 1,
+                                limit: 18,
+                                sort: {
+                                    creation_time: 'desc'
                                 }
+                            }).then(response_w => {
+                                console.log({
+                                    webhookEvents: {
+                                        data: response_w.docs,
+                                        count: response_w.docs.length
+                                    }
+                                });
+                                res.render('./dashboard/webhooks-details', {
+                                    session: req.isAuthenticated(),
+                                    user: user,
+                                    datas: {
+                                        plan: {
+                                            name: docs.name,
+                                            url_limit: docs[0].url_limit
+                                        },
+                                        applications: {
+                                            data: response[0]
+                                        },
+                                        urls: {
+                                            data: {},
+                                            count: count
+                                        },
+                                        webhooks: {
+                                            data: webhooks[0]
+                                        },
+                                        webhookEvents: {
+                                            data: response_w,
+                                            count: response_w.docs.length
+                                        },
+                                        localLanguage: res.locals.localLanguage
+                                    },
+                                    page: 'api',
+                                    messages: {
+                                        type: null,
+                                        title: null,
+                                        text: null
+                                    }
+                                });
                             });
                         });
                     });
@@ -812,6 +836,53 @@ router.post('/api/webhooks/:application_id/details', (req, res) => {
             'title': 'Oops!',
             'text': 'Missing required data.'
         });
+    }
+});
+
+// POST /dashboard/api/webhooks/delete
+router.post('/api/webhooks/delete', (req, res) => {
+    const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const webhook_id = req.body.webhook_id != '' && req.body.webhook_id != null && req.body.webhook_id != undefined ? req.body.webhook_id : false;
+    if (webhook_id && user_id) {
+        db.Webhook.deleteOne({
+            _id: webhook_id,
+            user_id: user_id
+        }).then(confirm => {
+            if (confirm) {
+                db.WebhookEvent.deleteMany({
+                    user_id: user_id,
+                    webhook_id: webhook_id
+                }).then(confirm => {
+                    if (confirm) {
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': 'Endpoint deleted.'
+                            }
+                        });
+                    }
+                }).catch(err => {
+                    res.json({
+                        'Error': err,
+                        'title': 'Oops!',
+                        'text': 'We have delete this endpoint but for some reason we can not delete it\'s events...'
+                    });
+                });
+            }
+        }).catch(err => {
+            res.json({
+                'Error': err,
+                'title': 'Oops!',
+                'text': 'We can not delete this endpoint.'
+            });
+        });
+    } else {
+        res.json({
+            'Error': err,
+            'title': 'Fatal!',
+            'text': 'You are not authorized.'
+        })
     }
 });
 

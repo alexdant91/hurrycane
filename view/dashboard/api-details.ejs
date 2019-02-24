@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="/css/selectize.css" />
         <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/css/iziModal.min.css" />
@@ -197,14 +198,25 @@
                                             <input type="text" name="name" id="name" value="<?= datas.applications.data.name ?>" placeholder="Appliaction name..." required />
                                         </div>
                                         <div class="input field">
-                                            <label for="allowed_origins">Which origin do you want to authorize? Separated by a ";" sign.</label>
                                             <?
                                             let origins = '';
                                             datas.applications.data.allowed_origins.forEach(element => {
                                                 origins += element+'; '
                                             });
                                             ?>
-                                            <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required><?= origins ?></textarea>
+                                            <div class="control-group">
+                                                <label for="allowed_origins">Which origin do you want to authorize?</label>
+                                                <?
+                                                let origins_allowed = [];
+                                                let origins_array = origins.split(';');
+                                                for(let i = 0; i < origins_array.length; i++) {
+                                                    if(origins_array[i] != '') origins_allowed.push(origins_array[i]);
+                                                }
+                                                let origins_string = origins_allowed.join(',').slice(0, -2);
+                                                ?>
+                                                <textarea type="text" id="allowed_origins" name="allowed_origins" class="input-tags" placeholder="https://www.example.com"><?= origins_string == 'false' ? '' : origins_string ?></textarea>
+                                            </div>
+                                            <!-- <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required><?= origins ?></textarea> -->
                                         </div>
                                         <div class="row">
                                             <div class="container text-center" style="padding: 25px 25px 0 25px;">
@@ -260,6 +272,7 @@
         <div id="webhooks_modal" class="iziModal"></div>
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/js/iziModal.min.js"></script>
@@ -267,8 +280,28 @@
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/api-details.js?v=1.0.0"></script>
+
+        <script typt="text/javascript" src="/js/selectize.js"></script>
         <script>
             $(document).ready(function () {
+
+                $('.input-tags').selectize({
+                    plugins: ['remove_button'],
+                    persist: false,
+                    create: true,
+                    render: {
+                        item: function (data, escape) {
+                            return '<div>"' + escape(data.text) + '"</div>';
+                        }
+                    },
+                    onDelete: function (values) {
+                        // return confirm(values.length > 1 ? 'Are you sure you want to remove these ' + values.length + ' URL?' : 'Are you sure you want to remove "' + values[0] + '"?');
+                    }
+                });
+
+                $(document).on('click', '.selectize-input', function () {
+                    $(this).find('input').focus();
+                });
 
                 $(document).on('click', '.copy-to-clip', function () {
                     const id = $(this).data('target');

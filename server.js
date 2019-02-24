@@ -40,6 +40,7 @@ const dashboard = require('./dashboard/dashboard');
 
 // Protect functions with CORS
 const cors = require('cors');
+const osLocale = require('os-locale');
 
 // Mongoose connection for session storage in Atlas
 const mongoose = require('mongoose');
@@ -54,6 +55,14 @@ const rateLimit = require("express-rate-limit");
 const apiLimiter = rateLimit({
     windowMs: config.api.requestTimeLimitRange, // 60 minutes
     max: config.api.requestNumberLimit // process.env.REQUEST_NUMBER_LIMIT || 1000
+});
+
+app.use(function (req, res, next) {
+    const env = process.env;
+    const language = env.LANG || env.LANGUAGE || env.LC_ALL || env.LC_MESSAGES;
+    res.locals.localLanguage = language;
+    res.locals.host = config.host;
+    next();
 });
 
 // Subdomain virtual host
@@ -105,7 +114,6 @@ app.use(function setUniqVisitor(req, res, next) {
             });
         }
     }
-    res.locals.host = config.host;
     next();
 });
 // Set the nonce CPS Security protection
@@ -198,6 +206,12 @@ app.use(`/test/api/${config.api.version}`, api);
 
 // The dashboard logic
 app.use('/dashboard', verifySession, dashboard);
+
+// The test webhook endpoint callback
+app.post('/test/wh', (req, res) => {
+    console.log(req.body);
+    res.sendStatus(200);
+});
 
 // The public logic
 app.get('/', (req, res) => {
