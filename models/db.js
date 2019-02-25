@@ -46,6 +46,11 @@ const urlSchema = Schema({
     },
     domain_name: String,
     user_id: String,
+    application_id: {
+        type: String,
+        required: true,
+        default: null
+    },
     alias: {
         type: String,
         required: true

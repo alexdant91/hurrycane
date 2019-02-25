@@ -128,6 +128,18 @@
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_deleted" id="link_deleted" />
                                                     <? } ?>
                                                     <label for="link_deleted"><span>link_deleted</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_retrieve') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_retrieve" id="link_retrieve" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_retrieve" id="link_retrieve" />
+                                                    <? } ?>
+                                                    <label for="link_retrieve"><span>link_retrieve</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_list') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_list" id="link_list" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_list" id="link_list" />
+                                                    <? } ?>
+                                                    <label for="link_list"><span>link_list</span></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -159,6 +171,14 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
 
                                 <table class="table hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">Response</th>
+                                            <th class="text-left">Request</th>
+                                            <th class="text-left">Event</th>
+                                            <th class="text-right">Created</th>
+                                        </tr>
+                                    </thead>
                                     <tbody class="async-endpoint-logs">
                                         <!-- @TODO: logic for endpoints pagination async mode -->
                                         <? if(datas.webhookEvents.data.docs.length > 0) { ?>

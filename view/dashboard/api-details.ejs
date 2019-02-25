@@ -291,14 +291,14 @@
                     create: true,
                     render: {
                         item: function (data, escape) {
-                            return '<div>"' + escape(data.text) + '"</div>';
+                            return `<div>${escape(data.text)}</div>`
                         }
                     },
                     onDelete: function (values) {
                         // return confirm(values.length > 1 ? 'Are you sure you want to remove these ' + values.length + ' URL?' : 'Are you sure you want to remove "' + values[0] + '"?');
                     }
                 });
-
+                // Fix the focus problem on selectize
                 $(document).on('click', '.selectize-input', function () {
                     $(this).find('input').focus();
                 });

@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="/css/selectize.css" />
         <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
         <script>
@@ -54,8 +55,12 @@
                                             <input type="text" name="name" id="name" value="" placeholder="Appliaction name..." required />
                                         </div>
                                         <div class="input field">
-                                            <label for="allowed_origins">Which origin do you want to authorize? Separated by a ";" sign.</label>
-                                            <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required></textarea>
+                                            <!-- <label for="allowed_origins">Which origin do you want to authorize? Separated by a ";" sign.</label>
+                                            <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required></textarea> -->
+                                            <div class="control-group">
+                                                <label for="allowed_origins">Which origin do you want to authorize?</label>
+                                                <textarea type="text" id="allowed_origins" name="allowed_origins" class="input-tags" placeholder="https://www.example.com"></textarea>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="container pad-25 text-center">
@@ -83,6 +88,7 @@
         </select>
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>\
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
@@ -90,6 +96,26 @@
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/api-new.js?v=1.0.0"></script>
+        <script typt="text/javascript" src="/js/selectize.js"></script>
+        <script type="text/javascript">
+            $('.input-tags').selectize({
+                plugins: ['remove_button'],
+                persist: false,
+                create: true,
+                render: {
+                    item: function (data, escape) {
+                        return `<div>${escape(data.text)}</div>`
+                    }
+                },
+                onDelete: function (values) {
+                    // return confirm(values.length > 1 ? 'Are you sure you want to remove these ' + values.length + ' URL?' : 'Are you sure you want to remove "' + values[0] + '"?');
+                }
+            });
+            // Fix the focus problem on selectize
+            $(document).on('click', '.selectize-input', function () {
+                $(this).find('input').focus();
+            });
+        </script>
     </body>
 
 </html>
