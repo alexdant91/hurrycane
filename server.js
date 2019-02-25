@@ -19,6 +19,8 @@ const bcrypt = require('bcrypt-nodejs');
 const MongoStore = require('connect-mongo')(session);
 const ScrapingPage = require('./modules/scraping/v1');
 const HtmlParser = require('./models/html-parser');
+const puppeteer = require('puppeteer');
+const sharp = require('sharp');
 
 // Security
 const helmet = require('helmet');
@@ -130,7 +132,7 @@ app.use(csp({
         frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
         imgSrc: ['*', "'self'", 'data:'],
         //sandbox: ['allow-forms', 'allow-scripts'],
-        reportUri: '/report-violation',
+        //reportUri: '/report-violation',
         objectSrc: ["'none'"],
         upgradeInsecureRequests: true,
         workerSrc: false
@@ -519,6 +521,7 @@ app.post('/shorten', (req, res) => {
 
     // The url limiter if isset user session
     const plan = req.isAuthenticated() ? req.session.user.subscription : null;
+    const application_id = null;
 
     if (user_id) {
         db.Plan.find({
@@ -541,41 +544,54 @@ app.post('/shorten', (req, res) => {
                                 });
                             } else {
                                 if (docs.length === 0) {
-                                    new ScrapingPage(long_url).getHeadHTML((err, head_html) => {
-                                        head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
-                                        new HtmlParser(head_html).getFavicon((err, favicon) => {
-                                            if (favicon != undefined && favicon != null) {
-                                                sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
-                                                favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
-                                            }
-                                            db.Url({
-                                                long_url,
-                                                domain_name,
-                                                user_id,
-                                                alias,
-                                                description,
-                                                password,
-                                                expiration_time,
-                                                timestamp,
-                                                head_html,
-                                                favicon,
-                                                device_select,
-                                                devicetag_url,
-                                                geo_select,
-                                                geotag_url,
-                                                seo_title,
-                                                seo_description
-                                            }).save(err => {
-                                                if (err) res.json({
-                                                    'Error': 'Error while data saving.'
-                                                });
-                                                res.json({
-                                                    'Status': 'done',
-                                                    'short_url': `${config.host}/s/${alias}`,
-                                                    'messages': {
-                                                        type: 'success',
-                                                        title: 'Well!',
-                                                        text: 'Your shorten link it\s ready :)',
+                                    getHeadHTML(long_url, (html) => {
+                                        headHTML(html, (head_html) => {
+                                            head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                            new HtmlParser(head_html).getFavicon((err, favicon) => {
+                                                if (favicon != undefined && favicon != null) {
+                                                    sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
+                                                    favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
+                                                }
+                                                db.Url({
+                                                    long_url,
+                                                    domain_name,
+                                                    application_id,
+                                                    user_id,
+                                                    alias,
+                                                    description,
+                                                    password,
+                                                    expiration_time,
+                                                    timestamp,
+                                                    head_html,
+                                                    favicon,
+                                                    device_select,
+                                                    devicetag_url,
+                                                    geo_select,
+                                                    geotag_url,
+                                                    seo_title,
+                                                    seo_description
+                                                }).save((err, newUrl) => {
+                                                    if (err) {
+                                                        res.json({
+                                                            'Error': 'Error while data saving.'
+                                                        });
+                                                    } else {
+                                                        // Get async screenshot of the page
+                                                        getPagePic({
+                                                            url: long_url,
+                                                            live_path: `./public/img/thumbnails/${newUrl._id}.png`,
+                                                            temp_path: `./public/img/temp/temp-${newUrl._id}.png`
+                                                        });
+                                                        // Get the response
+                                                        res.json({
+                                                            'Status': 'done',
+                                                            'short_url': `${config.host}/s/${alias}`,
+                                                            'messages': {
+                                                                type: 'success',
+                                                                title: 'Well!',
+                                                                text: 'Your shorten link it\s ready :)',
+                                                            }
+                                                        });
                                                     }
                                                 });
                                             });
@@ -675,13 +691,27 @@ app.post('/shorten/delete', (req, res) => {
         db.Url.deleteOne({
             _id: url_id
         }).then(confirm => {
-            if (confirm) res.json({
-                'Status': 'done',
-                'messages': {
-                    'title': 'Well!',
-                    'text': 'URL deleted.'
-                }
-            });
+            if (confirm) {
+                fs.unlink(`${__dirname}/public/img/thumbnails/${url_id}.png`, (err) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': 'URL deleted.'
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    'Error': err,
+                    'title': 'Oops!',
+                    'text': 'Internal server error.'
+                })
+            }
         }).catch(err => {
             res.json({
                 'Error': err,
@@ -720,6 +750,7 @@ app.get('/s/:alias', (req, res) => {
                     page: 's',
                     alias: alias,
                     long_url: docs[0].long_url,
+                    url: docs[0],
                     messages: {
                         type: null,
                         title: null,
@@ -1163,4 +1194,80 @@ function verifyLicenseMiddleware(license, done) {
     } else {
         return done(null, false);
     }
+}
+
+async function getPagePic(param) {
+    const url = param.url;
+    const path = param.live_path; // './public/img/thumbnails/image.png';
+    const temp_path = param.temp_path; // `./public/img/temp/temp-${Date.now()}.png`;
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    await page.setViewport({
+        width: 1480,
+        height: 860
+    });
+    await page.screenshot({
+        //encoding: 'base64'
+        path: temp_path
+    }).then(image => {
+        sharp(temp_path).resize(640, 372).toFile(path, (err) => {
+            fs.unlinkSync(temp_path);
+        });
+    }).catch(err => {
+        console.log(err);
+    });
+    await browser.close();
+}
+
+async function getHeadHTML(url, done) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    const headHandle = await page.$('head');
+    const html = await page.evaluate(head => head.innerHTML, headHandle);
+    await browser.close();
+    return await done(html)
+}
+
+function headHTML(html, done) {
+    const $ = cheerio.load(html);
+    let data = {
+        link: [],
+        title: [],
+        meta: []
+    };
+    data.title.push({
+        text: $('title').text()
+    });
+    $('link').each(function (i, elem) {
+        if (elem.attribs.rel != '' && elem.attribs.rel != undefined && elem.attribs.rel != null && elem.attribs.rel != 'stylesheet') {
+            data.link.push({
+                rel: elem.attribs.rel,
+                href: elem.attribs.href
+            });
+        }
+    })
+    $('meta').each(function (i, elem) {
+        //console.log(elem.attribs);
+        data.meta.push({
+            name: elem.attribs.name != undefined ? elem.attribs.name : null,
+            charset: elem.attribs.charset != undefined ? elem.attribs.charset : null,
+            property: elem.attribs.property != undefined ? elem.attribs.property : null,
+            content: elem.attribs.content != undefined ? elem.attribs.content.replace(/"/ig, "'") : null
+        });
+    });
+    //return done(data);
+    let html_head = [];
+    html_head.push(`<title>${data.title[0].text}</title>`);
+    data.link.forEach(elem => {
+        html_head.push(`<link rel="${elem.rel}" href="${elem.href}" />`);
+    });
+    data.meta.forEach(elem => {
+        elem.charset != undefined && elem.charset != null ? html_head.push(`<meta charset="${elem.charset}" />`) : false;
+        elem.name != undefined && elem.name != null ? html_head.push(`<meta name="${elem.name}" content="${elem.content}" />`) : false;
+        elem.property != undefined && elem.property != null ? html_head.push(`<meta property="${elem.property}" content="${elem.content}" />`) : false;
+    });
+    html_head = html_head.join("");
+    return done(html_head);
 }

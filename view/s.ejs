@@ -5,19 +5,22 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>
+        <!-- <title>
             Hurrycane.io -
             <?= page ?>
-        </title>
+        </title> -->
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+
+        <?- url.head_html ?>
     </head>
 
     <body>
 
         <h1></h1>
+        <img src="/img/thumbnails/<?= url._id ?>.png" alt="Page thumbnails" />
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
@@ -32,7 +35,7 @@
                 t--;
                 $('h1').html(t);
                 if (t == 0) {
-                    location.href = '<?= long_url ?>';
+                    //location.href = '<?= long_url ?>';
                 }
             }, 1000);
         </script>
