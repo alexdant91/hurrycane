@@ -350,7 +350,7 @@ router.delete('/shorten', (req, res) => {
     // Auth data
     // Header -> Token: session.token
     // Header -> Secretkey: application-secret-key-value
-    // Body   -> url_id = the url of the link
+    // Body   -> url_id = the url id of the link
     const secretkey = req.headers.secretkey != '' && req.headers.secretkey != null && req.headers.secretkey != undefined ? req.headers.secretkey : false;
     const token = req.headers.token != '' && req.headers.token != null && req.headers.token != undefined ? req.headers.token : false;
 
@@ -462,6 +462,159 @@ router.delete('/shorten', (req, res) => {
     });
 });
 
+router.put('/shorten', (req, res) => {
+    // Webhook data
+    // Update a link: Webhook event -> link_updated
+
+    // Auth data
+    // Header -> Token: session.token
+    // Header -> Secretkey: application-secret-key-value
+    // Body   -> url_id = the url id of the link
+    const secretkey = req.headers.secretkey != '' && req.headers.secretkey != null && req.headers.secretkey != undefined ? req.headers.secretkey : false;
+    const token = req.headers.token != '' && req.headers.token != null && req.headers.token != undefined ? req.headers.token : false;
+
+    jwt.verify(token, secretkey, (err, authData) => {
+        if (err) {
+            res.status(403).json({
+                'Error': 'Authorization required.'
+            });
+        } else {
+            // Here the basic data
+            const url_id = req.body.url_id != '' & req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false; // Required
+            const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
+            const application_id = authData.user.app;
+
+            // The updates field permitted
+            const properties = req.body.properties != null && req.body.properties != undefined && typeof req.body.properties === "object" ? req.body.properties : false;
+            const rules = req.body.rules != null && req.body.rules != undefined && typeof req.body.rules === "object" ? req.body.rules : false;
+            const seo = req.body.seo != null && req.body.seo != undefined && typeof req.body.seo === "object" ? req.body.seo : false;
+
+            if (properties || rules || seo) {
+                const description = properties.description != null && properties.description != undefined ? properties.description : null;
+                const password = properties.password != null && properties.password != undefined ? properties.password : null;
+                const expiration_time = properties.expires != null && properties.expires != undefined ? properties.expires : null;
+
+                const geo_select = rules.geo_tag != null && rules.geo_tag != undefined && Array.isArray(rules.geo_tag) ? rules.geo_tag : null;
+                const geotag_url = rules.geo_tag_url != null && rules.geo_tag_url != undefined ? rules.geo_tag_url : null;
+                const device_select = rules.device_tag != null && rules.device_tag != undefined && Array.isArray(rules.device_tag) ? rules.device_tag : null;
+                const devicetag_url = rules.device_tag_url != null && rules.device_tag_url != undefined ? rules.device_tag_url : null;
+
+                const seo_title = seo.seo_title != null && seo.seo_title != undefined ? seo.seo_title : null;
+                const seo_description = seo.seo_description != null && seo.seo_description != undefined ? seo.seo_description : null;
+
+                const payload = {};
+                if (description != null) payload.description = description;
+                if (password != null) payload.password = bcrypt.hashSync(password);
+                if (expiration_time != null) payload.expiration_time = expiration_time;
+                if (geo_select != null) payload.geo_select = geo_select;
+                if (geotag_url != null) payload.geotag_url = geotag_url;
+                if (device_select != null) payload.device_select = device_select;
+                if (devicetag_url != null) payload.devicetag_url = devicetag_url;
+                if (seo_title != null) payload.seo_title = seo_title;
+                if (seo_description != null) payload.seo_description = seo_description;
+
+                if (url_id && payload) {
+                    db.Url.updateOne({
+                        _id: url_id,
+                        user_id: user_id
+                    }, payload, (err, confirm) => {
+                        if (err) {
+                            res.status(500).json({
+                                'Error': 'Internal server error.'
+                            });
+                        } else {
+                            if (confirm.n > 0) {
+                                // Link updated so find webhooks events if isset
+                                db.Webhook.find({
+                                    application_id: application_id,
+                                    user_id: user_id
+                                }, (err, webhook) => {
+                                    if (webhook.length > 0) {
+                                        // Isset webhook so check if the event is registered
+                                        const events = webhook[0].events;
+                                        if (events.indexOf('link_updated') !== -1) {
+                                            // Send webhook async mode
+                                            const uri = webhook[0].endpoint;
+                                            rp({
+                                                method: 'POST',
+                                                uri: uri,
+                                                body: {
+                                                    data: {
+                                                        url_id: url_id,
+                                                        user_id: user_id,
+                                                        application_id: application_id,
+                                                        api_version: config.api.version,
+                                                        event: 'link_updated',
+                                                        status: 'success',
+                                                        created: Math.round(Date.now() / 1000)
+                                                    },
+                                                    signature: webhook[0].webhook_self_signature
+                                                },
+                                                json: true
+                                            }).then((parsedBody) => {
+                                                // POST succeeded so register the event
+                                                db.WebhookEvent({
+                                                    user_id: user_id,
+                                                    webhook_id: webhook[0]._id,
+                                                    application_id: application_id,
+                                                    endpoint: `/${config.api.version}/shorten`,
+                                                    request_response: '200 OK',
+                                                    request_method: 'PUT',
+                                                    api_version: config.api.version,
+                                                    event_type: 'link_updated',
+                                                    creation_time: Math.round(Date.now() / 1000)
+                                                }).save(err => {
+                                                    if (err) console.log(err);
+                                                });
+                                            }).catch((err) => {
+                                                // POST failed...
+                                                console.log('Failed webhook request')
+                                                console.log(err);
+                                            });
+                                            // Send the response and close the client connection
+                                            res.status(200).json({
+                                                'Status': 'success',
+                                                'Message': `Url id: ${url_id} updated.`
+                                            });
+
+                                        } else {
+                                            // The event is not registered to the webhook 
+                                            // So send the response and close the connection
+                                            res.status(200).json({
+                                                'Status': 'success',
+                                                'Message': `Url id: ${url_id} updated.`
+                                            });
+                                        }
+                                    } else {
+                                        // Webhook not isset so send the response and close the connection
+                                        res.status(200).json({
+                                            'Status': 'success',
+                                            'Message': `Url id: ${url_id} updated.`
+                                        });
+                                    }
+                                });
+                            } else {
+                                res.status(500).json({
+                                    'Error': 'No data founded.'
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    res.status(403).json({
+                        'Error': 'Missing required data.'
+                    });
+                }
+            } else {
+                res.status(500).json({
+                    'Error': 'Bad request.'
+                });
+            }
+        }
+        // res.status(200).json(authData);
+    });
+});
+
 router.get('/link', (req, res) => {
     // Webhook data
     // Get a link obj: Webhook event -> link_retrieve
@@ -496,9 +649,13 @@ router.get('/link', (req, res) => {
                         long_url: urls[0].long_url,
                         domain_name: urls[0].domain_name,
                         short_url: `${config.host}/s/${urls[0].alias}`,
-                        short_url_description: urls[0].description,
                         alias: urls[0].alias,
                         favicon: urls[0].favicon,
+                        properties: {
+                            description: urls[0].description,
+                            password: urls[0].password != null,
+                            expires: urls[0].expiration_time,
+                        },
                         rules: {
                             geo_tag: urls[0].geo_select,
                             geo_tag_url: urls[0].geotag_url,
@@ -627,9 +784,13 @@ router.get('/link/all', (req, res) => {
                             long_url: item.long_url,
                             domain_name: item.domain_name,
                             short_url: `${config.host}/s/${item.alias}`,
-                            short_url_description: item.description,
                             alias: item.alias,
                             favicon: item.favicon,
+                            properties: {
+                                description: item.description,
+                                password: item.password != null,
+                                expires: item.expiration_time,
+                            },
                             rules: {
                                 geo_tag: item.geo_select,
                                 geo_tag_url: item.geotag_url,

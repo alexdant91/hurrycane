@@ -81,6 +81,8 @@
                                                     <label for="all_events"><span>All events</span></label>
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_created" id="link_created" checked />
                                                     <label for="link_created"><span>link_created</span></label>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_updated" id="link_updated" checked />
+                                                    <label for="link_updated"><span>link_updated</span></label>
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_deleted" id="link_deleted" checked />
                                                     <label for="link_deleted"><span>link_deleted</span></label>
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_retrieve" id="link_retrieve" checked />
@@ -149,7 +151,7 @@
                     const endpoint = $('#endpoint').val();
                     const api_version = $('#api_version:checked').val();
                     const events = [];
-                    $('body').find('.events').each((i, event) => {
+                    $('body').find('.events:checked').each((i, event) => {
                         events.push($(event).val());
                     });
 

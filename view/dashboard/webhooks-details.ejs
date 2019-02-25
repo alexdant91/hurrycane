@@ -122,6 +122,12 @@
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_created" id="link_created" />
                                                     <? } ?>
                                                     <label for="link_created"><span>link_created</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_updated') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_updated" id="link_updated" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_updated" id="link_updated" />
+                                                    <? } ?>
+                                                    <label for="link_updated"><span>link_updated</span></label>
                                                     <? if(datas.webhooks.data.events.indexOf('link_deleted') > -1) { ?>
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_deleted" id="link_deleted" checked />
                                                     <? } else { ?>

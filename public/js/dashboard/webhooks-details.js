@@ -72,7 +72,7 @@ $(document).on('submit', '#update-webhooks', function (e) {
     const endpoint = $('#endpoint').val();
     const api_version = $('#api_version:checked').val();
     const events = [];
-    $('body').find('.events').each((i, event) => {
+    $('body').find('.events:checked').each((i, event) => {
         events.push($(event).val());
     });
 
