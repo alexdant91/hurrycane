@@ -741,11 +741,52 @@ app.post('/shorten/delete', (req, res) => {
 // Shorten link alias retrive logic
 app.get('/s/:alias', (req, res) => {
     const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
+    const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
+    const language = process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES;
     if (alias) {
         db.Url.find({
             alias: alias
         }, (err, docs) => {
             if (err) res.redirect('/?error=alias_not_founded');
+
+            // Update the clicks general counter
+            // Register the new referer if there's no one
+            // Update the referer if there's one
+            const clicks = docs[0].clicks + 1;
+            db.Url.updateOne({
+                _id: docs[0]._id
+            }, {
+                clicks: clicks
+            }, (err, confirm) => {
+                if (err) console.log(err);
+                if (confirm) {
+                    db.Analytic.find({
+                        url_id: docs[0]._id,
+                        referer: referer,
+                        language: language
+                    }, (err, items) => {
+                        if (items.length > 0) {
+                            // The row exist so update the clicks value from the same referer
+                            const click = items[0].clicks + 1;
+                            db.Analytic.updateOne({
+                                url_id: docs[0]._id,
+                                referer: referer,
+                                language: language
+                            }, {
+                                clicks: click
+                            }, (err, confirm) => {});
+                        } else {
+                            db.Analytic({
+                                url_id: docs[0]._id,
+                                clicks: 1,
+                                referer: referer,
+                                language: language
+                            }).save(err => {});
+                        }
+                    });
+                }
+            });
+
             const password = docs[0].password;
             if (password != null) {
                 res.render('alias', {

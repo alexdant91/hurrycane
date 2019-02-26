@@ -249,6 +249,8 @@ router.post('/shorten', (req, res) => {
                                                                 getHeadHTML(long_url, (html) => {
                                                                     headHTML(html, (head_html) => {
                                                                         head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                                                        head_html = head_html.replace(/%domain_name%/ig, domain_name);
+                                                                        head_html = head_html.replace(/%protocol%/ig, domain_protocol);
                                                                         new HtmlParser(head_html).getFavicon((err, favicon) => {
                                                                             if (favicon != undefined && favicon != null) {
                                                                                 sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
@@ -1254,7 +1256,7 @@ function headHTML(html, done) {
         if (elem.attribs.rel != '' && elem.attribs.rel != undefined && elem.attribs.rel != null && elem.attribs.rel != 'stylesheet') {
             data.link.push({
                 rel: elem.attribs.rel,
-                href: elem.attribs.href
+                href: elem.attribs.href != undefined ? (elem.attribs.href.charAt(0) == '/' ? `%protocol%://%domain_name%${elem.attribs.href.replace(/"/ig, "'")}` : elem.attribs.href.replace(/"/ig, "'")) : null
             });
         }
     })

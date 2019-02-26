@@ -73,7 +73,11 @@ const urlSchema = Schema({
     geo_select: Array,
     geotag_url: String,
     seo_title: String,
-    seo_description: String
+    seo_description: String,
+    clicks: {
+        type: Number,
+        default: 0
+    }
 });
 
 const planSchema = Schema({
@@ -242,6 +246,17 @@ const applicationWebhooksEndpointsEvents = Schema({
     }
 });
 
+const analyticsSchema = Schema({
+    url_id: String,
+    clicks: Number,
+    referer: String,
+    language: String,
+    timestamp: {
+        type: Number,
+        default: Math.round(Date.now() / 1000)
+    }
+});
+
 userSchema.plugin(mongoosePaginate);
 urlSchema.plugin(mongoosePaginate);
 planSchema.plugin(mongoosePaginate);
@@ -251,6 +266,7 @@ applicationSchema.plugin(mongoosePaginate);
 applicationEventSchema.plugin(mongoosePaginate);
 applicationWebhooksEndpoints.plugin(mongoosePaginate);
 applicationWebhooksEndpointsEvents.plugin(mongoosePaginate);
+analyticsSchema.plugin(mongoosePaginate);
 
 models.User = mongoose.model('User', userSchema);
 models.Url = mongoose.model('Url', urlSchema);
@@ -261,5 +277,6 @@ models.Application = mongoose.model('Application', applicationSchema);
 models.ApplicationEvent = mongoose.model('Application_event', applicationEventSchema);
 models.Webhook = mongoose.model('Webhook', applicationWebhooksEndpoints);
 models.WebhookEvent = mongoose.model('Webhook_event', applicationWebhooksEndpointsEvents);
+models.Analytic = mongoose.model('Analytic', analyticsSchema);
 
 module.exports = models;
