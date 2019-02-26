@@ -547,6 +547,8 @@ app.post('/shorten', (req, res) => {
                                     getHeadHTML(long_url, (html) => {
                                         headHTML(html, (head_html) => {
                                             head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                            head_html = head_html.replace(/%domain_name%/ig, domain_name);
+                                            head_html = head_html.replace(/%protocol%/ig, domain_protocol);
                                             new HtmlParser(head_html).getFavicon((err, favicon) => {
                                                 if (favicon != undefined && favicon != null) {
                                                     sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
@@ -628,41 +630,55 @@ app.post('/shorten', (req, res) => {
                     });
                 } else {
                     if (docs.length === 0) {
-                        new ScrapingPage(long_url).getHeadHTML((err, head_html) => {
-                            head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
-                            new HtmlParser(head_html).getFavicon((err, favicon) => {
-                                if (favicon != undefined && favicon != null) {
-                                    sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
-                                    favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
-                                }
-                                db.Url({
-                                    long_url,
-                                    domain_name,
-                                    user_id,
-                                    alias,
-                                    description,
-                                    password,
-                                    expiration_time,
-                                    timestamp,
-                                    head_html,
-                                    favicon,
-                                    device_select,
-                                    devicetag_url,
-                                    geo_select,
-                                    geotag_url,
-                                    seo_title,
-                                    seo_description
-                                }).save(err => {
-                                    if (err) res.json({
-                                        'Error': 'Error while data saving.'
-                                    });
-                                    res.json({
-                                        'Status': 'done',
-                                        'short_url': `${config.host}/s/${alias}`,
-                                        'messages': {
-                                            type: 'success',
-                                            title: 'Well!',
-                                            text: 'Your shorten link it\s ready :)',
+                        getHeadHTML(long_url, (html) => {
+                            headHTML(html, (head_html) => {
+                                head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                head_html = head_html.replace(/%domain_name%/ig, domain_name);
+                                head_html = head_html.replace(/%protocol%/ig, domain_protocol);
+                                new HtmlParser(head_html).getFavicon((err, favicon) => {
+                                    if (favicon != undefined && favicon != null) {
+                                        sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
+                                        favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
+                                    }
+                                    db.Url({
+                                        long_url,
+                                        domain_name,
+                                        user_id,
+                                        alias,
+                                        description,
+                                        password,
+                                        expiration_time,
+                                        timestamp,
+                                        head_html,
+                                        favicon,
+                                        device_select,
+                                        devicetag_url,
+                                        geo_select,
+                                        geotag_url,
+                                        seo_title,
+                                        seo_description
+                                    }).save((err, newUrl) => {
+                                        if (err) {
+                                            res.json({
+                                                'Error': 'Error while data saving.'
+                                            });
+                                        } else {
+                                            // Get async screenshot of the page
+                                            getPagePic({
+                                                url: long_url,
+                                                live_path: `./public/img/thumbnails/${newUrl._id}.png`,
+                                                temp_path: `./public/img/temp/temp-${newUrl._id}.png`
+                                            });
+                                            // Get the response
+                                            res.json({
+                                                'Status': 'done',
+                                                'short_url': `${config.host}/s/${alias}`,
+                                                'messages': {
+                                                    type: 'success',
+                                                    title: 'Well!',
+                                                    text: 'Your shorten link it\s ready :)',
+                                                }
+                                            });
                                         }
                                     });
                                 });
@@ -1244,7 +1260,7 @@ function headHTML(html, done) {
         if (elem.attribs.rel != '' && elem.attribs.rel != undefined && elem.attribs.rel != null && elem.attribs.rel != 'stylesheet') {
             data.link.push({
                 rel: elem.attribs.rel,
-                href: elem.attribs.href
+                href: elem.attribs.href != undefined ? (elem.attribs.href.charAt(0) == '/' ? `%protocol%://%domain_name%${elem.attribs.href.replace(/"/ig, "'")}` : elem.attribs.href.replace(/"/ig, "'")) : null
             });
         }
     })

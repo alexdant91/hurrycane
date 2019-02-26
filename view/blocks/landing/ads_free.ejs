@@ -1,0 +1,77 @@
+<style>
+    .ads-box {
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid #ffffff;
+        float: left;
+        width: 100%;
+        height: 175px;
+        line-height: 175px;
+        text-align: center;
+    }
+
+    img {
+        width: 100%;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+    }
+
+    .left.image {
+        width: 50%;
+    }
+
+    .left.info {
+        width: 50%;
+        padding: 0 0 0 20px;
+    }
+</style>
+<div class="row">
+    <div class="container">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!-- ADS Box top -->
+            <div class="ads-box">Free space</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="container">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                <!-- ADS Box left -->
+                <div class="ads-box">Free space</div>
+                <div class="ads-box" style="margin-top: 10px;">Free space</div>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                <!-- ADS Box left -->
+                <div class="left image">
+                    <img src="/img/thumbnails/<?= url._id ?>.png" alt="Page thumbnails" />
+                </div>
+                <div class="left info">
+                    <h5>
+                        <?= `${url.domain_name} - ${url.landing_page}` ?>
+                    </h5>
+                    <p>
+                        You will be redirected in <span class="timer"></span>s...
+                    </p>
+                    <p>
+                        <span class="redirect"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                <!-- ADS Box left -->
+                <div class="ads-box">Free space</div>
+                <div class="ads-box" style="margin-top: 10px;">Free space</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="container">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!-- ADS Box bottom -->
+            <div class="ads-box">Free space</div>
+        </div>
+    </div>
+</div>

@@ -55,6 +55,10 @@ const urlSchema = Schema({
         type: String,
         required: true
     },
+    landing_page: {
+        type: String,
+        default: 'standard'
+    },
     timestamp: {
         type: String,
         required: true
@@ -150,11 +154,16 @@ const applicationEventSchema = Schema({
         required: true
     },
     application_id: String,
+    param: Object,
     event_description: String,
+    event_method: String,
     event_request: String,
     event_response: String,
     request_origin: String,
-    creation_time: String
+    creation_time: {
+        type: String,
+        default: Math.round(Date.now() / 1000)
+    }
 });
 
 const applicationWebhooksEndpoints = Schema({
@@ -249,7 +258,7 @@ models.Plan = mongoose.model('Plan', planSchema);
 models.Wallet = mongoose.model('Wallet', walletSchema);
 models.License = mongoose.model('License', licenseSchema);
 models.Application = mongoose.model('Application', applicationSchema);
-models.ApplicationEvent = mongoose.model('ApplicationEvent', applicationEventSchema);
+models.ApplicationEvent = mongoose.model('Application_event', applicationEventSchema);
 models.Webhook = mongoose.model('Webhook', applicationWebhooksEndpoints);
 models.WebhookEvent = mongoose.model('Webhook_event', applicationWebhooksEndpointsEvents);
 

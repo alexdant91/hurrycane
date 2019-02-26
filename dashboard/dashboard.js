@@ -312,16 +312,58 @@ router.post('/api/delete', (req, res) => {
             user_id: user_id
         }).then(confirm => {
             if (confirm) {
-                db.Application.deleteMany({
+                db.ApplicationEvent.deleteMany({
                     application_id: application_id
                 }).then(confirm => {
                     if (confirm) {
-                        res.json({
-                            'Status': 'done',
-                            'messages': {
-                                'title': 'Well!',
-                                'text': 'Application deleted.'
+                        db.Webhook.deleteMany({
+                            application_id: application_id
+                        }).then(confirm => {
+                            if (confirm) {
+                                db.WebhookEvent.deleteMany({
+                                    application_id: application_id
+                                }).then(confirm => {
+                                    if (confirm) {
+                                        res.json({
+                                            'Status': 'done',
+                                            'messages': {
+                                                'title': 'Well!',
+                                                'text': 'Application deleted.'
+                                            }
+                                        });
+                                    } else {
+                                        res.json({
+                                            'Error': 'Internal server error.',
+                                            'title': 'Oops!',
+                                            'text': 'Internal server error.'
+                                        });
+                                    }
+                                }).catch(err => {
+                                    res.json({
+                                        'Error': err,
+                                        'title': 'Oops!',
+                                        'text': 'We have delete this application but for some reason we can not delete it\'s endpoints events...'
+                                    });
+                                })
+                            } else {
+                                res.json({
+                                    'Error': 'Internal server error.',
+                                    'title': 'Oops!',
+                                    'text': 'Internal server error.'
+                                });
                             }
+                        }).carch(err => {
+                            res.json({
+                                'Error': err,
+                                'title': 'Oops!',
+                                'text': 'We have delete this application but for some reason we can not delete it\'s webhook endpoints...'
+                            });
+                        });
+                    } else {
+                        res.json({
+                            'Error': 'Internal server error.',
+                            'title': 'Oops!',
+                            'text': 'Internal server error.'
                         });
                     }
                 }).catch(err => {

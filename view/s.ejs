@@ -19,8 +19,7 @@
 
     <body>
 
-        <h1></h1>
-        <img src="/img/thumbnails/<?= url._id ?>.png" alt="Page thumbnails" />
+        <?- include(`./blocks/landing/${url.landing_page}.ejs`) -?>
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
@@ -30,12 +29,14 @@
         <script type="text/javascript" src="/js/index.js?v=1.0.2"></script>
         <script>
             let t = 5;
-            $('h1').html(t);
-            setInterval(() => {
+            $('.timer').html(t);
+            const interval = setInterval(() => {
                 t--;
-                $('h1').html(t);
+                $('.timer').html(t);
                 if (t == 0) {
                     //location.href = '<?= long_url ?>';
+                    $('.redirect').html('The user was redirected to the long url page: <br> <a href="<?= long_url ?>"><?= long_url ?></a>');
+                    clearInterval(interval);
                 }
             }, 1000);
         </script>
