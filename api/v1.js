@@ -1212,7 +1212,12 @@ async function getPagePic(param) {
     const url = param.url;
     const path = param.live_path; // './public/img/thumbnails/image.png';
     const temp_path = param.temp_path; // `./public/img/temp/temp-${Date.now()}.png`;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        'args': [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    });
     const page = await browser.newPage();
     await page.goto(url);
     await page.setViewport({
@@ -1233,7 +1238,12 @@ async function getPagePic(param) {
 }
 
 async function getHeadHTML(url, done) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        'args': [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    });
     const page = await browser.newPage();
     await page.goto(url);
     const headHandle = await page.$('head');
