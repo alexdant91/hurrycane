@@ -283,8 +283,8 @@ router.post('/shorten', (req, res) => {
                                                                                     // Get async pic of the page
                                                                                     getPagePic({
                                                                                         url: long_url,
-                                                                                        live_path: `./public/img/thumbnails/${urls._id}.png`,
-                                                                                        temp_path: `./public/img/temp/temp-${urls._id}.png`
+                                                                                        live_path: `${__dirname}/../public/img/thumbnails/${urls._id}.png`,
+                                                                                        temp_path: `${__dirname}/../public/img/temp/temp-${urls._id}.png`
                                                                                     });
                                                                                     // Register the application event async
                                                                                     db.ApplicationEvent({

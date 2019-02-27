@@ -733,7 +733,7 @@ module.exports.init = function init() {
                 _id: url_id
             }).then(confirm => {
                 if (confirm) {
-                    fs.unlink(`${__dirname}/public/img/thumbnails/${url_id}.png`, (err) => {
+                    fs.unlink(`${__dirname}/../public/img/thumbnails/${url_id}.png`, (err) => {
                         if (err) {
                             console.log(err);
                         } else {
