@@ -4,7 +4,7 @@ class Config {
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
         this.host = 'http://localhost';
-        this.cluster = true;
+        this.cluster = process.env.CLUSTER_ENV || false;
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
             requestTimeLimitRange: 60 * 60 * 1000,
