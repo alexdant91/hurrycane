@@ -28,21 +28,29 @@
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'wallet') { ?> active <? } ?>" href="/dashboard/wallet"><i class="fal fa-wallet"></i> Wallet Balance</a>
         </div>
+        <!--
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'landing') { ?> active <? } ?> <? if(user.subscription != 'PREMIUM') { ?> disabled <? } ?>" href="<? if(user.subscription != 'PREMIUM') { ?>/upgrade<? } else { ?>/dashboard/landings<? } ?>"><i class="fal fa-exchange"></i> Landing pages <i class="fal fa-star right"></i></a>
         </div>
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'analytics') { ?> active <? } ?> <? if(user.subscription != 'PREMIUM') { ?> disabled <? } ?>" href="<? if(user.subscription != 'PREMIUM') { ?>/upgrade<? } else { ?>/dashboard/analytics<? } ?>"><i class="fal fa-chart-bar"></i> Analytics <i class="fal fa-star right"></i></a>
         </div>
+        -->
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'api') { ?> active <? } ?>" href="/dashboard/api"><i class="fal fa-rocket"></i> My Applications</a>
         </div>
+        <!--
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'settings') { ?> active <? } ?>" href="/dashboard/settings"><i class="fal fa-hand-holding-usd"></i> Ads Program</a>
         </div>
+        -->
         <? if(user.subscription == 'PREMIUM') { ?>
         <div class="menu-side-item-wrapper">
             <a class="menu-side-item <? if(page == 'subscription') { ?> active <? } ?>" href="/dashboard/subscription"><i class="fal fa-star"></i> My Premium</a>
+        </div>
+        <? } else { ?>
+        <div class="menu-side-item-wrapper">
+            <a class="menu-side-item <? if(page == 'subscription') { ?> active <? } ?>" href="/upgrade"><i class="fal fa-star"></i> Upgrade</a>
         </div>
         <? } ?>
         <div class="menu-side-item-wrapper">
