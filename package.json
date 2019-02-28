@@ -1,6 +1,9 @@
 {
-    "name": "url-shortner",
-    "version": "1.1.4",
+    "name": "hurrycane",
+    "version": "2.0.0",
+    "repository": {
+        "type": "https://github.com/alexdant91/hurrycane"
+    },
     "description": "Service for shortner url",
     "main": "server.js",
     "scripts": {
@@ -71,6 +74,8 @@
         "webpage-capture": "^0.1.3"
     },
     "devDependencies": {
-        "ava": "^1.2.1"
+        "ava": "^1.2.1",
+        "flightplan": "^0.6.19",
+        "fly": "^3.0.5"
     }
 }

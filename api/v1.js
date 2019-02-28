@@ -1214,8 +1214,7 @@ async function getPagePic(param) {
     const temp_path = param.temp_path; // `./public/img/temp/temp-${Date.now()}.png`;
     const browser = await puppeteer.launch({
         'args': [
-            '--no-sandbox',
-            '--disable-setuid-sandbox'
+            '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
         ]
     });
     const page = await browser.newPage();
@@ -1240,8 +1239,7 @@ async function getPagePic(param) {
 async function getHeadHTML(url, done) {
     const browser = await puppeteer.launch({
         'args': [
-            '--no-sandbox',
-            '--disable-setuid-sandbox'
+            '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
         ]
     });
     const page = await browser.newPage();

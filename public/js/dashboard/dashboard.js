@@ -14,7 +14,7 @@ $(document).find('div.lazy-load').each(function (i, elem) {
     let src = lazy.attr('data-src');
     let name = ('lazy-' + Math.random()).toString().replace(".", "");
     let $name = '#' + name;
-    $('body').append('<img id="' + name + '" src="' + src + '" />').attr('src', src);
+    $('body').append('<img id="' + name + '" src="' + src + '" />');
     $('body').find($name).on('load', function () {
         lazy.css('background-image', 'url("' + src + '")');
         $(this).remove();
@@ -139,6 +139,10 @@ $(document).on('click', '#shortenUrl', function (e) {
         error: function (a, b, c) {
             console.log(a, b, c);
             $this.html("Let's Go!");
+            iziToast.error({
+                title: 'Oops!',
+                message: 'Internal server error.'
+            });
         }
     });
     return false;
