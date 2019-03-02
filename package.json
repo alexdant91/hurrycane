@@ -9,7 +9,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "NODE_ENV=production node server.js",
-        "start:s": "NODE_ENV=staging SSL_ENV=false nodemon server.js",
+        "start:s": "NODE_ENV=staging nodemon server.js",
+        "start:l": "NODE_ENV=staging SSL_ENV=false nodemon server.js",
         "start:p": "NODE_ENV=production server.js",
         "json:server": "json-server --watch ./db.json --port 5000"
     },
