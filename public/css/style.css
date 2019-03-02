@@ -274,7 +274,8 @@ h1.url-title {
 .menu-top.moved {
     /* background: rgb(79, 55, 172) -webkit-linear-gradient(0deg, rgb(8, 84, 169) 0%, rgb(79, 55, 172) 100%) repeat scroll 0% 0% / auto padding-box border-box; */
     background: rgba(0, 0, 0, 0) linear-gradient(150deg, rgb(85, 51, 255) 15%, rgb(0, 186, 224) 70%, rgb(90, 220, 144) 94%) repeat scroll 0% 0% / auto padding-box border-box;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+    /* border-bottom: 1px solid #f1f1f1; */
+    box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, .03);
     transition: box-shadow 0.25s;
     -webkit-transition: box-shadow 0.25s;
     -moz-transition: box-shadow 0.25s;
@@ -475,10 +476,9 @@ h1.url-title {
 }
 
 .login-wrapper {
-    width: 400px;
     margin: 150px 50%;
     transform: translateX(-50%);
-    padding: 45px;
+    padding: 45px !important;
     border-radius: 15px;
     background: #ffffff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
@@ -533,6 +533,7 @@ h1.url-title {
     width: 25%;
     margin: 0 !important;
     padding: 5px 0;
+    float: left;
 }
 
 .advanced-option-wrapper .col-equal-input .input input {
@@ -562,11 +563,9 @@ h1.url-title {
 }
 
 .register-wrapper {
-    float: left;
-    width: 400px;
     margin: 100px 50%;
     transform: translateX(-50%);
-    padding: 45px;
+    padding: 45px !important;
     border-radius: 15px;
     background: #ffffff;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
@@ -624,11 +623,11 @@ h1.url-title {
 }
 
 .disclainer-wrapper {
-    width: 80vw;
+    width: 90vw;
     /* margin-top: 100px; */
     margin-top: 20px;
     margin-bottom: 100px;
-    margin-left: 10vw;
+    margin-left: 5vw;
     float: left;
 }
 
@@ -638,10 +637,11 @@ h1.url-title {
     margin: 0;
     text-align: center;
     float: left; */
-    width: calc(33% - 40px);
+    /* width: calc(33% - 40px); */
+    width: 100%;
     text-align: center;
     float: left;
-    margin: 20px;
+    margin: 20px 0;
     padding: 70px 0;
     border-radius: 15px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
@@ -1140,6 +1140,10 @@ h1.url-title {
     background-color: #c9f8b9;
 }
 
+.typed-center-wrapper {
+    display: none;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;
@@ -1151,6 +1155,10 @@ h1.url-title {
         width: 100%;
         height: auto;
         padding: 0 calc(50% - 620px);
+        display: block;
+    }
+
+    .typed-center-wrapper {
         display: block;
     }
 }
@@ -1165,6 +1173,10 @@ h1.url-title {
         width: 100%;
         height: auto;
         padding: 0;
+        display: block;
+    }
+
+    .typed-center-wrapper {
         display: block;
     }
 }

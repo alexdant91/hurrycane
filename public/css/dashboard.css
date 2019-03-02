@@ -1,5 +1,7 @@
 body {
     background: #F3F3F3;
+    height: 100vh !important;
+    overflow-y: hidden !important;
 }
 
 *:not(.fa),
@@ -26,6 +28,7 @@ body {
     width: -webkit-fill-available;
     height: auto;
     max-width: 100%;
+    min-height: 63px;
     padding: 0 20px;
     display: block;
     position: absolute;
@@ -46,10 +49,16 @@ body {
     background: #ffffff;
     color: #2B3440 !important;
     /* box-shadow: 0 5px 10px rgba(0, 0, 0, .15); */
-    border-bottom: 1px solid #D4D7DE;
+    border-bottom: 1px solid #f1f1f1;
+    box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, .03);
     /* transition: box-shadow 0.25s;
     -webkit-transition: box-shadow 0.25s;
     -moz-transition: box-shadow 0.25s; */
+
+    position: fixed;
+    left: 250px;
+    z-index: 999;
+    width: calc(100vw - 250px);
 }
 
 .menu-top-dashboard.moved a:not(.upgrade),
@@ -92,12 +101,12 @@ body {
 
 .left-side-menu {
     width: 250px;
-    height: calc(100vh - 66px - 55px);
+    height: calc(100vh - 55px);
     float: left;
     position: relative;
     left: 0;
-    top: 66px;
-    border-right: 1px solid #D4D7DE;
+    top: 0;
+    border-right: 1px solid #f1f1f1;
     background: #ffffff;
     overflow-y: auto;
     overflow-x: hidden;
@@ -105,14 +114,15 @@ body {
 
 .right-side-wrapper {
     width: calc(100vw - 251px);
-    height: calc(100vh - 66px);
+    height: 100vh;
     float: left;
     position: relative;
     right: 0;
-    top: 66px;
-    background: #F3F3F3;
+    top: 0;
+    background: #f3f3f3;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 66px 0 0 0;
 }
 
 .verbal-input-wrapper {
@@ -296,7 +306,7 @@ span.relative .verbal-select {
 }
 
 .add-verbal-select-btn {
-    margin: 0 5px 0 0;
+    margin: 0 5px 0 5px;
     border: 1px solid #00a5f6;
     color: #00a5f6 !important;
     -webkit-appearance: none;
@@ -310,6 +320,9 @@ span.relative .verbal-select {
 
 .add-verbal-select-btn i {
     color: #00a5f6 !important;
+    position: relative;
+    left: 1px;
+    top: 0px;
 }
 
 .remove-verbal-select-btn {
@@ -341,8 +354,8 @@ span.relative .verbal-select {
     width: 250px !important;
     font-size: 12px;
     background: #ffffff;
-    border-top: 1px solid #d2d7df;
-    border-right: 1px solid #d2d7df;
+    border-top: 1px solid #efefef;
+    border-right: 1px solid #efefef;
 }
 
 .menu-side-wrapper-bottom b {
@@ -405,10 +418,11 @@ span.relative .verbal-select {
 }
 
 .active-urls-wrapper {
+    margin: 10px 0;
     background: #ffffff;
     float: left;
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     transition: box-shadow 0.25s;
     -webkit-transition: box-shadow 0.25s;
@@ -435,6 +449,7 @@ span.relative .verbal-select {
 
 .active-new-application-wrapper {
     background: #ffffff;
+    margin: 10px 0;
     float: left;
     width: 100%;
     padding: 26px;
@@ -464,6 +479,7 @@ span.relative .verbal-select {
 
 .active-applications-wrapper {
     background: #ffffff;
+    margin: 10px 0;
     float: left;
     width: 100%;
     padding: 10px;
@@ -541,6 +557,7 @@ span.relative .verbal-select {
 
 .general-box-wrapper {
     background: #ffffff;
+    margin: 10px 0;
     float: left;
     width: 100%;
     padding: 25px;
@@ -616,6 +633,25 @@ span.relative .verbal-select {
 
 .form-new-application .input input:not([type="textarea"]) {
     margin: 10px 0 0 0;
+}
+
+.header-search {
+    position: relative;
+    font-size: 15px;
+    letter-spacing: 0;
+    border: none;
+    outline: none;
+    width: 30vw;
+    padding-left: 30px;
+}
+
+.left-side i.fa-search {
+    position: absolute;
+    z-index: 1;
+    font-size: 14px;
+    top: 22px;
+    left: 30px;
+    color: #767676 !important;
 }
 
 @media screen and (min-width: 1488px) {

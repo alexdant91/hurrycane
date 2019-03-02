@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>
-            Hurrycane.io -
+            Hurrycane.it -
             <?= page ?>
         </title>
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
@@ -40,182 +40,66 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">Switching the button you can activating or disabling your application. When the app is disabled the api request return with an error.</span>
-                                <i class="fal fa-info-circle"></i>
-                            </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
-                                <img src="/img/api-logo.png" class="url-icon" alt="Api application logo" style="height: 64px;" />
-                            </div>
-                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 form-new-application">
-                                <h4 class="application-main-title">
-                                    <?= `${datas.applications.data.name}` ?>
-                                </h4>
-                                <div class="app-sub-title">
-                                    ID:
-                                    <?= `${datas.applications.data._id}` ?>
-                                </div>
-                                <div class="input field" style="margin-top: 20px;">
-                                    <label for="secret_key">Secret key <span class="sign-timer right"></span></label>
-                                    <div class="button-input">
-                                        <input type="text" name="secret_key" class="blurred" style="text-align: center !important;font-size: 15px;" id="secret_key" value="fakesecr-etfak-esek-retf-akesecretfak" placeholder="Appliaction name..." unselectable="on" disabled />
-                                        <button id="show-secret-key"><i class="fal fa-eye"></i> Show</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                <div class="onoffswitch">
-                                    <? if(datas.applications.data.active) { ?>
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="application_status" value="<? if(datas.applications.data.active) { ?>on<? } else { ?>off<? } ?>" checked="checked">
-                                    <? } else { ?>
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="application_status" value="<? if(datas.applications.data.active) { ?>on<? } else { ?>off<? } ?>">
-                                    <? } ?>
-                                    <label class="onoffswitch-label" for="application_status">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
-                        <div class="general-box-wrapper relative">
-                            <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">Switching the button you can pass from test to live application and vice versa. Make all the tests you want in test mode. Se the <a href="#" style="text-decoration: underline;color:#fff !important;">docs</a> for all information.</span>
-                                <i class="fal fa-info-circle"></i>
-                            </div>
-                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 offset-md-2 form-new-application">
-                                <div class="row">
-                                    <div class="container pad-20">
-                                        <h6 class="text-center">
-                                            <i class="fal fa-plug"></i> Live or Testing mode
-                                        </h6>
-                                    </div>
-                                </div>
-                                <div class="input field" style="margin-top: 20px;">
-                                    <label for="test_endpoint">Sandbox endpoint for testing</label>
-                                    <div class="button-input">
-                                        <input type="text" name="test_endpoint" id="test_endpoint" value="<?= host ?>/test/api/v1/" readonly />
-                                        <button class="copy-to-clip" data-target="test_endpoint"><i class="fal fa-copy"></i> Copy</button>
-                                    </div>
-                                </div>
-                                <div class="input field" style="margin-top: 20px;">
-                                    <label for="live_endpoint">Live endpoint for production</label>
-                                    <div class="button-input">
-                                        <input type="text" name="live_endpoint" id="live_endpoint" value="<?= host ?>/api/v1/" readonly />
-                                        <button class="copy-to-clip" data-target="live_endpoint"><i class="fal fa-copy"></i> Copy</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                <div class="onoffswitch application_env">
-                                    <? if(datas.applications.data.production) { ?>
-                                    <input type="checkbox" name="application_env" class="onoffswitch-checkbox" id="application_env" value="<? if(datas.applications.data.production) { ?>on<? } else { ?>off<? } ?>" checked="checked">
-                                    <? } else { ?>
-                                    <input type="checkbox" name="application_env" class="onoffswitch-checkbox" id="application_env" value="<? if(datas.applications.data.production) { ?>on<? } else { ?>off<? } ?>">
-                                    <? } ?>
-                                    <label class="onoffswitch-label" for="application_env">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
-                        <div class="general-box-wrapper relative">
-                            <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">Insert the endpoint for the webhook. Every event info will be posted as JSON parsed string with a digital signature.</span>
-                                <i class="fal fa-info-circle"></i>
-                            </div>
-                            <div class="row">
-                                <div class="container pad-20">
-                                    <h6 class="text-center">
-                                        <i class="fal fa-sync"></i> Set Webhook's endpoints
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
-                                <table class="table hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-left">Url</th>
-                                            <th class="text-center">Version</th>
-                                            <th class="text-center">Events</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <? if(datas.webhooks.data.length > 0) { ?>
-                                        <? for(let i = 0; i < datas.webhooks.data.length; i++) { ?>
-                                        <tr>
-                                            <td class=" a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>">
-                                                <?= datas.webhooks.data[i].endpoint ?>
-                                            </td>
-                                            <td class="text-center a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>">v1</td>
-                                            <td class="text-center a-link" data-href="<?= `/dashboard/api/webhooks/${datas.applications.data._id}/details?webhook_self_id=${datas.webhooks.data[i]._id}` ?>"><span class="label label-orange">All</span></td>
-                                            <td class="webhook_self" data-self-id="<?= datas.webhooks.data[i]._id ?>">
-                                                <i class="fal fa-eye"></i>
-                                            </td>
-                                        </tr>
-                                        <? } ?>
-                                        <? } else { ?>
-                                        <tr>
-                                            <td colspan="4" class="text-center"><b>No Weebhooks defined.</b></td>
-                                        </tr>
-                                        <? } ?>
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="container text-center" style="padding: 25px 25px 0 25px;">
-                                        <a href="/dashboard/api/webhooks/<?= datas.applications.data._id ?>/new" class="butt main-button blue-button"><i class="fal fa-plus white-text"></i> New endpoint</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
-                        <div class="general-box-wrapper relative">
-                            <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">You can edit the name e the origin's requests that you want to authorize.</span>
+                                <span class="tooltiptext">You can edit your preferences.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 offset-md-2">
                                 <div class="row">
                                     <div class="container pad-20">
                                         <h6 class="text-center">
-                                            <i class="fal fa-info-circle"></i> Application details & settings
+                                            <i class="fal fa-user"></i> Profile & Settings
                                         </h6>
                                     </div>
                                 </div>
-                                <form action="/dashboard/api/update" method="POST" id="update-api">
+                                <form action="/dashboard/settings/update" method="POST" id="update-user">
                                     <div class="form-new-application">
                                         <div class="input field">
-                                            <label for="name">What's the name of your application?</label>
-                                            <input type="text" name="name" id="name" value="<?= datas.applications.data.name ?>" placeholder="Appliaction name..." required />
+                                            <label for="name">What's your first name?</label>
+                                            <input type="text" name="name" id="name" value="<?= user.name ?>" placeholder="First name..." required />
                                         </div>
                                         <div class="input field">
-                                            <?
-                                            let origins = '';
-                                            datas.applications.data.allowed_origins.forEach(element => {
-                                                origins += element+'; '
-                                            });
-                                            ?>
-                                            <div class="control-group">
-                                                <label for="allowed_origins">Which origin do you want to authorize?</label>
-                                                <?
-                                                let origins_allowed = [];
-                                                let origins_array = origins.split(';');
-                                                for(let i = 0; i < origins_array.length; i++) {
-                                                    if(origins_array[i] != '') origins_allowed.push(origins_array[i]);
-                                                }
-                                                let origins_string = origins_allowed.join(',').slice(0, -2);
-                                                ?>
-                                                <textarea type="text" id="allowed_origins" name="allowed_origins" class="input-tags" placeholder="https://www.example.com"><?= origins_string == 'false' ? '' : origins_string ?></textarea>
+                                            <label for="last_name">What's your last name?</label>
+                                            <input type="text" name="last_name" id="last_name" value="<?= user.last_name ?>" placeholder="Last name..." required />
+                                        </div>
+                                        <div class="input field">
+                                            <label for="email">What's your email?</label>
+                                            <input type="text" name="email" id="email" value="<?= user.email ?>" placeholder="Email..." required />
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
                                             </div>
-                                            <!-- <textarea class="textarea" name="allowed_origins" id="allowed_origins" placeholder="https://www.example.com; https://www.domain.com;" required><?= origins ?></textarea> -->
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">You can change your password.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 offset-md-2">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-lock"></i> Manage Password
+                                        </h6>
+                                    </div>
+                                </div>
+                                <form action="/dashboard/settings/update" method="POST" id="update-password">
+                                    <div class="form-new-application">
+                                        <div class="input field">
+                                            <label for="pass1">What's your new password?</label>
+                                            <input type="password" name="pass1" id="pass1" placeholder="Choise your new password..." required minlength="8" />
+                                        </div>
+                                        <div class="input field">
+                                            <label for="pass2">Repete your new password</label>
+                                            <input type="password" name="pass2" id="pass2" placeholder="Repete your new password..." required minlength="8" />
                                         </div>
                                         <div class="row">
                                             <div class="container text-center" style="padding: 25px 25px 0 25px;">
@@ -232,7 +116,7 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative" style="border: 1px solid red;">
                             <div class="info-box absolute tooltip">
-                                <span class="tooltiptext">Danger! Deleting your application you will lost all the API's funztionality and the registered events related to this app.</span>
+                                <span class="tooltiptext">Danger! Deleting your account you will lost all the urls, analytics, applications, events logs and API's funztionality related to your account.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
                             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center"></div>
@@ -247,7 +131,7 @@
                                 <div class="row">
                                     <div class="container text-center" style="padding: 25px 25px 25px 25px;">
                                         <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
-                                        <a href="#delete" class="url-actions application-main-delete-trigger butt main-button red-button max" data-id="<?= datas.applications.data._id ?>"><i class="fal fa-trash"></i> Delete This Application</a>
+                                        <a href="#delete" class="url-actions user-main-delete-trigger butt main-button red-button max" data-id="<?= user._id ?>"><i class="fal fa-trash"></i> Delete your account</a>
                                     </div>
                                 </div>
                             </div>
@@ -256,7 +140,6 @@
 
                 </div>
             </div>
-            <input type="hidden" id="application_id" value="<?= datas.applications.data._id ?>" />
 
         </div>
 
@@ -278,7 +161,7 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
-        <script type="text/javascript" src="/js/dashboard/api-details.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/user-details.js?v=1.0.0"></script>
 
         <script typt="text/javascript" src="/js/selectize.js"></script>
         <script>

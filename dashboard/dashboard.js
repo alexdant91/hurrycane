@@ -6,6 +6,7 @@ const isUrl = require('is-url');
 const router = express.Router();
 const PaymentSystem = require('../modules/payment-system/v1')(config.stripe.secretKey);
 const uuid = require('uuid/v4');
+const bcrypt = require('bcrypt-nodejs');
 
 // GET /dashboard/
 router.get('/', (req, res) => {
@@ -150,6 +151,232 @@ router.get('/subscription', (req, res) => {
             });
         });
     });
+});
+
+/*
+ * 
+ * SET THE SETTINGS FUNCTIONALITY
+ *  
+ * */
+
+// GET /dashboard/settings
+router.get('/settings', (req, res) => {
+    db.Url.countDocuments({
+        user_id: req.session.user._id
+    }, (err, count) => {
+        if (err) throw err;
+        db.Plan.find({
+            name: req.session.user.subscription
+        }, (err, docs) => {
+            if (err) throw err;
+            // If the avatar is an url (facebook, twitter) remove the directory from path
+            let user = req.session.user;
+            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            db.User.find({
+                _id: req.session.user._id
+            }, (err, user) => {
+                if (err) throw err;
+                res.render('./dashboard/settings', {
+                    session: req.isAuthenticated(),
+                    user: user[0],
+                    datas: {
+                        plan: {
+                            name: docs.name,
+                            url_limit: docs[0].url_limit
+                        },
+                        urls: {
+                            data: {},
+                            count: count
+                        }
+                    },
+                    page: 'settings',
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
+                    }
+                });
+            });
+        });
+    });
+});
+
+// POST /dashboard/settings/update
+router.post('/settings/update', (req, res) => {
+    const user_id = req.session.user._id;
+    const action = req.query.action != '' && req.query.action != null && req.query.action != undefined ? req.query.action : false;
+    if (action) {
+        switch (action) {
+            case 'UpdateUserInfo':
+                const name = req.body.name != '' && req.body.name != null && req.body.name != undefined ? req.body.name : false;
+                const last_name = req.body.last_name != '' && req.body.last_name != null && req.body.last_name != undefined ? req.body.last_name : false;
+                const email = req.body.email != '' && req.body.email != null && req.body.email != undefined ? req.body.email : false;
+                if (name && last_name && email) {
+                    db.User.find({
+                        email: email
+                    }, (err, user) => {
+                        if (err) {
+                            res.json({
+                                'Error': 'Internal server error.',
+                                'title': 'Oops!',
+                                'text': 'Internal server error.'
+                            });
+                        } else {
+                            if (user.length > 0 && user[0]._id != user_id) {
+                                res.json({
+                                    'Error': 'Email allready exist.',
+                                    'title': 'Oops!',
+                                    'text': 'Email allready exist.'
+                                });
+                            } else {
+                                db.User.updateOne({
+                                    _id: user_id
+                                }, {
+                                    name: name,
+                                    last_name: last_name,
+                                    email: email
+                                }, (err, confirm) => {
+                                    if (err) {
+                                        res.json({
+                                            'Error': 'Internal server error.',
+                                            'title': 'Oops!',
+                                            'text': 'Internal server error.'
+                                        });
+                                    } else {
+                                        if (confirm) {
+                                            res.json({
+                                                'Status': 'done',
+                                                'messages': {
+                                                    'title': 'Well!',
+                                                    'text': 'User information updated.'
+                                                }
+                                            });
+                                        } else {
+                                            res.json({
+                                                'Error': 'Internal server error.',
+                                                'title': 'Oops!',
+                                                'text': 'Internal server error.'
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    res.json({
+                        'Error': 'Bad request.',
+                        'title': 'Oops!',
+                        'text': 'Missing required data.'
+                    });
+                }
+                break;
+            case 'UpdateUserPassword':
+                const pass1 = req.body.pass1 != '' && req.body.pass1 != null && req.body.pass1 != undefined ? req.body.pass1 : false;
+                const pass2 = req.body.pass2 != '' && req.body.pass2 != null && req.body.pass2 != undefined ? req.body.pass2 : false;
+                if (pass1 && pass2) {
+                    const password = bcrypt.hashSync(pass2);
+                    if (pass1 === pass2) {
+                        db.User.updateOne({
+                            _id: user_id
+                        }, {
+                            password: password
+                        }, (err, confirm) => {
+                            if (err) {
+                                res.json({
+                                    'Error': 'Internal server error.',
+                                    'title': 'Oops!',
+                                    'text': 'Internal server error.'
+                                });
+                            } else {
+                                if (confirm) {
+                                    res.json({
+                                        'Status': 'done',
+                                        'messages': {
+                                            'title': 'Well!',
+                                            'text': 'Your password updated.'
+                                        }
+                                    });
+                                } else {
+                                    res.json({
+                                        'Error': 'Internal server error.',
+                                        'title': 'Oops!',
+                                        'text': 'Internal server error.'
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        res.json({
+                            'Error': 'Bad request.',
+                            'title': 'Oops!',
+                            'text': 'The two password doesn\'t match.'
+                        });
+                    }
+                } else {
+                    res.json({
+                        'Error': 'Bad request.',
+                        'title': 'Oops!',
+                        'text': 'Missing required data.'
+                    });
+                }
+                break;
+            default:
+                res.json({
+                    'Error': 'Bad request.',
+                    'title': 'Oops!',
+                    'text': 'Bad request.'
+                })
+                break;
+        }
+    } else {
+        res.json({
+            'Error': 'Bad request.',
+            'title': 'Oops!',
+            'text': 'Bad request.'
+        })
+    }
+});
+
+// POST /dashboard/settings/delete
+router.post('/settings/delete', (req, res) => {
+    const user_id = req.session.user._id != '' && req.session.user._id != null && req.session.user._id != undefined ? req.session.user._id : false;
+    if (user_id) {
+        db.User.deleteOne({
+            _id: user_id
+        }, (err, confirm) => {
+            console.log(err, confirm);
+            if (!err) {
+                if (confirm) {
+                    res.json({
+                        'Status': 'done',
+                        'messages': {
+                            'title': 'Well!',
+                            'text': 'User deleted.'
+                        }
+                    })
+                } else {
+                    res.json({
+                        'Error': 'Internal server error.',
+                        'title': 'Oops!',
+                        'text': 'Internal server error 1.'
+                    })
+                }
+            } else {
+                res.json({
+                    'Error': 'Internal server error.',
+                    'title': 'Oops!',
+                    'text': 'Internal server error 2.'
+                })
+            }
+        });
+    } else {
+        res.json({
+            'Error': 'Bad request.',
+            'title': 'Oops!',
+            'text': 'Bad request.'
+        })
+    }
 });
 
 /*

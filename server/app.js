@@ -92,16 +92,16 @@ module.exports.init = function init() {
     //     console.log(host, req.headers);
     //     next()
     // });
-    // const vhost = (hostname, app) => (req, res, next) => {
-    //     const host = req.headers.host.split('.')[0];
-    //     console.log('[DEBUG]: ' + host, hostname);
-    //     if (host === hostname) {
-    //         return app(req, res, next);
-    //     } else {
-    //         next();
-    //     }
-    // };
-    // app.use(vhost('api', api));
+    const vhost = (hostname, app) => (req, res, next) => {
+        const host = req.headers.host.split('.')[0];
+        // console.log('[DEBUG]: ' + host, hostname);
+        if (host === hostname) {
+            return app(req, res, next);
+        } else {
+            next();
+        }
+    };
+    app.use(vhost('api', api));
     // End api subdomain
 
     // Get device informations
@@ -190,7 +190,9 @@ module.exports.init = function init() {
     app.use(passport.session());
     app.use(compression());
     app.use(minify());
-    app.use(express.static(__dirname + '/../public'));
+    app.use(express.static(__dirname + '/../public', {
+        dotfiles: 'allow'
+    }));
     app.set('views', __dirname + '/../view');
     app.set('view engine', 'ejs');
 
@@ -202,12 +204,12 @@ module.exports.init = function init() {
     // Mailer configuration
     const Mailer = require('../models/mailer');
     const mailer = new Mailer({
-        host: "mail.eatita.it",
+        host: "authsmtp.securemail.pro",
         port: 465,
         secure: true,
         auth: {
-            user: "info@eatita.it",
-            pass: "D&dgroupsrls18"
+            user: "info@hurrycane.it",
+            pass: "18Gmgaa2'"
         }
     });
 
@@ -322,7 +324,7 @@ module.exports.init = function init() {
         const name = req.body.name != '' && req.body.name != undefined ? req.body.name : false;
         const last_name = req.body.last_name != '' && req.body.last_name != undefined ? req.body.last_name : null;
         const email = req.body.email != '' && req.body.email != undefined ? req.body.email : false;
-        const password = req.body.password != '' && req.body.password != undefined ? bcrypt.hashSync(req.body.password) : uuid().replace(/-/i, "").substring(0, 9);
+        const password = req.body.password != '' && req.body.password != undefined ? bcrypt.hashSync(req.body.password) : bcrypt.hashSync(uuid().replace(/-/i, "").substring(0, 9));
         const subscription = req.body.subscription != '' && req.body.subscription != null && req.body.subscription != undefined ? req.body.subscription : 'BASIC';
         const avatar = req.body.avatar != '' && req.body.avatar != null && req.body.avatar != undefined ? req.body.avatar : null;
         const ref = req.body.ref != '' && req.body.ref != null && req.body.ref != undefined ? req.body.ref : undefined;
@@ -396,11 +398,11 @@ module.exports.init = function init() {
                                     } else {
                                         // Async Send confirmation email
                                         mailer.set({
-                                            from: 'info@eatita.it',
+                                            from: 'info@hurrycane.it',
                                             to: email,
                                             subject: 'Welcome Alessandro!',
-                                            text: 'Hi Alessandro, welcome to hurrycane.io',
-                                            html: `<p>Hi ${name}, welcome to hurrycane.io</p>`,
+                                            text: 'Hi Alessandro, welcome to hurrycane.it',
+                                            html: `<p>Hi ${name}, welcome to hurrycane.it</p>`,
                                         }).send((err, info) => {
                                             console.log(err);
                                         });
@@ -486,11 +488,11 @@ module.exports.init = function init() {
                                         } else {
                                             // Async Send confirmation email
                                             mailer.set({
-                                                from: 'info@eatita.it',
+                                                from: 'info@hurrycane.it',
                                                 to: email,
                                                 subject: 'Welcome Alessandro!',
-                                                text: 'Hi Alessandro, welcome to hurrycane.io',
-                                                html: `<p>Hi ${name}, welcome to hurrycane.io</p>`,
+                                                text: 'Hi Alessandro, welcome to hurrycane.it',
+                                                html: `<p>Hi ${name}, welcome to hurrycane.it</p>`,
                                             }).send((err, info) => {
                                                 console.log(err);
                                             });
@@ -1130,14 +1132,18 @@ module.exports.init = function init() {
     // });
 
     // Get the https required modules
-    // const sslOptions = {
-    //     cert: fs.readFileSync('./ssl/cert.pem'),
-    //     key: fs.readFileSync('./ssl/key.pem')
-    // };
+    if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
+        console.log(process.env.SSL_ENV);
+        const sslOptions = {
+            cert: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/fullchain.pem', 'utf8'),
+            key: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/privkey.pem', 'utf8'),
+            ca: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/chain.pem', 'utf8')
+        };
 
-    // const servers = https.createServer(sslOptions, app).listen(443, () => {
-    //     console.log('Server https is listening on port 443...');
-    // });
+        const servers = https.createServer(sslOptions, app).listen(443, () => {
+            console.log(colors.bold.green(`[SERVER] Started server on => http://localhost:${servers.address().port} for Process Id ${process.pid}`));
+        });
+    }
     // End get the https required modules
 
     const server = app.listen(process.env.PORT || config.port, () => {
