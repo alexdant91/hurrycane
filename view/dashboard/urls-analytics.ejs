@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.io -
+            <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/layout.css" />
+        <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+        <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
+        <script>
+            String.prototype.toCapitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
+            Date.prototype.toDateInputValue = (function() {
+                var local = new Date(this);
+                local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+                return local.toJSON().slice(0,10);
+            });
+            Date.prototype.toDateInputValueYesterday = (function() {
+                var local = new Date(this.getTime() - 24 * 60 * 60 * 1000);
+                local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+                return local.toJSON().slice(0,10);
+            });
+        </script>
+        <style>
+            h6 {
+                font-weight: 400;
+            }
+            canvas {
+                max-height: 386px;
+                width: 100%;
+            }
+            sub.cut-text {
+                float: left;
+                width: 100%;
+                margin-top: 5px; 
+            }
+            .cut-text {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                width: 160px;
+                height: 1.2em;
+                white-space: nowrap;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="left-side-menu">
+            <?- include('./blocks/side_menu.ejs') -?>
+        </div>
+
+        <div class="right-side-wrapper">
+            <div class="flex-row">
+                <div class="flex-container">
+
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                        <div class="row">
+                            <div class="container">
+                                <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="general-box-wrapper" style="min-height: 130px;">
+                                        <h5 style="margin-bottom: 5px;">
+                                            Analytics
+                                        </h5>
+                                        <sub class="cut-text">
+                                            Long URL -> <a target="_blank" href="<?= `${datas.urls.data.long_url}` ?>" alt="<?= `${datas.urls.data.long_url}` ?>" title="<?= `${datas.urls.data.long_url}` ?>">
+                                                <?= `${datas.urls.data.long_url}` ?>
+                                            </a>
+                                        </sub>
+                                        <br>
+                                        <sub class="cut-text">
+                                            Short URL -> <a target="_blank" href="<?= `${localhost}/s/${datas.urls.data.alias}` ?>" alt="<?= `${localhost}/s/${datas.urls.data.alias}` ?>" title="<?= `${localhost}/s/${datas.urls.data.alias}` ?>">
+                                                <?= `${localhost}/s/${datas.urls.data.alias}` ?>
+                                            </a>
+                                        </sub>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="general-box-wrapper" style="min-height: 130px;">
+                                        <div class="row">
+                                            <div class="container">
+                                                <h6>Total clicks</h6>
+                                                <sub>Total clicks from the beginning.</sub>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center">
+                                                <h6 style="margin-top: 10px;">
+                                                    <?= datas.totalClicks ?>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="general-box-wrapper">
+                                        <div class="col-xl-5 col-lg-5 col-md-4 col-sm-12 col-xs-12">
+                                            <div class="input field">
+                                                <label for="start-date">From?</label>
+                                                <input type="date" name="start-date" id="start-date" value="<?=  ?>" />
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-5 col-lg-5 col-md-4 col-sm-12 col-xs-12">
+                                            <div class="input field">
+                                                <label for="end-date">To?</label>
+                                                <input type="date" name="end-date" id="end-date" value="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                            <div class="input field text-center">
+                                                <button class="butt main-button blue-button update-date" style="margin-top: 50%;transform: translateY(-50%);">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="general-box-wrapper">
+                                <div class="row">
+                                    <div class="container">
+                                        <h6>Clicks by devices</h6>
+                                        <sub>Total clicks collected by device type.</sub>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <canvas id="device" width="400" height="400"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                            <div class="general-box-wrapper">
+                                <div class="row">
+                                    <div class="container">
+                                        <h6>Clicks by location</h6>
+                                        <sub>Total clicks collected by location.</sub>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <canvas id="location" width="auto" height="386" style="height: 386px;;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="general-box-wrapper">
+                                <div class="row">
+                                    <div class="container">
+                                        <h6>Clicks by referer</h6>
+                                        <sub>Total clicks collected by referer.</sub>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <div class="divider"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container">
+                                        <canvas id="referer" width="auto" height="386" style="height: 386px;;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <input type="hidden" id="url_id" value="<?= datas.urls.data._id ?>" />
+
+        <div class="row menu-side-wrapper-bottom">
+            <?- include('./blocks/side_menu_bottom.ejs') -?>
+        </div>
+
+        <select id="width_tmp_select">
+            <option id="width_tmp_option"></option>
+        </select>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/urls-analytics.js?v=1.0.0"></script>
+        <script>
+            document.getElementById('start-date').value = new Date().toDateInputValueYesterday();
+            document.getElementById('end-date').value = new Date().toDateInputValue();
+        </script>
+        <!-- <script>
+            google.charts.load('current', {
+                'packages': ['geochart'],
+                // Note: you will need to get a mapsApiKey for your project.
+                // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+                'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+            });
+            google.charts.setOnLoadCallback(drawRegionsMap);
+
+            function drawRegionsMap() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Country', 'Popularity'],
+                    ['Germany', 200],
+                    ['United States', 300],
+                    ['Brazil', 400],
+                    ['Canada', 500],
+                    ['France', 600],
+                    ['RU', 700]
+                ]);
+
+                var options = {};
+
+                var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+                chart.draw(data, options);
+            }
+        </script> -->
+    </body>
+
+</html>

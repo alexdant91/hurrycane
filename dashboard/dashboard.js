@@ -381,6 +381,197 @@ router.post('/settings/delete', (req, res) => {
 
 /*
  * 
+ * SET THE URLS ANALYTICS FUNCTIONALITY
+ *  
+ * */
+
+// GET /dashboard/urls/analytics/:id
+router.get('/urls/analytics/:id', (req, res) => {
+    const url_id = req.params.id != '' && req.params.id != null && req.params.id != undefined ? req.params.id : false;
+    const StartTime = req.query._s != '' && req.query._s != undefined && req.query._s != null && req.query._s > 0 ? req.query._s : Math.round(new Date().setHours(23, 59, 59, 999) / 1000);
+    const EndTime = req.query._e != '' && req.query._e != undefined && req.query._e != null && req.query._e > 0 ? req.query._e : Math.round(new Date().setHours(23, 59, 59, 999) / 1000);
+
+    if (url_id) {
+        db.Plan.find({
+            name: req.session.user.subscription
+        }, (err, docs) => {
+            if (err) throw err;
+            // If the avatar is an url (facebook, twitter) remove the directory from path
+            let user = req.session.user;
+            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            db.Url.find({
+                _id: url_id,
+                user_id: req.session.user._id
+            }, (err, urls) => {
+                if (err) throw err;
+                db.Analytic.find({
+                    url_id: url_id
+                }, (err, analytics) => {
+                    if (err) throw err;
+                    let totalClicks = 0;
+                    analytics.forEach(e => {
+                        totalClicks += e.clicks;
+                    });
+                    res.render('./dashboard/urls-analytics', {
+                        session: req.isAuthenticated(),
+                        user: user,
+                        localhost: config.host,
+                        datas: {
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            },
+                            analytics: analytics,
+                            totalClicks: totalClicks,
+                            urls: {
+                                data: urls[0],
+                                count: urls.length
+                            }
+                        },
+                        page: 'urls',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
+                        }
+                    });
+                });
+            });
+        });
+    } else {
+        res.status(403).json({
+            'Error': 'Bad request.'
+        })
+    }
+
+});
+
+// POST /dashboard/urls/analytics
+router.post('/urls/analytics', (req, res) => {
+    const url_id = req.body.url_id != '' && req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false;
+    const StartTime = req.body.startDate != '' && req.body.startDate != undefined && req.body.startDate != null && req.body.startDate > 0 ? req.body.startDate : Math.round(new Date().setHours(0, 0, 0, 0) / 1000);
+    const EndTime = req.body.endDate != '' && req.body.endDate != undefined && req.body.endDate != null && req.body.endDate > 0 ? req.body.endDate : Math.round(new Date().setHours(23, 59, 59, 999) / 1000);
+    if (url_id) {
+        db.Analytic.find({
+            user_id: req.session.user._id,
+            url_id: url_id,
+            timestamp: {
+                $gte: StartTime,
+                $lte: EndTime
+            }
+        }, (err, analytics) => {
+            let devices = {
+                labels: ['Tablet', 'Mobile', 'Desktop', 'Unknown'],
+                data: []
+            }
+            let location = {
+                labels: [],
+                data: []
+            }
+            let referer = {
+                labels: [],
+                data: []
+            }
+
+            let tabletData = 0;
+            let phoneData = 0;
+            let desktopData = 0;
+            let unknownData = 0;
+
+            analytics.forEach(array => {
+                // Devices
+                if (array.device == 'tablet') {
+                    tabletData += array.clicks;
+                } else if (array.device == 'phone') {
+                    phoneData += array.clicks;
+                } else if (array.device == 'desktop') {
+                    desktopData += array.clicks;
+                } else {
+                    unknownData += array.clicks;
+                }
+
+                // Locations
+                if (location.labels.indexOf(array.language) !== -1) {
+                    let index = location.labels.indexOf(array.language);
+                    location.data[index] = location.data[index] + array.clicks;
+                } else {
+                    location.labels.push(array.language);
+                    let index = location.labels.indexOf(array.language);
+                    location.data[index] = array.clicks;
+                }
+
+                // Referer
+                if (referer.labels.indexOf(array.referer) !== -1) {
+                    let index = referer.labels.indexOf(array.referer);
+                    referer.data[index] = referer.data[index] + array.clicks;
+                } else {
+                    referer.labels.push(array.referer);
+                    let index = referer.labels.indexOf(array.referer);
+                    referer.data[index] = array.clicks;
+                }
+            });
+
+            // Push data
+            devices.data = [tabletData, phoneData, desktopData, unknownData];
+
+            if (err) {
+                res.json({
+                    'Error': 'Internal server error.',
+                    'title': 'Oops!',
+                    'text': 'Internal server error.'
+                });
+            } else {
+                res.json({
+                    'Status': 'done',
+                    'devices': {
+                        'labels': devices.labels,
+                        'data': devices.data
+                    },
+                    'locations': {
+                        'labels': location.labels,
+                        'data': location.data
+                    },
+                    'referer': {
+                        'labels': referer.labels,
+                        'data': referer.data
+                    }
+                });
+            }
+
+        });
+    } else {
+        res.json({
+            'Error': 'Missing required datas.',
+            'title': 'Oops!',
+            'text': 'Missing required datas.'
+        });
+    }
+});
+
+function ArraySameValues(array) {
+    array.sort();
+    var results = [];
+    var current = null;
+    var cnt = 0;
+    array.forEach(array => {
+        if (array != current) {
+            if (cnt > 0) {
+                results[current] = cnt;
+            }
+            current = array;
+            cnt = 1;
+        } else {
+            cnt++;
+        }
+    });
+    if (cnt > 0) {
+        results[current] = cnt;
+    }
+    return results;
+}
+
+/*
+ * 
  * SET THE APPLICATION FUNCTIONALITY
  *  
  * */

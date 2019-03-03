@@ -24,6 +24,11 @@ class Config {
         }
     }
 
+    // Utils
+    time() {
+        return Math.round(Date.now() / 1000);
+    }
+
 }
 
 const adsense_api_config = {

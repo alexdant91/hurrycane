@@ -59,7 +59,7 @@
                                     </a>
                                     <br>
                                     <? if(user.subscription == 'PREMIUM') { ?>
-                                    <a href="#details" class="url-actions"><i class="fal fa-chart-bar"></i> Analytics</a> -
+                                    <a href="/dashboard/urls/analytics/<?= datas.urls.data.docs[i]._id ?>" class="url-actions"><i class="fal fa-chart-bar"></i> Analytics</a> -
                                     <? } ?>
                                     <a href="#edit" class="url-actions"><i class="fal fa-pencil"></i> Edit</a> - <a href="#delete" class="url-actions url-delete-trigger" data-id="<?= datas.urls.data.docs[i]['_id'] ?>"><i class="fal fa-trash"></i> Delete</a>
                                 </div>

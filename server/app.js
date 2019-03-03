@@ -789,14 +789,21 @@ module.exports.init = function init() {
                     if (confirm) {
                         db.Analytic.find({
                             url_id: docs[0]._id,
+                            user_id: docs[0].user_id,
+                            device: req.device.type,
                             referer: referer,
-                            language: language
+                            language: language,
+                            timestamp: {
+                                $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
+                            }
                         }, (err, items) => {
                             if (items.length > 0) {
                                 // The row exist so update the clicks value from the same referer
                                 const click = items[0].clicks + 1;
                                 db.Analytic.updateOne({
                                     url_id: docs[0]._id,
+                                    user_id: docs[0].user_id,
+                                    device: req.device.type,
                                     referer: referer,
                                     language: language
                                 }, {
@@ -805,7 +812,9 @@ module.exports.init = function init() {
                             } else {
                                 db.Analytic({
                                     url_id: docs[0]._id,
+                                    user_id: docs[0].user_id,
                                     clicks: 1,
+                                    device: req.device.type,
                                     referer: referer,
                                     language: language
                                 }).save(err => {});
