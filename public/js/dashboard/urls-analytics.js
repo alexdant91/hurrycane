@@ -1,7 +1,7 @@
 const url_id = $('#url_id').val();
 const $startDate = $('#start-date');
 const $endDate = $('#end-date');
-let myChartDevice, myChartLocation, myChartReferer;
+let myChartViews, myChartDevice, myChartLocation, myChartReferer;
 $.ajax({
     url: '/dashboard/urls/analytics',
     method: 'POST',
@@ -15,6 +15,7 @@ $.ajax({
         endDate: Math.round(new Date(new Date().toDateInputValue()).getTime() / 1000)
     }),
     success: function (data) {
+        console.log(data);
         if (data.Error) {
             iziToast.error({
                 position: 'topRight',
@@ -22,6 +23,32 @@ $.ajax({
                 message: data.text
             });
         } else if (data.Status == 'done') {
+
+            let ctxViews = document.getElementById("view").getContext('2d');
+            myChartViews = new Chart(ctxViews, {
+                type: 'line',
+                data: {
+                    labels: data.views.labels,
+                    datasets: [{
+                        label: '# Views',
+                        data: data.views.data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.35)',
+                        // borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
 
             let ctxDevice = document.getElementById("device").getContext('2d');
             myChartDevice = new Chart(ctxDevice, {
@@ -136,6 +163,7 @@ $(document).on('click', '.update-date', function () {
             endDate
         }),
         success: function (data) {
+
             if (data.Error) {
                 iziToast.error({
                     position: 'topRight',
@@ -144,7 +172,37 @@ $(document).on('click', '.update-date', function () {
                 });
             } else if (data.Status == 'done') {
 
+                // Views
+                let ctxViews = document.getElementById("view").getContext('2d');
+                myChartViews.destroy();
+                myChartViews = new Chart(ctxViews, {
+                    type: 'line',
+                    data: {
+                        labels: data.views.labels,
+                        datasets: [{
+                            label: '# Clicks',
+                            data: data.views.data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.35)',
+                            // borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                // Devices
                 let ctxDevice = document.getElementById("device").getContext('2d');
+                myChartDevice.destroy();
                 myChartDevice = new Chart(ctxDevice, {
                     type: 'doughnut',
                     data: {
@@ -173,11 +231,13 @@ $(document).on('click', '.update-date', function () {
                     }
                 });
 
+                // Locations
                 let locationLabelsFormatted = [];
                 data.locations.labels.forEach(item => {
                     locationLabelsFormatted.push(item.split('_')[0].toUpperCase());
                 });
                 let ctxLocation = document.getElementById("location").getContext('2d');
+                myChartLocation.destroy();
                 myChartLocation = new Chart(ctxLocation, {
                     type: 'bar',
                     data: {
@@ -203,11 +263,13 @@ $(document).on('click', '.update-date', function () {
                     }
                 });
 
+                // Referers
                 let refererLabelsFormatted = [];
                 data.referer.labels.forEach(item => {
-                    refererLabelsFormatted.push(extractHostname(item));
+                    refererLabelsFormatted.push(extractHostname(item).hostname);
                 });
                 let ctxReferer = document.getElementById("referer").getContext('2d');
+                myChartReferer.destroy();
                 myChartReferer = new Chart(ctxReferer, {
                     type: 'line',
                     data: {
@@ -240,9 +302,6 @@ $(document).on('click', '.update-date', function () {
         }
     });
 
-    myChartReferer.data.labels = ['Tablet', 'Desktop', 'Phone', 'Unknown'];
-    myChartReferer.data.datasets[0].data = [23, 32, 64, 29];
-    myChartReferer.update();
 });
 
 function extractHostname(url) {

@@ -460,6 +460,10 @@ router.post('/urls/analytics', (req, res) => {
                 $lte: EndTime
             }
         }, (err, analytics) => {
+            let views = {
+                labels: [],
+                data: []
+            }
             let devices = {
                 labels: ['Tablet', 'Mobile', 'Desktop', 'Unknown'],
                 data: []
@@ -477,8 +481,22 @@ router.post('/urls/analytics', (req, res) => {
             let phoneData = 0;
             let desktopData = 0;
             let unknownData = 0;
+            let tempViews = [];
 
             analytics.forEach(array => {
+                // Views
+                let uniq_view = array.uniq_views != null && array.uniq_views != undefined ? array.uniq_views.length : 0;
+                let time = new Date(array.timestamp * 1000);
+                let timedate = `${time.getFullYear()}-${(parseInt(time.getMonth()) + 1) > 9 ? parseInt(time.getMonth()) + 1 : 0+''+(parseInt(time.getMonth()) + 1)}-${time.getDate() > 9 ? time.getDate() : 0+''+time.getDate()}`;
+
+                if (views.labels.indexOf(timedate) !== -1) {
+                    let index = views.labels.indexOf(timedate);
+                    views.data[index] = parseInt(views.data[index]) + parseInt(uniq_view);
+                } else {
+                    views.labels.push(timedate);
+                    views.data.push(parseInt(uniq_view));
+                }
+
                 // Devices
                 if (array.device == 'tablet') {
                     tabletData += array.clicks;
@@ -523,6 +541,10 @@ router.post('/urls/analytics', (req, res) => {
             } else {
                 res.json({
                     'Status': 'done',
+                    'views': {
+                        'labels': views.labels,
+                        'data': views.data
+                    },
                     'devices': {
                         'labels': devices.labels,
                         'data': devices.data
@@ -569,6 +591,44 @@ function ArraySameValues(array) {
     }
     return results;
 }
+
+/*
+ * 
+ * SET THE SEARCH FUNCTIONALITY
+ *  
+ * */
+
+router.post('/search', (req, res) => {
+    const user_id = req.session.user._id;
+    const value = req.body.value != '' && req.body.value != null && req.body.value != undefined ? req.body.value : false;
+    if (value) {
+        db.Application.find({
+            user_id: user_id,
+            name: {
+                $regex: value,
+                $options: "i"
+            }
+        }, (err, docs) => {
+            if (err) {
+                res.json({
+                    'Error': 'Internal server error'
+                });
+            } else {
+                if (docs.length > 0) {
+                    res.json({
+                        data: docs,
+                        count: docs.length
+                    });
+                } else {
+                    res.json({
+                        count: 0
+                    })
+                }
+            }
+        });
+    }
+
+});
 
 /*
  * 

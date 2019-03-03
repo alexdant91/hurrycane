@@ -654,6 +654,73 @@ span.relative .verbal-select {
     color: #767676 !important;
 }
 
+.from-to-arrow {
+    position: absolute;
+    left: 41.5%;
+    top: 63px;
+}
+
+.overlay-background {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    display: none;
+}
+
+.input-search-results {
+    position: fixed;
+    height: auto;
+    padding: 0 !important;
+    margin: 0 0 0 15px;
+    border: 1px solid white;
+    background: white;
+    max-height: 300px;
+    z-index: 11;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: none;
+}
+
+.input-search-results .search-field-wrapper {
+    border: 1px solid #fefefe;
+}
+
+.input-search-results .search-field-wrapper:hover {
+    background: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.input-search-results .logo-search-field {
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+    min-width: 40px;
+}
+
+.input-search-results .name-search-field {
+    font-size: 15px;
+    line-height: 40px;
+}
+
+.input-search-results .application-active {
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    border-radius: 50%;
+}
+
+.input-search-results .application-active.active {
+    background: #4CAF50;
+}
+
+.input-search-results .application-active.disabled {
+    background: #ff5722;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;

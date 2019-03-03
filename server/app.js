@@ -800,6 +800,8 @@ module.exports.init = function init() {
                             if (items.length > 0) {
                                 // The row exist so update the clicks value from the same referer
                                 const click = items[0].clicks + 1;
+                                const uniq_key = req.cookies.uniqueVisitor;
+                                const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
                                 db.Analytic.updateOne({
                                     url_id: docs[0]._id,
                                     user_id: docs[0].user_id,
@@ -807,12 +809,14 @@ module.exports.init = function init() {
                                     referer: referer,
                                     language: language
                                 }, {
-                                    clicks: click
+                                    clicks: click,
+                                    uniq_views: uniq_views
                                 }, (err, confirm) => {});
                             } else {
                                 db.Analytic({
                                     url_id: docs[0]._id,
                                     user_id: docs[0].user_id,
+                                    uniq_views: [req.cookies.uniqueVisitor],
                                     clicks: 1,
                                     device: req.device.type,
                                     referer: referer,

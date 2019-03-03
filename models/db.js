@@ -249,6 +249,10 @@ const applicationWebhooksEndpointsEvents = Schema({
 const analyticsSchema = Schema({
     url_id: String,
     user_id: String,
+    uniq_views: {
+        type: Array,
+        default: []
+    },
     device: String,
     clicks: Number,
     referer: String,

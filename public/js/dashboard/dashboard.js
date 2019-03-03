@@ -204,6 +204,79 @@ $(document).on('click', '.share-button', function () {
     sharePopup($(this).attr('href'));
 });
 
+$(document).on('focusin', 'input.header-search', function () {
+    $('body').find('.overlay-background').fadeIn(350);
+    if ($(this).val() != '') {
+        $('body').find('.input-search-results').fadeIn(0);
+    } else {
+        $('body').find('.input-search-results').fadeOut(0);
+    }
+});
+
+$(document).on('focusout', 'input.header-search', function () {
+    if ($(this).val() == '') {
+        $('body').find('.overlay-background').fadeOut(350);
+        $('body').find('.input-search-results').fadeOut(0);
+    }
+});
+
+$(document).on('keyup', 'input.header-search', function () {
+    if ($(this).val() != '') {
+        $('body').find('.input-search-results').fadeIn(0);
+    } else {
+        $('body').find('.input-search-results').fadeOut(0);
+    }
+
+    $.ajax({
+        url: '/dashboard/search',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
+        data: JSON.stringify({
+            value: $('input.header-search').val()
+        }),
+        success: function (data) {
+            if (data.count == 0) {
+                $('.input-search-results').html('');
+                $('.input-search-results').html(`
+                    <div class="row search-field-wrapper">
+                        <div class="container">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center name-search-field">
+                                No data founded.
+                            </div>
+                        </div>
+                    </div>
+                `);
+            } else if (data.count > 0) {
+                $('.input-search-results').html('');
+                $.each(data.data, (i, value) => {
+                    console.log(value);
+                    let active = value.active ? '<div class="application-active right active"></div>' : '<div class="application-active right disabled"></div>';
+                    $('.input-search-results').append(`
+                        <div class="row search-field-wrapper a-link" data-href="/dashboard/api/details/${value._id}">
+                            <div class="container">
+                                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-3 col-xs-3">
+                                    <img class="logo-search-field" src="/img/api-logo.png" alt="App api logo" />
+                                </div>
+                                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-9 col-xs-3 name-search-field">
+                                    ${value.name} - ${value._id} ${active}
+                                </div>
+                            </div>
+                        </div>
+                    `)
+                });
+            }
+
+        },
+        error: function (a, b, c) {
+            console.log(a, b, c);
+            $this.html('<i class="fal fa-eye"></i> Show');
+        }
+    });
+});
+
 function sharePopup(url) {
     const left = (document.body.clientWidth / 2) - 250;
     const top = (document.body.clientHeight / 2) - 250;
