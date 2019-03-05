@@ -21,7 +21,10 @@ class Config {
         };
         this.api = {
             version: 'v1'
-        }
+        };
+        this.wallet = {
+            single_transaction: 0.00025
+        };
     }
 
     // Utils

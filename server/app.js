@@ -797,81 +797,111 @@ module.exports.init = function init() {
                 }, (err, confirm) => {
                     if (err) console.log(err);
                     if (confirm) {
-                        db.Analytic.find({
-                            url_id: docs[0]._id,
-                            user_id: docs[0].user_id,
-                            device: req.device.type,
-                            referer: referer,
-                            language: language,
-                            timestamp: {
-                                $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
-                            }
-                        }, (err, items) => {
-                            if (items.length > 0) {
-                                // The row exist so update the clicks value from the same referer
-                                const click = items[0].clicks + 1;
-                                const uniq_key = req.cookies.uniqueVisitor;
-                                const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
-                                db.Analytic.updateOne({
-                                    url_id: docs[0]._id,
-                                    user_id: docs[0].user_id,
-                                    device: req.device.type,
-                                    referer: referer,
-                                    language: language
-                                }, {
-                                    clicks: click,
-                                    uniq_views: uniq_views
-                                }, (err, confirm) => {});
-                            } else {
-                                db.Analytic({
-                                    url_id: docs[0]._id,
-                                    user_id: docs[0].user_id,
-                                    uniq_views: [req.cookies.uniqueVisitor],
-                                    clicks: 1,
-                                    device: req.device.type,
-                                    referer: referer,
-                                    language: language
-                                }).save(err => {});
-                            }
-                        });
+
+                        const password = docs[0].password;
+                        if (password != null) {
+                            res.render('alias', {
+                                session: req.isAuthenticated(),
+                                user: req.session.user,
+                                page: 'alias',
+                                alias: alias,
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                        } else {
+
+                            // First location 
+                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                            // Then device
+                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+
+                            // Async analytics and wallet
+                            db.Analytic.find({
+                                url_id: docs[0]._id,
+                                user_id: docs[0].user_id,
+                                device: req.device.type,
+                                referer: referer,
+                                language: language,
+                                timestamp: {
+                                    $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
+                                }
+                            }, (err, items) => {
+                                if (items.length > 0) {
+                                    // The row exist so update the clicks value from the same referer
+                                    const click = items[0].clicks + 1;
+                                    const uniq_key = req.cookies.uniqueVisitor;
+                                    const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
+                                    db.Analytic.updateOne({
+                                        url_id: docs[0]._id,
+                                        user_id: docs[0].user_id,
+                                        device: req.device.type,
+                                        referer: referer,
+                                        language: language
+                                    }, {
+                                        clicks: click,
+                                        uniq_views: uniq_views
+                                    }, (err, confirm) => {});
+
+
+                                    if (items[0].uniq_views != undefined && items[0].uniq_views != null) {
+                                        // Uniq key retrieved
+                                        if (items[0].uniq_views.indexOf(uniq_key) === -1) {
+                                            // It's a new uniq view for the current day
+                                            if (docs[0].landing_page == 'standard') {
+                                                db.Wallet({
+                                                    user_id: docs[0].user_id,
+                                                    application_id: docs[0].application_id,
+                                                    url_id: docs[0]._id,
+                                                    amount: config.wallet.single_transaction
+                                                }).save(err => {});
+                                            }
+                                        }
+                                    }
+
+                                } else {
+
+                                    db.Analytic({
+                                        url_id: docs[0]._id,
+                                        user_id: docs[0].user_id,
+                                        uniq_views: [req.cookies.uniqueVisitor],
+                                        clicks: 1,
+                                        device: req.device.type,
+                                        referer: referer,
+                                        language: language
+                                    }).save(err => {});
+
+                                    if (docs[0].landing_page == 'standard') {
+                                        db.Wallet({
+                                            user_id: docs[0].user_id,
+                                            application_id: docs[0].application_id,
+                                            url_id: docs[0]._id,
+                                            amount: config.wallet.single_transaction
+                                        }).save(err => {});
+                                    }
+                                }
+                            });
+
+                            res.render('s', {
+                                session: req.isAuthenticated(),
+                                user: req.session.user,
+                                page: 's',
+                                alias: alias,
+                                long_url: long_url,
+                                url: docs[0],
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                            // res.redirect(docs[0].long_url);
+                        }
                     }
                 });
 
-                const password = docs[0].password;
-                if (password != null) {
-                    res.render('alias', {
-                        session: req.isAuthenticated(),
-                        user: req.session.user,
-                        page: 'alias',
-                        alias: alias,
-                        messages: {
-                            type: null,
-                            title: null,
-                            text: null
-                        }
-                    });
-                } else {
-
-                    // First location 
-                    const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
-                    // Then device
-                    const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
-
-                    res.render('s', {
-                        session: req.isAuthenticated(),
-                        user: req.session.user,
-                        page: 's',
-                        alias: alias,
-                        long_url: long_url,
-                        url: docs[0],
-                        messages: {
-                            type: null,
-                            title: null,
-                            text: null
-                        }
-                    });
-                    // res.redirect(docs[0].long_url);
-                }
             });
         } else {
             res.redirect('/?error=empty_alias');

@@ -90,7 +90,17 @@ const planSchema = Schema({
 });
 
 const walletSchema = Schema({
-
+    user_id: {
+        type: String,
+        required: true
+    },
+    application_id: String,
+    url_id: String,
+    amount: Number,
+    timestamp: {
+        type: Number,
+        default: config.time()
+    }
 });
 
 const licenseSchema = Schema({
