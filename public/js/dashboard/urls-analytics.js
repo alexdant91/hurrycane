@@ -2,6 +2,7 @@ const url_id = $('#url_id').val();
 const $startDate = $('#start-date');
 const $endDate = $('#end-date');
 let myChartViews, myChartDevice, myChartLocation, myChartReferer;
+const timestamps = new Date().toDateInputValueRange(-2, 4);
 $.ajax({
     url: '/dashboard/urls/analytics',
     method: 'POST',
@@ -11,8 +12,8 @@ $.ajax({
     dataType: 'json',
     data: JSON.stringify({
         url_id,
-        startDate: Math.round(new Date(new Date().toDateInputValueYesterday()).getTime() / 1000),
-        endDate: Math.round(new Date(new Date().toDateInputValue()).getTime() / 1000)
+        startDate: timestamps.start.timestamp,
+        endDate: timestamps.end.timestamp
     }),
     success: function (data) {
         console.log(data);
@@ -180,7 +181,7 @@ $(document).on('click', '.update-date', function () {
                     data: {
                         labels: data.views.labels,
                         datasets: [{
-                            label: '# Clicks',
+                            label: '# Views',
                             data: data.views.data,
                             backgroundColor: 'rgba(54, 162, 235, 0.35)',
                             // borderColor: 'rgba(54, 162, 235, 1)',

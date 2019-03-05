@@ -35,6 +35,8 @@ $(document).on('click', '#shortenUrl', function (e) {
     const description = $('#description').val();
     const password = $('#password').val();
     const expiration_time = $('#expire').val();
+    const page_screenshot = $('#page_screenshot').is(':checked');
+    const page_seotags = $('#page_seotags').is(':checked');
 
     // const device_select = $('[name="device_select[]"]').val();
     let device_select = [];
@@ -51,22 +53,30 @@ $(document).on('click', '#shortenUrl', function (e) {
     const seo_title = $('[name="seo_title"]').val();
     const seo_description = $('[name="seo_description"]').val();
 
+    console.log(device_select, geo_select);
+
     $.ajax({
         url: '/shorten',
         method: 'POST',
-        data: {
-            long_url,
-            alias,
-            description,
-            password,
-            expiration_time,
-            device_select,
-            devicetag_url,
-            geo_select,
-            geotag_url,
-            seo_title,
-            seo_description
+        headers: {
+            'Content-Type': 'application/json'
         },
+        dataType: 'json',
+        data: JSON.stringify({
+            long_url: long_url,
+            alias: alias,
+            description: description,
+            password: password,
+            expiration_time: expiration_time,
+            device_select: device_select,
+            devicetag_url: devicetag_url,
+            geo_select: geo_select,
+            geotag_url: geotag_url,
+            seo_title: seo_title,
+            seo_description: seo_description,
+            page_screenshot: page_screenshot,
+            page_seotags: page_seotags
+        }),
         success: function (data) {
             if (data.Error) {
                 iziToast.error({

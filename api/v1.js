@@ -195,6 +195,8 @@ router.post('/shorten', (req, res) => {
             const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
             const domain_name = long_url != false ? extractHostname(long_url).hostname : null;
             const domain_protocol = long_url != false ? extractHostname(long_url).protocol : null;
+            const page_screenshot = req.body.page_screenshot != '' && req.body.page_screenshot != null && req.body.page_screenshot != undefined && typeof req.body.page_screenshot === "boolean" ? req.body.page_screenshot : false;
+            const page_seotags = req.body.page_seotags != '' && req.body.page_seotags != null && req.body.page_seotags != undefined && typeof req.body.page_seotags === "boolean" ? req.body.page_seotags : false;
 
             // Here the user logged in features
             const user_permissions = authData.user.plan;
@@ -270,6 +272,8 @@ router.post('/shorten', (req, res) => {
                                                                                 favicon,
                                                                                 device_select,
                                                                                 devicetag_url,
+                                                                                page_screenshot,
+                                                                                page_seotags,
                                                                                 geo_select,
                                                                                 geotag_url,
                                                                                 seo_title,
@@ -281,11 +285,13 @@ router.post('/shorten', (req, res) => {
                                                                                     });
                                                                                 } else {
                                                                                     // Get async pic of the page
-                                                                                    getPagePic({
-                                                                                        url: long_url,
-                                                                                        live_path: `${__dirname}/../public/img/thumbnails/${urls._id}.png`,
-                                                                                        temp_path: `${__dirname}/../public/img/temp/temp-${urls._id}.png`
-                                                                                    });
+                                                                                    if (page_screenshot) {
+                                                                                        getPagePic({
+                                                                                            url: long_url,
+                                                                                            live_path: `${__dirname}/../public/img/thumbnails/${urls._id}.png`,
+                                                                                            temp_path: `${__dirname}/../public/img/temp/temp-${urls._id}.png`
+                                                                                        });
+                                                                                    }
                                                                                     // Register the application event async
                                                                                     db.ApplicationEvent({
                                                                                         user_id: user_id,

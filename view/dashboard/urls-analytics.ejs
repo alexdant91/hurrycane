@@ -24,14 +24,32 @@
                 return this.charAt(0).toUpperCase() + this.slice(1);
             }
             Date.prototype.toDateInputValue = (function() {
-                var local = new Date(this);
+                let local = new Date(this);
                 local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
                 return local.toJSON().slice(0,10);
             });
             Date.prototype.toDateInputValueYesterday = (function() {
-                var local = new Date(this.getTime() - 24 * 60 * 60 * 1000);
+                let local = new Date(this.getTime() - 24 * 60 * 60 * 1000);
                 local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
                 return local.toJSON().slice(0,10);
+            });
+            Date.prototype.toDateInputValueRange = (function($start, $end) {
+                let container = {};
+                const local = new Date(this);
+                $start = $start != undefined && typeof $start === "number" ? $start : -1;
+                $end = $end != undefined && typeof $end === "number" ? $end : 5;
+                let start = local.getTime() + (86400000 * $start);
+                let end = local.getTime() + (86400000 * $end);
+                return {
+                    start: {
+                        timestamp: Math.round(start/1000),
+                        formatted: new Date(start).toJSON().slice(0,10)
+                    },
+                    end: {
+                        timestamp: Math.round(end/1000),
+                        formatted: new Date(end).toJSON().slice(0,10)
+                    }
+                };
             });
         </script>
         <style>
@@ -93,12 +111,12 @@
                                         </sub>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="general-box-wrapper" style="min-height: 130px;">
                                         <div class="row">
                                             <div class="container">
-                                                <h6>Total clicks</h6>
-                                                <sub>Total clicks from the beginning.</sub>
+                                                <h6>Total Clicks</h6>
+                                                <sub>Total clicks.</sub>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -110,13 +128,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="general-box-wrapper" style="min-height: 130px;">
+                                        <div class="row">
+                                            <div class="container">
+                                                <h6>Unique Views</h6>
+                                                <sub>Total unique Views.</sub>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center">
+                                                <h6 style="margin-top: 10px;">
+                                                    <?= datas.totalViews ?>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="general-box-wrapper relative">
                                         <i class="fal fa-arrow-right from-to-arrow"></i>
                                         <div class="col-xl-5 col-lg-5 col-md-4 col-sm-12 col-xs-12">
                                             <div class="input field">
                                                 <label for="start-date">From?</label>
-                                                <input type="date" name="start-date" id="start-date" value="<?=  ?>" />
+                                                <input type="date" name="start-date" id="start-date" value="" />
                                             </div>
                                         </div>
                                         <div class="col-xl-5 col-lg-5 col-md-4 col-sm-12 col-xs-12">
@@ -127,7 +162,9 @@
                                         </div>
                                         <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
                                             <div class="input field text-center">
-                                                <button class="butt main-button blue-button update-date" style="margin-top: 50%;transform: translateY(-50%);">Update</button>
+                                                <button class="butt main-button blue-button update-date" style="margin-top: 50%;transform: translateY(-50%);">
+                                                    <i class="fal fa-sync white-text"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -243,8 +280,8 @@
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/urls-analytics.js?v=1.0.0"></script>
         <script>
-            document.getElementById('start-date').value = new Date().toDateInputValueYesterday();
-            document.getElementById('end-date').value = new Date().toDateInputValue();
+            document.getElementById('start-date').value = timestamps.start.formatted;
+            document.getElementById('end-date').value = timestamps.end.formatted;
         </script>
         <!-- <script>
             google.charts.load('current', {

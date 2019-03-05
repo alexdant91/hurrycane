@@ -1,5 +1,7 @@
 const Config = require('../config/config');
 const config = new Config();
+const Country = require('../config/country');
+const country = new Country();
 const express = require('express');
 const db = require('../models/db');
 const isUrl = require('is-url');
@@ -32,7 +34,8 @@ router.get('/', (req, res) => {
                     urls: {
                         data: {},
                         count: count
-                    }
+                    },
+                    countries: country.countriesToIndexArray()
                 },
                 page: 'index',
                 messages: {
@@ -409,8 +412,10 @@ router.get('/urls/analytics/:id', (req, res) => {
                 }, (err, analytics) => {
                     if (err) throw err;
                     let totalClicks = 0;
+                    let totalViews = 0;
                     analytics.forEach(e => {
                         totalClicks += e.clicks;
+                        totalViews += e.uniq_views.length;
                     });
                     res.render('./dashboard/urls-analytics', {
                         session: req.isAuthenticated(),
@@ -423,6 +428,7 @@ router.get('/urls/analytics/:id', (req, res) => {
                             },
                             analytics: analytics,
                             totalClicks: totalClicks,
+                            totalViews: totalViews,
                             urls: {
                                 data: urls[0],
                                 count: urls.length
@@ -481,7 +487,6 @@ router.post('/urls/analytics', (req, res) => {
             let phoneData = 0;
             let desktopData = 0;
             let unknownData = 0;
-            let tempViews = [];
 
             analytics.forEach(array => {
                 // Views

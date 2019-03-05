@@ -44,9 +44,11 @@
             </div>
             <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
                 <!-- ADS Box left -->
+                <? if(url.page_screenshot || url.page_screenshot == undefined) { ?>
                 <div class="left image">
                     <img src="/img/thumbnails/<?= url._id ?>.png" alt="Page thumbnails" />
                 </div>
+                <? } ?>
                 <div class="left info">
                     <h5>
                         <?= `${url.domain_name} - ${url.landing_page}` ?>

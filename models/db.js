@@ -72,6 +72,8 @@ const urlSchema = Schema({
     devicetag_url: String,
     geo_select: Array,
     geotag_url: String,
+    page_seotags: Boolean,
+    page_screenshot: Boolean,
     seo_title: String,
     seo_description: String,
     clicks: {

@@ -2,6 +2,8 @@ module.exports.init = function init() {
     // Config
     const Config = require('../config/config');
     const config = new Config();
+    const Country = require('../config/country');
+    const country = new Country();
 
     // Console formatter
     const colors = require('colors/safe');
@@ -533,13 +535,15 @@ module.exports.init = function init() {
         const user_id = req.session.user != undefined && req.session.user != null ? req.session.user._id : null;
         const domain_name = long_url != false ? extractHostname(long_url).hostname : null;
         const domain_protocol = long_url != false ? extractHostname(long_url).protocol : null;
+        const page_screenshot = req.body.page_screenshot != '' && req.body.page_screenshot != null && req.body.page_screenshot != undefined && typeof req.body.page_screenshot === "boolean" ? req.body.page_screenshot : false;
+        const page_seotags = req.body.page_seotags != '' && req.body.page_seotags != null && req.body.page_seotags != undefined && typeof req.body.page_seotags === "boolean" ? req.body.page_seotags : false;
 
         // Here the user logged in features
         const user_data = req.isAuthenticated() ? req.session.user : null;
         const user_permissions = user_data != null && user_data != undefined ? user_data.subscription : 'BASIC';
-        const device_select = req.body['device_select[]'] != '' && req.body['device_select[]'] != null && req.body['device_select[]'] != undefined && Array.isArray(req.body['device_select[]']) ? req.body['device_select[]'] : [];
+        const device_select = req.body.device_select != '' && req.body.device_select != null && req.body.device_select != undefined && Array.isArray(req.body.device_select) ? req.body.device_select : [];
         const devicetag_url = req.body.devicetag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.devicetag_url : null;
-        const geo_select = req.body['geo_select[]'] != '' && req.body['geo_select[]'] != null && req.body['geo_select[]'] != undefined && Array.isArray(req.body['geo_select[]']) ? req.body['geo_select[]'] : [];
+        const geo_select = req.body.geo_select != '' && req.body.geo_select != null && req.body.geo_select != undefined && Array.isArray(req.body.geo_select) ? req.body.geo_select : [];
         const geotag_url = req.body.geotag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.geotag_url : null;
 
         // Now the premium featurs
@@ -595,6 +599,8 @@ module.exports.init = function init() {
                                                         favicon,
                                                         device_select,
                                                         devicetag_url,
+                                                        page_screenshot,
+                                                        page_seotags,
                                                         geo_select,
                                                         geotag_url,
                                                         seo_title,
@@ -606,11 +612,13 @@ module.exports.init = function init() {
                                                             });
                                                         } else {
                                                             // Get async screenshot of the page
-                                                            getPagePic({
-                                                                url: long_url,
-                                                                live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
-                                                                temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
-                                                            });
+                                                            if (page_screenshot) {
+                                                                getPagePic({
+                                                                    url: long_url,
+                                                                    live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
+                                                                    temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
+                                                                });
+                                                            }
                                                             // Get the response
                                                             res.json({
                                                                 'Status': 'done',
@@ -680,6 +688,8 @@ module.exports.init = function init() {
                                             favicon,
                                             device_select,
                                             devicetag_url,
+                                            page_screenshot,
+                                            page_seotags,
                                             geo_select,
                                             geotag_url,
                                             seo_title,
@@ -691,11 +701,13 @@ module.exports.init = function init() {
                                                 });
                                             } else {
                                                 // Get async screenshot of the page
-                                                getPagePic({
-                                                    url: long_url,
-                                                    live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
-                                                    temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
-                                                });
+                                                if (page_screenshot) {
+                                                    getPagePic({
+                                                        url: long_url,
+                                                        live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
+                                                        temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
+                                                    });
+                                                }
                                                 // Get the response
                                                 res.json({
                                                     'Status': 'done',
@@ -735,17 +747,14 @@ module.exports.init = function init() {
                 _id: url_id
             }).then(confirm => {
                 if (confirm) {
-                    fs.unlink(`${__dirname}/../public/img/thumbnails/${url_id}.png`, (err) => {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            res.json({
-                                'Status': 'done',
-                                'messages': {
-                                    'title': 'Well!',
-                                    'text': 'URL deleted.'
-                                }
-                            });
+                    // Delete thumbnail async
+                    fs.unlink(`${__dirname}/../public/img/thumbnails/${url_id}.png`, (err) => {});
+                    // Delete thumbnail async
+                    res.json({
+                        'Status': 'done',
+                        'messages': {
+                            'title': 'Well!',
+                            'text': 'URL deleted.'
                         }
                     });
                 } else {
@@ -770,6 +779,7 @@ module.exports.init = function init() {
         const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
         const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
         const language = process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES;
+        const location = country.findCounryNameFromCode(language.split('_')[0]);
         if (alias) {
             db.Url.find({
                 alias: alias
@@ -841,12 +851,18 @@ module.exports.init = function init() {
                         }
                     });
                 } else {
+
+                    // First location 
+                    const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                    // Then device
+                    const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+
                     res.render('s', {
                         session: req.isAuthenticated(),
                         user: req.session.user,
                         page: 's',
                         alias: alias,
-                        long_url: docs[0].long_url,
+                        long_url: long_url,
                         url: docs[0],
                         messages: {
                             type: null,
