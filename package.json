@@ -1,6 +1,6 @@
 {
     "name": "hurrycane",
-    "version": "2.0.0",
+    "version": "2.4.1",
     "repository": {
         "type": "https://github.com/alexdant91/hurrycane"
     },
@@ -8,11 +8,11 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "NODE_ENV=production node server.js",
+        "start": "NODE_ENV=production CLUSTER_ENV=true SSL_ENV=true sudo node server.js",
         "start:s": "NODE_ENV=staging nodemon server.js",
         "start:l": "NODE_ENV=staging SSL_ENV=false nodemon server.js",
         "start:p": "NODE_ENV=production server.js",
-        "json:server": "json-server --watch ./db.json --port 5000"
+        "start:production": "sudo NODE_ENV=production CLUSTER_ENV=true SSL_ENV=true forever --minUptime 1000 --spinSleepTime 1000 server.js"
     },
     "author": "Alessandro D'Antoni",
     "license": "ISC",

@@ -36,64 +36,101 @@
 
                     <?- include('./blocks/search-fields.ejs') -?>
 
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 active-urls-container">
-                        <? if(datas.urls.data.docs.length <= 0) { ?>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="active-urls-wrapper">
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <a href="/dashboard" class="url-external">
-                                        <i class="fal fa-link"></i> Add your first URL! <i class="fal fa-plus right"></i>
-                                    </a>
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">See the total amount of the current user wallet.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="row">
+                                <div class="container pad-20">
+                                    <h5 class="text-left">
+                                        <i class="fal fa-wallet"></i> Wallet
+                                        <span class="right total-wallet-amount">
+                                            <i class="fal fa-sync fa-spin"></i>
+                                        </span>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
-                        <? } ?>
-                        <? for(let i = 0; i < datas.urls.data.docs.length; i++) { ?>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12" id="<?= datas.urls.data.docs[i]['_id'] ?>">
-                            <div class="active-urls-wrapper">
-                                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                    <? let favicon = datas.urls.data.docs[i]['favicon'] != null && datas.urls.data.docs[i]['favicon'] != undefined && datas.urls.data.docs[i]['favicon'] != '' ? datas.urls.data.docs[i]['favicon'] : '/img/empty_favicon.png' ?>
-                                    <img src="<?= favicon ?>" class="url-icon" alt="Favicon" />
-                                </div>
-                                <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <a href="/s/<?= datas.urls.data.docs[i]['alias'] ?>" target="_blank">
-                                        <?= `${datas.urls.data.docs[i]['domain_name']} - ${datas.urls.data.docs[i]['alias']}` ?>
-                                    </a>
-                                    <br>
-                                    <? if(user.subscription == 'PREMIUM') { ?>
-                                    <a href="#details" class="url-actions"><i class="fal fa-chart-bar"></i> Analytics</a> -
-                                    <? } ?>
-                                    <a href="#edit" class="url-actions"><i class="fal fa-pencil"></i> Edit</a> - <a href="#delete" class="url-actions url-delete-trigger" data-id="<?= datas.urls.data.docs[i]['_id'] ?>"><i class="fal fa-trash"></i> Delete</a>
-                                </div>
-                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12 col-xs-12">
-                                    <a href="/s/<?= datas.urls.data.docs[i]['alias'] ?>" class="url-external" target="_blank">
-                                        <i class="fal fa-external-link"></i>
-                                    </a>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">See all the transactions in current user wallet.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+
+                                <table class="table hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">Created</th>
+                                            <th class="text-center">URL's ID</th>
+                                            <th class="text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="async-endpoint-logs">
+                                        <!-- @TODO: logic for endpoints pagination async mode -->
+                                        <? if(datas.wallet.data.docs.length > 0) { ?>
+                                        <? for(let i = 0; i < datas.wallet.data.docs.length; i++) {
+                                        let options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                                        let date = new Date(datas.wallet.data.docs[i].timestamp*1000);
+                                        let local = localLanguage.split(".")[0].replace(/_/ig, "-");
+                                        let timeToLocale = date.toLocaleDateString(local, options);
+                                        ?>
+                                        <tr>
+                                            <td class="text-left">
+                                                <?= timeToLocale ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="/dashboard/urls/details/<?= datas.wallet.data.docs[i].url_id ?>">
+                                                    <?= datas.wallet.data.docs[i].url_id ?>
+                                                </a>
+                                            </td>
+                                            <td class="text-right">
+                                                <span class="label label-green">
+                                                    <a href="/dashboard/urls/details/<?= datas.wallet.data.docs[i].url_id ?>">
+                                                        € 
+                                                        <?= datas.wallet.data.docs[i].amount ?>
+                                                    </a>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <? } ?>
+                                        <? } else { ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center">No endpoint logs avaiable.</td>
+                                        </tr>
+                                        <? } ?>
+
+                                        <!-- @TODO: logic for endpoints pagination async mode -->
+                                    </tbody>
+                                </table>
+
+                                <div class="row" style="margin-top:20px;">
+                                    <div class="container text-center">
+                                        <div class="box-pagination-wrapper">
+                                            <? if(datas.wallet.data.hasPrevPage) { ?>
+                                            <a href="<?= `/dashboard/${page}?page=1` ?>" class="pagination-item first">First</a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.prevPage}` ?>" class="pagination-item prev"><i class="fal fa-arrow-left"></i></a>
+                                            <? } ?>
+                                            <a class="pagination-item number">
+                                                <?= datas.wallet.data.page ?> of
+                                                <?= datas.wallet.data.totalPages ?>
+                                            </a>
+                                            <? if(datas.wallet.data.hasNextPage) { ?>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.nextPage}` ?>" class="pagination-item next"><i class="fal fa-arrow-right"></i></a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.totalPages}` ?>" class="pagination-item last">Last</a>
+                                            <? } ?>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <? } ?>
                     </div>
 
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="container text-center">
-                    <div class="box-pagination-wrapper">
-                        <? if(datas.urls.data.hasPrevPage) { ?>
-                        <a href="<?= `/dashboard/${page}?page=1` ?>" class="pagination-item first">First</a>
-                        <a href="<?= `/dashboard/${page}?page=${datas.urls.data.prevPage}` ?>" class="pagination-item prev"><i class="fal fa-arrow-left"></i></a>
-                        <? } ?>
-                        <a class="pagination-item number">
-                            <?= datas.urls.data.page ?> of
-                            <?= datas.urls.data.totalPages ?>
-                        </a>
-                        <? if(datas.urls.data.hasNextPage) { ?>
-                        <a href="<?= `/dashboard/${page}?page=${datas.urls.data.nextPage}` ?>" class="pagination-item next"><i class="fal fa-arrow-right"></i></a>
-                        <a href="<?= `/dashboard/${page}?page=${datas.urls.data.totalPages}` ?>" class="pagination-item last">Last</a>
-                        <? } ?>
-                    </div>
                 </div>
             </div>
 
@@ -113,6 +150,7 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
         <script type="text/javascript" src="/js/iziModal.min.js"></script>
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/wallet.js?v=1.0.0"></script>
     </body>
 
 </html>

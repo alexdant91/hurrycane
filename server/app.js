@@ -76,7 +76,9 @@ module.exports.init = function init() {
 
     // logger
     // app.use(morgan('tiny'));
-    app.use(morgan(colors.bold.green(':method :url :status :res[content-length] - :response-time ms')));
+    if (process.env.NODE_ENV != 'production') {
+        app.use(morgan(colors.bold.green(':method :url :status :res[content-length] - :response-time ms')));
+    }
 
     app.use(function (req, res, next) {
         const env = process.env;
@@ -104,6 +106,7 @@ module.exports.init = function init() {
         }
     };
     app.use(vhost('api', api));
+    app.use(vhost('dashboard', dashboard));
     // End api subdomain
 
     // Get device informations
@@ -1192,7 +1195,6 @@ module.exports.init = function init() {
 
     // Get the https required modules
     if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
-        console.log(process.env.SSL_ENV);
         const sslOptions = {
             cert: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/fullchain.pem', 'utf8'),
             key: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/privkey.pem', 'utf8'),
@@ -1200,7 +1202,7 @@ module.exports.init = function init() {
         };
 
         const servers = https.createServer(sslOptions, app).listen(443, () => {
-            console.log(colors.bold.green(`[SERVER] Started server on => http://localhost:${servers.address().port} for Process Id ${process.pid}`));
+            console.log(colors.bold.green(`[SERVER] Started server on => https://localhost:${servers.address().port} for Process Id ${process.pid}`));
         });
     }
     // End get the https required modules

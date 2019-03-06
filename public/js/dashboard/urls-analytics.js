@@ -3,6 +3,7 @@ const $startDate = $('#start-date');
 const $endDate = $('#end-date');
 let myChartViews, myChartDevice, myChartLocation, myChartReferer;
 const timestamps = new Date().toDateInputValueRange(-2, 4);
+console.log(timestamps);
 $.ajax({
     url: '/dashboard/urls/analytics',
     method: 'POST',
@@ -24,6 +25,7 @@ $.ajax({
                 message: data.text
             });
         } else if (data.Status == 'done') {
+            console.log(data);
 
             let ctxViews = document.getElementById("view").getContext('2d');
             myChartViews = new Chart(ctxViews, {

@@ -102,7 +102,7 @@ router.get('/urls', (req, res) => {
 
 /*
  * 
- * SET THE SUBSCRITION FUNCTIONALITY
+ * SET THE SUBSCRIPTION FUNCTIONALITY
  *  
  * */
 
@@ -596,6 +596,94 @@ function ArraySameValues(array) {
     }
     return results;
 }
+
+/*
+ * 
+ * SET THE WALLET FUNCTIONALITY
+ *  
+ * */
+
+// GET /dashboard/wallet
+router.get('/wallet', (req, res) => {
+    const user_id = req.session.user._id;
+    if (user_id) {
+        db.Plan.find({
+            name: req.session.user.subscription
+        }, (err, docs) => {
+            if (err) throw err;
+            // If the avatar is an url (facebook, twitter) remove the directory from path
+            let user = req.session.user;
+            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            db.Wallet.paginate({
+                user_id: user_id
+            }, {
+                limit: 18,
+                sort: {
+                    timestamp: 'desc'
+                }
+            }).then(wallet => {
+                db.Url.find({
+                    user_id: req.session.user._id
+                }, (err, urls) => {
+                    if (err) throw err;
+                    res.render('./dashboard/wallet.ejs', {
+                        session: req.isAuthenticated(),
+                        user: user,
+                        localhost: config.host,
+                        datas: {
+                            urls: {
+                                data: urls,
+                                count: urls.length
+                            },
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            },
+                            wallet: {
+                                data: wallet
+                            }
+                        },
+                        page: 'wallet',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
+                        }
+                    });
+                });
+            }).catch(err => {
+                if (err) throw err;
+            });
+        });
+    } else {
+        res.status(403).json({
+            'Error': 'Bad request.'
+        })
+    }
+});
+
+// POST /dashboard/wallet/total
+router.get('/wallet/total', (req, res) => {
+    const user_id = req.session.user._id;
+    db.Wallet.find({
+        user_id: user_id
+    }, (err, wallet) => {
+        if (err) {
+            res.json({
+                'Error': 'Internal server error.'
+            })
+        } else {
+            let amount = 0;
+            wallet.forEach(w => {
+                amount += w.amount;
+            });
+            res.json({
+                'Status': 'done',
+                'total': amount
+            });
+        }
+    });
+});
 
 /*
  * 
