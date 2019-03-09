@@ -100,6 +100,131 @@ router.get('/urls', (req, res) => {
     });
 });
 
+// GET /dashboard/urls/details/:id
+router.get('/urls/details/:id', (req, res) => {
+    const url_id = req.params.id != '' && req.params.id != null && req.params.id != undefined ? req.params.id : false;
+    if (url_id) {
+        db.Url.find({
+            user_id: req.session.user._id
+        }).then(response => {
+            // res.json(response);
+            db.Plan.find({
+                name: req.session.user.subscription
+            }, (err, docs) => {
+                if (err) throw err;
+                // If the avatar is an url (facebook, twitter) remove the directory from path
+                let user = req.session.user;
+                user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                res.render('./dashboard/urls-details', {
+                    session: req.isAuthenticated(),
+                    user: user,
+                    datas: {
+                        plan: {
+                            name: docs.name,
+                            url_limit: docs[0].url_limit
+                        },
+                        urls: {
+                            data: response[0]
+                        }
+                    },
+                    page: 'urls',
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
+                    }
+                });
+            });
+        }).catch(err => {
+            res.json(err);
+        });
+    } else {
+        res.json({
+            'Error': 'Missing required data.'
+        });
+    }
+});
+
+// POST /dashboard/urls/details
+router.post('/urls/details', (req, res) => {
+    // Here the basic data
+    const user_id = req.session.user._id;
+    const url_id = req.body.url_id != '' & req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false; // Required
+
+    // The updates field permitted
+    const properties = req.body.properties != null && req.body.properties != undefined && typeof req.body.properties === "object" ? req.body.properties : false;
+    const rules = req.body.rules != null && req.body.rules != undefined && typeof req.body.rules === "object" ? req.body.rules : false;
+    const seo = req.body.seo != null && req.body.seo != undefined && typeof req.body.seo === "object" ? req.body.seo : false;
+
+    if (properties || rules || seo) {
+        const description = properties.description != null && properties.description != undefined ? properties.description : null;
+        const password = properties.password != null && properties.password != undefined ? properties.password : null;
+        const expiration_time = properties.expires != null && properties.expires != undefined ? properties.expires : null;
+
+        const geo_select = rules.geo_tag != null && rules.geo_tag != undefined && Array.isArray(rules.geo_tag) ? rules.geo_tag : null;
+        const geotag_url = rules.geo_tag_url != null && rules.geo_tag_url != undefined ? rules.geo_tag_url : null;
+        const device_select = rules.device_tag != null && rules.device_tag != undefined && Array.isArray(rules.device_tag) ? rules.device_tag : null;
+        const devicetag_url = rules.device_tag_url != null && rules.device_tag_url != undefined ? rules.device_tag_url : null;
+
+        const seo_title = seo.seo_title != null && seo.seo_title != undefined ? seo.seo_title : null;
+        const seo_description = seo.seo_description != null && seo.seo_description != undefined ? seo.seo_description : null;
+
+        const payload = {};
+        if (description != null) payload.description = description;
+        if (password != null) payload.password = bcrypt.hashSync(password);
+        if (expiration_time != null) payload.expiration_time = expiration_time;
+        if (geo_select != null) payload.geo_select = geo_select;
+        if (geotag_url != null) payload.geotag_url = geotag_url;
+        if (device_select != null) payload.device_select = device_select;
+        if (devicetag_url != null) payload.devicetag_url = devicetag_url;
+        if (seo_title != null) payload.seo_title = seo_title;
+        if (seo_description != null) payload.seo_description = seo_description;
+
+        if (url_id && payload) {
+            // Find the application and perform security checks
+            db.Url.updateOne({
+                _id: url_id,
+                user_id: user_id
+            }, payload, (err, confirm) => {
+                if (err) {
+                    res.status(200).json({
+                        'Error': 'Internal server error.'
+                    });
+                } else {
+                    if (confirm.n > 0) {
+                        // Webhook not isset so send the response and close the connection
+                        res.status(200).json({
+                            'Status': 'success',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': `Url id: ${url_id} updated.`
+                            }
+                        });
+                    } else {
+                        res.status(200).json({
+                            'Error': 'No data founded.',
+                            'title': 'Oops!',
+                            'text': 'Internal server error.'
+                        });
+                    }
+                }
+            });
+        } else {
+            res.status(200).json({
+                'Error': 'Missing required data.',
+                'title': 'Oops!',
+                'text': 'Missing required data.'
+            });
+        }
+    } else {
+        res.status(200).json({
+            'Error': 'Bad request.',
+            'title': 'Oops!',
+            'text': 'Internal server error.'
+        });
+    }
+});
+
 /*
  * 
  * SET THE SUBSCRIPTION FUNCTIONALITY
@@ -665,24 +790,203 @@ router.get('/wallet', (req, res) => {
 // POST /dashboard/wallet/total
 router.get('/wallet/total', (req, res) => {
     const user_id = req.session.user._id;
-    db.Wallet.find({
-        user_id: user_id
-    }, (err, wallet) => {
+    db.User.find({
+        _id: user_id
+    }, (err, user) => {
         if (err) {
             res.json({
                 'Error': 'Internal server error.'
             })
         } else {
-            let amount = 0;
-            wallet.forEach(w => {
-                amount += w.amount;
-            });
-            res.json({
-                'Status': 'done',
-                'total': amount
-            });
+            db.Payout.find({
+                user_id: user_id
+            }, (err, payout) => {
+                let amount = user[0].wallet_amount;
+                let out = 0;
+                if (out.length > 0) {
+                    payout.forEach(w => {
+                        out += w.amount;
+                    });
+                }
+                amount = amount - out;
+                res.json({
+                    'Status': 'done',
+                    'total': amount,
+                    'payout': out
+                });
+            })
         }
     });
+});
+
+router.get('/wallet/payout', (req, res) => {
+    const user_id = req.session.user._id;
+    if (user_id) {
+        db.Plan.find({
+            name: req.session.user.subscription
+        }, (err, docs) => {
+            if (err) throw err;
+            db.Url.find({
+                user_id: req.session.user._id
+            }, (err, urls) => {
+                if (err) throw err;
+                db.User.find({
+                    _id: user_id
+                }, (err, user) => {
+                    console.log(user);
+                    res.render('./dashboard/payout-new.ejs', {
+                        session: req.isAuthenticated(),
+                        user: req.session.user,
+                        localhost: config.host,
+                        datas: {
+                            user: user[0],
+                            urls: {
+                                data: urls,
+                                count: urls.length
+                            },
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            }
+                        },
+                        page: 'wallet',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
+                        }
+                    });
+                });
+            });
+        });
+    } else {
+        res.status(403).json({
+            'Error': 'Bad request.'
+        })
+    }
+});
+
+router.post('/wallet/payout/new', (req, res) => {
+    const amount = req.body.amount != '' && req.body.amount != null && req.body.amount != undefined && typeof req.body.amount === "number" ? req.body.amount : false;
+    if (amount) {
+        // Check if amount is over € 5,00
+        if (amount > 5) {
+            db.Payout.countDocuments({
+                user_id: req.session.user._id,
+                payed: false
+            }, (err, count) => {
+                if (err) {
+                    res.json({
+                        'Error': 'Internal server error.',
+                        'title': 'Oops!',
+                        'text': 'Internal server error.'
+                    });
+                } else {
+                    if (count == 0) {
+                        db.User.find({
+                            _id: req.session.user._id
+                        }, (err, user) => {
+                            if (err) {
+                                res.json({
+                                    'Error': 'Internal server error.',
+                                    'title': 'Oops!',
+                                    'text': 'Internal server error.'
+                                });
+                            } else {
+                                const wallet = user[0].wallet_amount;
+                                if (wallet >= amount) {
+                                    // Register a payout
+                                    db.Payout({
+                                        user_id: req.session.user._id,
+                                        amount: amount
+                                    }).save(err => {
+                                        if (err) {
+                                            res.json({
+                                                'Error': 'Internal server error.',
+                                                'title': 'Oops!',
+                                                'text': 'Internal server error.'
+                                            });
+                                        } else {
+                                            // Update the new total wallet amount
+                                            const newWallet = wallet - amount;
+                                            db.User.updateOne({
+                                                _id: req.session.user._id
+                                            }, {
+                                                wallet_amount: newWallet
+                                            }, (err, confirm) => {
+                                                if (err) {
+                                                    res.json({
+                                                        'Error': 'Internal server error.',
+                                                        'title': 'Oops!',
+                                                        'text': 'Internal server error.'
+                                                    });
+                                                } else {
+                                                    if (confirm) {
+                                                        db.Wallet({
+                                                            user_id: req.session.user._id,
+                                                            description: 'Payout request.',
+                                                            amount: -amount,
+                                                        }).save(err => {
+                                                            if (err) {
+                                                                res.json({
+                                                                    'Error': 'Internal server error.',
+                                                                    'title': 'Oops!',
+                                                                    'text': 'Internal server error.'
+                                                                });
+                                                            } else {
+                                                                res.json({
+                                                                    'Status': 'done',
+                                                                    'messages': {
+                                                                        'title': 'Well!',
+                                                                        'text': 'Payout requested.'
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    } else {
+                                                        res.json({
+                                                            'Error': 'Internal server error.',
+                                                            'title': 'Oops!',
+                                                            'text': 'Internal server error.'
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    res.json({
+                                        'Error': 'You have not enougth found.',
+                                        'title': 'Oops!',
+                                        'text': 'You have not enougth found.'
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        res.json({
+                            'Error': 'You have just requested a payout.',
+                            'title': 'Oops!',
+                            'text': 'You have just requested a payout.'
+                        });
+                    }
+                }
+            });
+
+        } else {
+            res.json({
+                'Error': 'You need a minimum of € 5.00 to request a payout.',
+                'title': 'Oops!',
+                'text': 'You need a minimum of € 5.00 to request a payout.'
+            });
+        }
+    } else {
+        res.json({
+            'Error': 'Missing required data.',
+            'title': 'Oops!',
+            'text': 'Missing required data.'
+        });
+    }
 });
 
 /*

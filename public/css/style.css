@@ -1246,6 +1246,18 @@ h1.url-title {
 
 /* INPUT GROUP CHECKBOX */
 
+.alert {
+    float: left;
+    width: 100%;
+    padding: 15px 10px;
+    border-radius: 3px;
+}
+
+.alert-orange {
+    background: #ffc57e !important;
+    color: #503400 !important;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;

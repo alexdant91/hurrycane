@@ -53,10 +53,10 @@ $(document).on('click', '#shortenUrl', function (e) {
     const seo_title = $('[name="seo_title"]').val();
     const seo_description = $('[name="seo_description"]').val();
 
-    console.log(device_select, geo_select);
+    const endpoint = $('#fast-mode').is(':checked') ? '/shorten/direct' : '/shorten';
 
     $.ajax({
-        url: '/shorten',
+        url: endpoint,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

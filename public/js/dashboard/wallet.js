@@ -15,7 +15,8 @@ $.ajax({
                 message: data.text
             });
         } else if (data.Status == 'done') {
-            $('.total-wallet-amount').html(`€ ${data.total}`)
+            $('.total-wallet-amount').html(`€ ${data.total.toFixed(5)}`);
+            $('.total-payout-amount').html(`€ ${data.payout.toFixed(5)}`);
         }
 
     },

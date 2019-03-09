@@ -741,6 +741,82 @@ module.exports.init = function init() {
         }
     });
 
+    // Shorten in direct mode
+    app.post('/shorten/direct', (req, res) => {
+        // Here the basic features
+        const long_url = req.body.long_url != '' && req.body.long_url != undefined ? req.body.long_url : false; // Required
+        const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, 9);
+        const description = req.body.description != '' && req.body.description != undefined && req.body.description != null ? req.body.description : null;
+        const password = req.body.password != '' && req.body.password != undefined && req.body.password != null ? bcrypt.hashSync(req.body.password) : null;
+        const expiration_time = req.body.expiration_time != '' && req.body.expiration_time != undefined && req.body.expiration_time != null ? Math.round((new Date(req.body.expiration_time).getTime()) / 1000) : null;
+        const timestamp = Math.round(Date.now() / 1000);
+        const user_id = req.session.user != undefined && req.session.user != null ? req.session.user._id : null;
+        const domain_name = long_url != false ? extractHostname(long_url).hostname : null;
+        const domain_protocol = long_url != false ? extractHostname(long_url).protocol : null;
+        const page_screenshot = false;
+        const page_seotags = false;
+
+        // Here the user logged in features
+        const user_data = req.isAuthenticated() ? req.session.user : null;
+        const user_permissions = user_data != null && user_data != undefined ? user_data.subscription : 'BASIC';
+        const device_select = req.body.device_select != '' && req.body.device_select != null && req.body.device_select != undefined && Array.isArray(req.body.device_select) ? req.body.device_select : [];
+        const devicetag_url = req.body.devicetag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.devicetag_url : null;
+        const geo_select = req.body.geo_select != '' && req.body.geo_select != null && req.body.geo_select != undefined && Array.isArray(req.body.geo_select) ? req.body.geo_select : [];
+        const geotag_url = req.body.geotag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.geotag_url : null;
+
+        // Now the premium featurs
+        const seo_title = user_permissions != 'BASIC' && req.body.seo_title != '' && req.body.seo_title != null && req.body.seo_title != undefined ? req.body.seo_title : null;
+        const seo_description = user_permissions != 'BASIC' && req.body.seo_description != '' && req.body.seo_description != null && req.body.seo_description != undefined ? req.body.seo_description : null;
+
+        // The url limiter if isset user session
+        const plan = req.isAuthenticated() ? req.session.user.subscription : null;
+        const application_id = null;
+
+        if (long_url) {
+            db.Url({
+                long_url,
+                domain_name,
+                application_id,
+                user_id,
+                alias,
+                description,
+                password,
+                expiration_time,
+                timestamp,
+                device_select,
+                devicetag_url,
+                page_screenshot,
+                page_seotags,
+                geo_select,
+                geotag_url,
+                seo_title,
+                seo_description
+            }).save((err, newUrl) => {
+                if (err) {
+                    res.json({
+                        'Error': 'Error while data saving.'
+                    });
+                } else {
+                    res.json({
+                        'Status': 'done',
+                        'short_url': `${config.host}/s/${alias}`,
+                        'messages': {
+                            type: 'success',
+                            title: 'Well!',
+                            text: 'Your shorten link it\s ready :)',
+                        }
+                    });
+                }
+            });
+        } else {
+            res.json({
+                'Error': 'Missig required data.',
+                'title': 'Oops!',
+                'text': 'Missig required data.',
+            });
+        }
+    });
+
     // Shorten url delete
     app.post('/shorten/delete', (req, res) => {
         const url_id = req.body.url_id != '' && req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false;
@@ -860,6 +936,17 @@ module.exports.init = function init() {
                                                     url_id: docs[0]._id,
                                                     amount: config.wallet.single_transaction
                                                 }).save(err => {});
+                                                db.User.find({
+                                                    _id: docs[0].user_id,
+                                                }, (err, user) => {
+                                                    if (!err && user.length > 0) {
+                                                        db.User.updateOne({
+                                                            _id: user[0]._id
+                                                        }, {
+                                                            wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                        }, (err, confirm) => {});
+                                                    }
+                                                });
                                             }
                                         }
                                     }
@@ -883,6 +970,17 @@ module.exports.init = function init() {
                                             url_id: docs[0]._id,
                                             amount: config.wallet.single_transaction
                                         }).save(err => {});
+                                        db.User.find({
+                                            _id: docs[0].user_id,
+                                        }, (err, user) => {
+                                            if (!err && user.length > 0) {
+                                                db.User.updateOne({
+                                                    _id: user[0]._id
+                                                }, {
+                                                    wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                }, (err, confirm) => {});
+                                            }
+                                        });
                                     }
                                 }
                             });

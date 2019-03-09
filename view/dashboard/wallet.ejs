@@ -44,12 +44,34 @@
                             </div>
                             <div class="row">
                                 <div class="container pad-20">
-                                    <h5 class="text-left">
-                                        <i class="fal fa-wallet"></i> Wallet
-                                        <span class="right total-wallet-amount">
-                                            <i class="fal fa-sync fa-spin"></i>
-                                        </span>
-                                    </h5>
+                                    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <h4 class="text-left">
+                                            <i class="fal fa-wallet"></i> Wallet
+                                        </h4>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="right">
+                                            Payouts requested <br>
+                                            <h5 class="total-payout-amount">
+                                                <i class="fal fa-sync fa-spin"></i>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="right">
+                                            Wallet amount <br>
+                                            <h5 class="total-wallet-amount">
+                                                <i class="fal fa-sync fa-spin"></i>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="row" style="margin-top: 30px;">
+                                            <div class="container text-center">
+                                                <a href="/dashboard/wallet/payout" class="butt main-button blue-button">Request a payout</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -62,6 +84,14 @@
                                 <i class="fal fa-info-circle"></i>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 form-new-application">
+
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-credit-card"></i> Transactions
+                                        </h6>
+                                    </div>
+                                </div>
 
                                 <table class="table hover">
                                     <thead>
@@ -77,8 +107,7 @@
                                         <? for(let i = 0; i < datas.wallet.data.docs.length; i++) {
                                         let options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
                                         let date = new Date(datas.wallet.data.docs[i].timestamp*1000);
-                                        let local = localLanguage.split(".")[0].replace(/_/ig, "-");
-                                        let timeToLocale = date.toLocaleDateString(local, options);
+                                        let timeToLocale = `${date.getFullYear()}-${(date.getMonth()+1) < 10 ? 0+''+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate() < 10 ? 0+''+date.getDate() : date.getDate()}`;
                                         ?>
                                         <tr>
                                             <td class="text-left">

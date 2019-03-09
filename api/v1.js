@@ -48,6 +48,7 @@ router.get('/token', (req, res) => {
 
     if (secretkey && authHeader && application_id && host && protocol) {
         const origin = `${protocol}://${host}`;
+        console.log(origin);
         if (authHeader.split(' ')[0] == 'Bearer') {
             const base64Token = authHeader.split(' ')[1];
             const decodedToken = Buffer.from(base64Token, 'base64').toString('ascii');
@@ -98,7 +99,7 @@ router.get('/token', (req, res) => {
                                                 authObj.app = application[0]._id;
                                                 // Check if the origin is authorized
                                                 const allowed_origins = application[0].allowed_origins;
-                                                if (allowed_origins.indexOf(origin) !== -1) {
+                                                if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                                     // The origin is allowed so insert it in the authObj
                                                     authObj.origin = origin;
                                                     // Now authorize the client
@@ -195,8 +196,8 @@ router.post('/shorten', (req, res) => {
             const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
             const domain_name = long_url != false ? extractHostname(long_url).hostname : null;
             const domain_protocol = long_url != false ? extractHostname(long_url).protocol : null;
-            const page_screenshot = req.body.page_screenshot != '' && req.body.page_screenshot != null && req.body.page_screenshot != undefined && typeof req.body.page_screenshot === "boolean" ? req.body.page_screenshot : false;
-            const page_seotags = req.body.page_seotags != '' && req.body.page_seotags != null && req.body.page_seotags != undefined && typeof req.body.page_seotags === "boolean" ? req.body.page_seotags : false;
+            const page_screenshot = req.body.page_screenshot != '' && req.body.page_screenshot != null && req.body.page_screenshot != undefined && typeof req.body.page_screenshot === "boolean" ? req.body.page_screenshot : true;
+            const page_seotags = req.body.page_seotags != '' && req.body.page_seotags != null && req.body.page_seotags != undefined && typeof req.body.page_seotags === "boolean" ? req.body.page_seotags : true;
 
             // Here the user logged in features
             const user_permissions = authData.user.plan;
@@ -227,7 +228,7 @@ router.post('/shorten', (req, res) => {
                         if (application[0].active) {
                             if (application[0].production) {
                                 const allowed_origins = application[0].allowed_origins;
-                                if (allowed_origins.indexOf(origin) !== -1) {
+                                if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Plan.find({
                                         name: plan
                                     }, (err, plans) => {
@@ -441,6 +442,187 @@ router.post('/shorten', (req, res) => {
 
 });
 
+router.post('/shorten/direct', (req, res) => {
+    // Webhook data
+    // Create a link: Webhook event -> link_created
+
+    // Auth data
+    // Header -> Token: session.token
+    // Header -> Secretkey: application-secret-key-value
+    const secretkey = req.headers.secretkey != '' && req.headers.secretkey != null && req.headers.secretkey != undefined ? req.headers.secretkey : false;
+    const token = req.headers.token != '' && req.headers.token != null && req.headers.token != undefined ? req.headers.token : false;
+    // Get the host origin for the authorization
+    const host = req.hostname != '' && req.hostname != null && req.hostname != undefined ? req.hostname : false;
+    const protocol = req.protocol != '' && req.protocol != null && req.protocol != undefined ? req.protocol : false;
+    const origin = `${protocol}://${host}`;
+
+    jwt.verify(token, secretkey, (err, authData) => {
+        if (err) {
+            res.status(403).json({
+                'Error': 'Authorization required.'
+            });
+        } else {
+            // Here the basic features
+            const long_url = req.body.long_url != '' && req.body.long_url != undefined ? req.body.long_url : false; // Required
+            const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, 9);
+            const description = req.body.description != '' && req.body.description != undefined && req.body.description != null ? req.body.description : null;
+            const password = req.body.password != '' && req.body.password != undefined && req.body.password != null ? bcrypt.hashSync(req.body.password) : null;
+            const expiration_time = req.body.expiration_time != '' && req.body.expiration_time != undefined && req.body.expiration_time != null ? Math.round((new Date(req.body.expiration_time).getTime()) / 1000) : null;
+            const timestamp = Math.round(Date.now() / 1000);
+            const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
+            const domain_name = long_url != false ? extractHostname(long_url).hostname : null;
+            const domain_protocol = long_url != false ? extractHostname(long_url).protocol : null;
+            const page_screenshot = false;
+            const page_seotags = false;
+
+            // Here the user logged in features
+            const user_data = req.isAuthenticated() ? req.session.user : null;
+            const user_permissions = user_data != null && user_data != undefined ? user_data.subscription : 'BASIC';
+            const device_select = req.body.device_select != '' && req.body.device_select != null && req.body.device_select != undefined && Array.isArray(req.body.device_select) ? req.body.device_select : [];
+            const devicetag_url = req.body.devicetag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.devicetag_url : null;
+            const geo_select = req.body.geo_select != '' && req.body.geo_select != null && req.body.geo_select != undefined && Array.isArray(req.body.geo_select) ? req.body.geo_select : [];
+            const geotag_url = req.body.geotag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.geotag_url : null;
+
+            // Now the premium featurs
+            const seo_title = user_permissions != 'BASIC' && req.body.seo_title != '' && req.body.seo_title != null && req.body.seo_title != undefined ? req.body.seo_title : null;
+            const seo_description = user_permissions != 'BASIC' && req.body.seo_description != '' && req.body.seo_description != null && req.body.seo_description != undefined ? req.body.seo_description : null;
+
+            // The url limiter if isset user session
+            const plan = req.isAuthenticated() ? req.session.user.subscription : null;
+            const application_id = authData.user.app != '' && authData.user.app != null && authData.user.app != undefined ? authData.user.app : false;
+
+            if (user_id && long_url && application_id) {
+
+                db.Url({
+                    long_url,
+                    domain_name,
+                    application_id,
+                    user_id,
+                    alias,
+                    description,
+                    password,
+                    expiration_time,
+                    timestamp,
+                    device_select,
+                    devicetag_url,
+                    page_screenshot,
+                    page_seotags,
+                    geo_select,
+                    geotag_url,
+                    seo_title,
+                    seo_description
+                }).save((err, urls) => {
+                    if (err) {
+                        res.status(500).json({
+                            'Error': 'Error while data saving.'
+                        });
+                    } else {
+                        db.ApplicationEvent({
+                            user_id: user_id,
+                            application_id: application_id,
+                            param: {
+                                url_id: urls._id,
+                            },
+                            event_description: 'Create a new short link.',
+                            event_method: 'POST',
+                            event_request: `/${config.api.version}/shorten/direct`,
+                            event_response: '200 OK',
+                            request_origin: origin
+                        }).save((err, doc) => {});
+                        // Link created so find webhooks events if isset
+                        db.Webhook.find({
+                            application_id: application_id,
+                            user_id: user_id
+                        }, (err, webhook) => {
+                            if (webhook.length > 0) {
+                                // Isset webhook so check if the event is registered
+                                const events = webhook[0].events;
+                                if (events.indexOf('link_created') !== -1) {
+                                    // Send webhook async mode
+                                    const uri = webhook[0].endpoint;
+                                    rp({
+                                        method: 'POST',
+                                        uri: uri,
+                                        body: {
+                                            data: {
+                                                user_id: user_id,
+                                                application_id: application_id,
+                                                long_url: long_url,
+                                                short_url: `${config.host}/s/${alias}`,
+                                                api_version: config.api.version,
+                                                event: 'link_created',
+                                                status: 'success',
+                                                created: Math.round(Date.now() / 1000)
+                                            },
+                                            signature: webhook[0].webhook_self_signature
+                                        },
+                                        json: true
+                                    }).then((parsedBody) => {
+                                        // POST succeeded so register the event
+                                        db.WebhookEvent({
+                                            url_id: urls._id,
+                                            user_id: user_id,
+                                            webhook_id: webhook[0]._id,
+                                            application_id: application_id,
+                                            endpoint: `/${config.api.version}/shorten`,
+                                            request_response: '200 OK',
+                                            request_method: 'POST',
+                                            api_version: config.api.version,
+                                            event_type: 'link_created',
+                                            creation_time: Math.round(Date.now() / 1000)
+                                        }).save(err => {
+                                            if (err) console.log(err);
+                                        });
+                                    }).catch((err) => {
+                                        // POST failed...
+                                        console.log('Failed webhook request')
+                                        console.log(err);
+                                    });
+                                    // Send the response and close the client connection
+                                    res.status(200).json({
+                                        'Status': 'success',
+                                        'url': {
+                                            'id': urls._id,
+                                            'short_url': `${config.host}/s/${alias}`,
+                                            'alias': urls.alias,
+                                        }
+                                    });
+
+                                } else {
+                                    // The event is not registered to the webhook 
+                                    // So send the response and close the connection
+                                    res.status(200).json({
+                                        'Status': 'success',
+                                        'url': {
+                                            'id': urls._id,
+                                            'short_url': `${config.host}/s/${alias}`,
+                                            'alias': urls.alias,
+                                        }
+                                    });
+                                }
+                            } else {
+                                // Webhook not isset so send the response and close the connection
+                                res.status(200).json({
+                                    'Status': 'success',
+                                    'url': {
+                                        'id': urls._id,
+                                        'short_url': `${config.host}/s/${alias}`,
+                                        'alias': urls.alias,
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.status(500).json({
+                    'Error': 'Missig required data.'
+                });
+            }
+        }
+    });
+});
+
 router.delete('/shorten', (req, res) => {
     // Webhook data
     // Delete a link: Webhook event -> link_deleted
@@ -481,7 +663,7 @@ router.delete('/shorten', (req, res) => {
                         if (application[0].active) {
                             if (application[0].production) {
                                 const allowed_origins = application[0].allowed_origins;
-                                if (allowed_origins.indexOf(origin) !== -1) {
+                                if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Url.deleteOne({
                                         _id: url_id,
                                         user_id: user_id
@@ -645,6 +827,7 @@ router.put('/shorten', (req, res) => {
                 const description = properties.description != null && properties.description != undefined ? properties.description : null;
                 const password = properties.password != null && properties.password != undefined ? properties.password : null;
                 const expiration_time = properties.expires != null && properties.expires != undefined ? properties.expires : null;
+                const page_screenshot = properties.page_screenshot != '' && properties.page_screenshot != null && properties.page_screenshot != undefined && typeof properties.page_screenshot === "boolean" ? properties.page_screenshot : null;
 
                 const geo_select = rules.geo_tag != null && rules.geo_tag != undefined && Array.isArray(rules.geo_tag) ? rules.geo_tag : null;
                 const geotag_url = rules.geo_tag_url != null && rules.geo_tag_url != undefined ? rules.geo_tag_url : null;
@@ -653,6 +836,7 @@ router.put('/shorten', (req, res) => {
 
                 const seo_title = seo.seo_title != null && seo.seo_title != undefined ? seo.seo_title : null;
                 const seo_description = seo.seo_description != null && seo.seo_description != undefined ? seo.seo_description : null;
+                const page_seotags = seo.page_seotags != '' && seo.page_seotags != null && seo.page_seotags != undefined && typeof seo.page_seotags === "boolean" ? seo.page_seotags : null;
 
                 const payload = {};
                 if (description != null) payload.description = description;
@@ -664,6 +848,8 @@ router.put('/shorten', (req, res) => {
                 if (devicetag_url != null) payload.devicetag_url = devicetag_url;
                 if (seo_title != null) payload.seo_title = seo_title;
                 if (seo_description != null) payload.seo_description = seo_description;
+                if (page_screenshot != null) payload.page_screenshot = page_screenshot;
+                if (page_seotags != null) payload.page_seotags = page_seotags;
 
                 if (url_id && payload) {
                     // Find the application and perform security checks
@@ -679,7 +865,7 @@ router.put('/shorten', (req, res) => {
                             if (application[0].active) {
                                 if (application[0].production) {
                                     const allowed_origins = application[0].allowed_origins;
-                                    if (allowed_origins.indexOf(origin) !== -1) {
+                                    if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                         db.Url.updateOne({
                                             _id: url_id,
                                             user_id: user_id
@@ -850,7 +1036,7 @@ router.get('/link', (req, res) => {
                         if (application[0].active) {
                             if (application[0].production) {
                                 const allowed_origins = application[0].allowed_origins;
-                                if (allowed_origins.indexOf(origin) !== -1) {
+                                if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Url.find({
                                         _id: url_id,
                                         user_id: user_id,
@@ -1032,7 +1218,7 @@ router.get('/link/all', (req, res) => {
                         if (application[0].active) {
                             if (application[0].production) {
                                 const allowed_origins = application[0].allowed_origins;
-                                if (allowed_origins.indexOf(origin) !== -1) {
+                                if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Url.find({
                                         user_id: user_id,
                                         application_id: application_id

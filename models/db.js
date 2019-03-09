@@ -24,6 +24,10 @@ const userSchema = Schema({
     avatar: String,
     facebook_id: String,
     last_name: String,
+    wallet_amount: {
+        type: Number,
+        default: 0.00000
+    },
     customer_id: {
         type: String,
         default: null
@@ -94,9 +98,36 @@ const walletSchema = Schema({
         type: String,
         required: true
     },
-    application_id: String,
+    application_id: {
+        type: String,
+        default: null
+    },
+    description: String,
     url_id: String,
     amount: Number,
+    timestamp: {
+        type: Number,
+        default: config.time()
+    }
+});
+
+const payoutSchema = Schema({
+    user_id: {
+        type: String,
+        required: true
+    },
+    application_id: {
+        type: String,
+        default: null
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    payed: {
+        type: Boolean,
+        default: false
+    },
     timestamp: {
         type: Number,
         default: config.time()
@@ -178,7 +209,7 @@ const applicationEventSchema = Schema({
     request_origin: String,
     creation_time: {
         type: String,
-        default: Math.round(Date.now() / 1000)
+        default: config.time()
     }
 });
 
@@ -212,7 +243,7 @@ const applicationWebhooksEndpoints = Schema({
     },
     creation_time: {
         type: String,
-        default: Math.round(Date.now() / 1000)
+        default: config.time()
     }
 });
 
@@ -254,7 +285,7 @@ const applicationWebhooksEndpointsEvents = Schema({
     },
     creation_time: {
         type: String,
-        default: Math.round(Date.now() / 1000)
+        default: config.time()
     }
 });
 
@@ -271,30 +302,32 @@ const analyticsSchema = Schema({
     language: String,
     timestamp: {
         type: Number,
-        default: Math.round(Date.now() / 1000)
+        default: config.time()
     }
 });
 
 userSchema.plugin(mongoosePaginate);
 urlSchema.plugin(mongoosePaginate);
 planSchema.plugin(mongoosePaginate);
+payoutSchema.plugin(mongoosePaginate);
 walletSchema.plugin(mongoosePaginate);
 licenseSchema.plugin(mongoosePaginate);
+analyticsSchema.plugin(mongoosePaginate);
 applicationSchema.plugin(mongoosePaginate);
 applicationEventSchema.plugin(mongoosePaginate);
 applicationWebhooksEndpoints.plugin(mongoosePaginate);
 applicationWebhooksEndpointsEvents.plugin(mongoosePaginate);
-analyticsSchema.plugin(mongoosePaginate);
 
-models.User = mongoose.model('User', userSchema);
 models.Url = mongoose.model('Url', urlSchema);
 models.Plan = mongoose.model('Plan', planSchema);
+models.User = mongoose.model('User', userSchema);
 models.Wallet = mongoose.model('Wallet', walletSchema);
+models.Payout = mongoose.model('Payout', payoutSchema);
 models.License = mongoose.model('License', licenseSchema);
-models.Application = mongoose.model('Application', applicationSchema);
-models.ApplicationEvent = mongoose.model('Application_event', applicationEventSchema);
-models.Webhook = mongoose.model('Webhook', applicationWebhooksEndpoints);
-models.WebhookEvent = mongoose.model('Webhook_event', applicationWebhooksEndpointsEvents);
 models.Analytic = mongoose.model('Analytic', analyticsSchema);
+models.Application = mongoose.model('Application', applicationSchema);
+models.Webhook = mongoose.model('Webhook', applicationWebhooksEndpoints);
+models.ApplicationEvent = mongoose.model('Application_event', applicationEventSchema);
+models.WebhookEvent = mongoose.model('Webhook_event', applicationWebhooksEndpointsEvents);
 
 module.exports = models;
