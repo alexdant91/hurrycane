@@ -118,7 +118,7 @@ $.ajax({
             });
             let ctxReferer = document.getElementById("referer").getContext('2d');
             myChartReferer = new Chart(ctxReferer, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: refererLabelsFormatted,
                     datasets: [{
@@ -274,7 +274,7 @@ $(document).on('click', '.update-date', function () {
                 let ctxReferer = document.getElementById("referer").getContext('2d');
                 myChartReferer.destroy();
                 myChartReferer = new Chart(ctxReferer, {
-                    type: 'line',
+                    type: 'bar',
                     data: {
                         labels: refererLabelsFormatted,
                         datasets: [{

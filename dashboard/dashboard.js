@@ -105,36 +105,45 @@ router.get('/urls/details/:id', (req, res) => {
     const url_id = req.params.id != '' && req.params.id != null && req.params.id != undefined ? req.params.id : false;
     if (url_id) {
         db.Url.find({
+            _id: url_id,
             user_id: req.session.user._id
         }).then(response => {
             // res.json(response);
-            db.Plan.find({
-                name: req.session.user.subscription
-            }, (err, docs) => {
-                if (err) throw err;
-                // If the avatar is an url (facebook, twitter) remove the directory from path
-                let user = req.session.user;
-                user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
-                res.render('./dashboard/urls-details', {
-                    session: req.isAuthenticated(),
-                    user: user,
-                    datas: {
-                        plan: {
-                            name: docs.name,
-                            url_limit: docs[0].url_limit
+            if (response.length > 0) {
+                db.Plan.find({
+                    name: req.session.user.subscription
+                }, (err, docs) => {
+                    if (err) throw err;
+                    // If the avatar is an url (facebook, twitter) remove the directory from path
+                    let user = req.session.user;
+                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    res.render('./dashboard/urls-details', {
+                        session: req.isAuthenticated(),
+                        user: user,
+                        datas: {
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            },
+                            urls: {
+                                data: response[0]
+                            },
+                            countries: country.countriesToIndexArray()
                         },
-                        urls: {
-                            data: response[0]
+                        page: 'urls',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
                         }
-                    },
-                    page: 'urls',
-                    messages: {
-                        type: null,
-                        title: null,
-                        text: null
-                    }
+                    });
                 });
-            });
+            } else {
+                // @TODO: Improve the errors handler
+                res.json({
+                    'Error': `The URL (${url_id}) was deleted or not exist.`
+                });
+            }
         }).catch(err => {
             res.json(err);
         });

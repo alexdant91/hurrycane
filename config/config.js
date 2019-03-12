@@ -4,6 +4,7 @@ class Config {
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
         this.host = 'https://hurrycane.it';
+        this.short_host = 'http://hycn.it';
         this.cluster = process.env.CLUSTER_ENV || false;
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
@@ -23,7 +24,7 @@ class Config {
             version: 'v1'
         };
         this.wallet = {
-            single_transaction: 0.00025
+            single_transaction: 0.00050
         };
     }
 

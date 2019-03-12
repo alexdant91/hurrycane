@@ -41,10 +41,14 @@
                     <!-- <button type="button" class="custom-button-advanced"><i class="fal fa-cog"></i> Advanced options</button> -->
                     <div class="row">
                         <div class="container pad-20 custom-radio">
-                            <input type="radio" name="mode" id="advanced-mode" checked />
-                            <label for="advanced-mode"><span>Advanced mode</span></label>
                             <input type="radio" name="mode" id="fast-mode" />
                             <label for="fast-mode"><span>Fast mode</span></label>
+                            <input type="radio" name="mode" id="advanced-mode" checked />
+                            <label for="advanced-mode"><span>Advanced mode</span></label>
+                            <div class="right">
+                                <p class="alert alert-info margin-0 fast-mode hidden"><i class="fal fa-lightbulb"></i> It's the fastest way to generate a short link but you will lost a lot of features.</p>
+                                <p class="alert alert-info margin-0 advanced-mode"><i class="fal fa-lightbulb"></i> It takes a little longer but allows you to take advantage of many more features.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -115,9 +119,13 @@
                                         Ok, we can do it! Simply choose your favourite option. So, if the connected device is
                                         <span>
                                             <select name="device_select[]" class="verbal-select">
-                                                <option value="phone">a smartphone</option>
-                                                <option value="desktop">a desktop</option>
-                                                <option value="tablet">a tablet</option>
+                                                <? const devices = ['phone', 'tablet', 'desktop']; ?>
+                                                <? for(let i = 0; i < devices.length; i++) { ?>
+                                                <option value="<?= devices[i] ?>">
+                                                    a
+                                                    <?= devices[i] ?>
+                                                </option>
+                                                <? } ?>
                                             </select>
                                         </span>
                                         <button class="add-verbal-select-btn" type="button"><i class="fal fa-plus"></i></button>

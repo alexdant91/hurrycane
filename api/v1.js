@@ -26,15 +26,22 @@ const config = new Config();
  */
 
 // GET /api/
-router.get('/', (req, res) => {
+router.get(['/', `/${config.api.version}`], (req, res) => {
     res.json({
         api: 'API',
         headers: req.headers
     });
 });
 
-router.get('/token', (req, res) => {
+// POST /api/
+router.post('/', (req, res) => {
+    res.json({
+        api: 'API',
+        headers: req.headers
+    });
+});
 
+router.get(['/token', `/${config.api.version}/token`], (req, res) => {
     // All required data:
     // Header -> Authorization: Bearer base64(username:password) [Bearer YWxleGRhbnQ5MUBnbWFpbC5jb206MThHbWdhYTIn]
     // Header -> Secretkey: application-secret-key-value
@@ -165,7 +172,7 @@ router.get('/token', (req, res) => {
     }
 });
 
-router.post('/shorten', (req, res) => {
+router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
     // Webhook data
     // Create a link: Webhook event -> link_created
 
@@ -325,7 +332,7 @@ router.post('/shorten', (req, res) => {
                                                                                                             user_id: user_id,
                                                                                                             application_id: application_id,
                                                                                                             long_url: long_url,
-                                                                                                            short_url: `${config.host}/s/${alias}`,
+                                                                                                            short_url: `${config.short_host}/s/${alias}`,
                                                                                                             api_version: config.api.version,
                                                                                                             event: 'link_created',
                                                                                                             status: 'success',
@@ -360,7 +367,7 @@ router.post('/shorten', (req, res) => {
                                                                                                     'Status': 'success',
                                                                                                     'url': {
                                                                                                         'id': urls._id,
-                                                                                                        'short_url': `${config.host}/s/${alias}`,
+                                                                                                        'short_url': `${config.short_host}/s/${alias}`,
                                                                                                         'alias': urls.alias,
                                                                                                     }
                                                                                                 });
@@ -372,7 +379,7 @@ router.post('/shorten', (req, res) => {
                                                                                                     'Status': 'success',
                                                                                                     'url': {
                                                                                                         'id': urls._id,
-                                                                                                        'short_url': `${config.host}/s/${alias}`,
+                                                                                                        'short_url': `${config.short_host}/s/${alias}`,
                                                                                                         'alias': urls.alias,
                                                                                                     }
                                                                                                 });
@@ -383,7 +390,7 @@ router.post('/shorten', (req, res) => {
                                                                                                 'Status': 'success',
                                                                                                 'url': {
                                                                                                     'id': urls._id,
-                                                                                                    'short_url': `${config.host}/s/${alias}`,
+                                                                                                    'short_url': `${config.short_host}/s/${alias}`,
                                                                                                     'alias': urls.alias,
                                                                                                 }
                                                                                             });
@@ -442,7 +449,7 @@ router.post('/shorten', (req, res) => {
 
 });
 
-router.post('/shorten/direct', (req, res) => {
+router.post(['/shorten/direct', `/${config.api.version}/shorten/direct`], (req, res) => {
     // Webhook data
     // Create a link: Webhook event -> link_created
 
@@ -548,7 +555,7 @@ router.post('/shorten/direct', (req, res) => {
                                                 user_id: user_id,
                                                 application_id: application_id,
                                                 long_url: long_url,
-                                                short_url: `${config.host}/s/${alias}`,
+                                                short_url: `${config.short_host}/s/${alias}`,
                                                 api_version: config.api.version,
                                                 event: 'link_created',
                                                 status: 'success',
@@ -583,7 +590,7 @@ router.post('/shorten/direct', (req, res) => {
                                         'Status': 'success',
                                         'url': {
                                             'id': urls._id,
-                                            'short_url': `${config.host}/s/${alias}`,
+                                            'short_url': `${config.short_host}/s/${alias}`,
                                             'alias': urls.alias,
                                         }
                                     });
@@ -595,7 +602,7 @@ router.post('/shorten/direct', (req, res) => {
                                         'Status': 'success',
                                         'url': {
                                             'id': urls._id,
-                                            'short_url': `${config.host}/s/${alias}`,
+                                            'short_url': `${config.short_host}/s/${alias}`,
                                             'alias': urls.alias,
                                         }
                                     });
@@ -606,7 +613,7 @@ router.post('/shorten/direct', (req, res) => {
                                     'Status': 'success',
                                     'url': {
                                         'id': urls._id,
-                                        'short_url': `${config.host}/s/${alias}`,
+                                        'short_url': `${config.short_host}/s/${alias}`,
                                         'alias': urls.alias,
                                     }
                                 });
@@ -623,7 +630,7 @@ router.post('/shorten/direct', (req, res) => {
     });
 });
 
-router.delete('/shorten', (req, res) => {
+router.delete(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
     // Webhook data
     // Delete a link: Webhook event -> link_deleted
 
@@ -792,7 +799,7 @@ router.delete('/shorten', (req, res) => {
     });
 });
 
-router.put('/shorten', (req, res) => {
+router.put(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
     // Webhook data
     // Update a link: Webhook event -> link_updated
 
@@ -997,7 +1004,7 @@ router.put('/shorten', (req, res) => {
     });
 });
 
-router.get('/link', (req, res) => {
+router.get(['/link', `/${config.api.version}/link`], (req, res) => {
     // Webhook data
     // Get a link obj: Webhook event -> link_retrieve
 
@@ -1048,7 +1055,7 @@ router.get('/link', (req, res) => {
                                             application_id: urls[0].application_id,
                                             long_url: urls[0].long_url,
                                             domain_name: urls[0].domain_name,
-                                            short_url: `${config.host}/s/${urls[0].alias}`,
+                                            short_url: `${config.short_host}/s/${urls[0].alias}`,
                                             alias: urls[0].alias,
                                             favicon: urls[0].favicon,
                                             properties: {
@@ -1181,7 +1188,7 @@ router.get('/link', (req, res) => {
     });
 });
 
-router.get('/link/all', (req, res) => {
+router.get(['/link/all', `/${config.api.version}/link/all`], (req, res) => {
     // Webhook data
     // Get list of all links obj: Webhook event -> link_list
 
@@ -1231,7 +1238,7 @@ router.get('/link/all', (req, res) => {
                                                 application_id: item.application_id,
                                                 long_url: item.long_url,
                                                 domain_name: item.domain_name,
-                                                short_url: `${config.host}/s/${item.alias}`,
+                                                short_url: `${config.short_host}/s/${item.alias}`,
                                                 alias: item.alias,
                                                 favicon: item.favicon,
                                                 properties: {

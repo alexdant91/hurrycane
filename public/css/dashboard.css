@@ -141,6 +141,10 @@ body {
     margin: 10px 0;
 }
 
+.verbal-input-wrapper .verbal-inputs>span:not(:last-child) {
+    margin-right: 5px;
+}
+
 .verbal-input-wrapper .verbal-select {
     margin: 0 0 0 5px;
     -webkit-appearance: none;
@@ -162,6 +166,10 @@ body {
 
 .verbal-input-wrapper .verbal-select:hover {
     box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+}
+
+.verbal-inputs>span {
+    display: inline-block;
 }
 
 .user-side-wrapper {
@@ -328,7 +336,7 @@ span.relative .verbal-select {
 .remove-verbal-select-btn {
     position: absolute;
     line-height: 0;
-    top: -4px;
+    top: 0;
     font-size: 12px;
     padding: 9px;
     border-radius: 50%;

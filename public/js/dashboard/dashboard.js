@@ -40,13 +40,13 @@ $(document).on('click', '#shortenUrl', function (e) {
 
     // const device_select = $('[name="device_select[]"]').val();
     let device_select = [];
-    $('[name="device_select[]"]').each(function () {
+    $('body').find('[name="device_select[]"]').each(function () {
         device_select.push($(this).val());
     });
     const devicetag_url = $('[name="devicetag_url"]').val();
     // const geo_select = $('[name="geo_select[]"]').val();
     let geo_select = [];
-    $('[name="geo_select[]"]').each(function () {
+    $('body').find('[name="geo_select[]"]').each(function () {
         geo_select.push($(this).val());
     });
     const geotag_url = $('[name="geotag_url"]').val();
@@ -133,6 +133,9 @@ $(document).on('click', '#shortenUrl', function (e) {
                                     <a href="http://twitter.com/share?url=${data.short_url}"
                                     class="tw-share-button share-button"
                                     onclick="return false;"><i class="fab fa-twitter"></i> Share on twitter</a>
+                                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=${data.short_url}&source=LinkedIn"
+                                    class="in-share-button share-button"
+                                    onclick="return false;"><i class="fab fa-linkedin"></i> Share on LinkedIn</a>
                                 </div>
                             </div>
                         </div>
@@ -285,6 +288,19 @@ $(document).on('keyup', 'input.header-search', function () {
             $this.html('<i class="fal fa-eye"></i> Show');
         }
     });
+});
+
+$(document).on('change', 'input[type="radio"][name="mode"]', function () {
+    let fastMode = $('#fast-mode').is(':checked');
+    if (fastMode) {
+        $('.row.advanced-option-wrapper > .container').find('.row').addClass('disabled');
+        $('p.fast-mode').removeClass('hidden');
+        $('p.advanced-mode').addClass('hidden');
+    } else {
+        $('.row.advanced-option-wrapper > .container').find('.row').removeClass('disabled');
+        $('p.fast-mode').addClass('hidden');
+        $('p.advanced-mode').removeClass('hidden');
+    }
 });
 
 function sharePopup(url) {

@@ -62,6 +62,10 @@ table.hover tr:hover {
     background: #f5fafc;
 }
 
+.hidden {
+    display: none;
+}
+
 input {
     height: 56px !important;
 }
@@ -796,6 +800,25 @@ h1.url-title {
     color: #ffffff;
 }
 
+.in-share-button {
+    float: left;
+    margin: 0 5px 0 0;
+    background: #2C3E49;
+    color: #ffffff !important;
+    padding: 10px 25px;
+    border-radius: 100px;
+    font-size: 16px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
+}
+
+.in-share-button:hover {
+    color: #ffffff !important;
+}
+
+.in-share-button i.fab {
+    color: #ffffff;
+}
+
 .share-button.full {
     width: 100%;
 }
@@ -1248,14 +1271,33 @@ h1.url-title {
 
 .alert {
     float: left;
-    width: 100%;
+    width: auto;
     padding: 15px 10px;
     border-radius: 3px;
+}
+
+.alert.block {
+    width: 100% !important;
 }
 
 .alert-orange {
     background: #ffc57e !important;
     color: #503400 !important;
+    font-size: 15px;
+}
+
+.alert-orange i {
+    color: #503400 !important;
+}
+
+.alert-info {
+    background: #d5f2ff !important;
+    color: #0e5d7b !important;
+    font-size: 15px;
+}
+
+.alert-info i {
+    color: #0e5d7b !important;
 }
 
 @media screen and (min-width: 1488px) {

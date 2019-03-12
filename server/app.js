@@ -54,6 +54,7 @@ module.exports.init = function init() {
     // Routers for api and dashboard
     const api = require(`../api/${config.api.version}`);
     const dashboard = require('../dashboard/dashboard');
+    const hycn = require('../hycn/index');
 
     // Protect functions with CORS
     const cors = require('cors');
@@ -90,23 +91,19 @@ module.exports.init = function init() {
 
     // Subdomain virtual host
     // Set a subdomain for serving routers like api
-    // app.use((req, res, next) => {
+    // const vhost = (hostname, app) => (req, res, next) => {
     //     const host = req.headers.host.split('.')[0];
-    //     const origin = req.headers.origin;
-    //     console.log(host, req.headers);
-    //     next()
-    // });
-    const vhost = (hostname, app) => (req, res, next) => {
-        const host = req.headers.host.split('.')[0];
-        // console.log('[DEBUG]: ' + host, hostname);
-        if (host === hostname) {
-            return app(req, res, next);
-        } else {
-            next();
-        }
-    };
+    //     // console.log('[DEBUG]: ' + host, hostname);
+    //     if (host === hostname) {
+    //         return app(req, res, next);
+    //     } else {
+    //         next();
+    //     }
+    // };
+    const vhost = require('../modules/vhost/v1');
     app.use(vhost('api', api));
     app.use(vhost('dashboard', dashboard));
+    app.use(vhost('hycn', hycn));
     // End api subdomain
 
     // Get device informations
@@ -120,6 +117,11 @@ module.exports.init = function init() {
         type: ['json', 'application/csp-report']
     }));
     app.use(cookieParser());
+    // Set the nonce CPS Security protection
+    // app.use((req, res, next) => {
+    //     res.locals.nonce = uuid().toString('base64');; //uuid();
+    //     next();
+    // });
     app.use(function setUniqVisitor(req, res, next) {
         // check if client sent cookie
         let cookie = req.cookies.uniqueVisitor;
@@ -143,19 +145,14 @@ module.exports.init = function init() {
         }
         next();
     });
-    // Set the nonce CPS Security protection
-    // app.use((req, res, next) => {
-    //     res.locals.nonce = uuid().toString('base64');; //uuid();
-    //     next();
-    // });
     app.use(helmet());
     app.use(csp({
         directives: {
-            defaultSrc: ["'self'", 'localhost', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
-            scriptSrc: ["'self'", "'unsafe-inline'", 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
-            styleSrc: ["'self'", "'unsafe-inline'", '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
-            frameSrc: ["'self'", '*.facebook.net', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
-            imgSrc: ['*', "'self'", 'data:'],
+            defaultSrc: ["'self'", 'localhost', 'hycn.it', '*.hycn.it', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
+            scriptSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
+            styleSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
+            frameSrc: ["'self'", '*.facebook.net', 'hycn.it', '*.hycn.it', 'hurrycane.it', '*.hurrycane.it', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
+            imgSrc: ['*', "'self'", 'hycn.it', '*.hycn.it', 'data:'],
             //sandbox: ['allow-forms', 'allow-scripts'],
             //reportUri: '/report-violation',
             objectSrc: ["'none'"],
@@ -202,7 +199,8 @@ module.exports.init = function init() {
     app.set('view engine', 'ejs');
 
     app.use((req, res, next) => {
-        console.log(colors.bold.blue(`[SERVER]: Worker on process id ${process.pid}.`));
+        // console.log(colors.bold.blue(`[SERVER]: Worker on process id ${process.pid}.`));
+        // console.log(req.cookies.session);
         next();
     });
 
@@ -625,7 +623,7 @@ module.exports.init = function init() {
                                                             // Get the response
                                                             res.json({
                                                                 'Status': 'done',
-                                                                'short_url': `${config.host}/s/${alias}`,
+                                                                'short_url': `${config.short_host}/${alias}`,
                                                                 'messages': {
                                                                     type: 'success',
                                                                     title: 'Well!',
@@ -714,7 +712,7 @@ module.exports.init = function init() {
                                                 // Get the response
                                                 res.json({
                                                     'Status': 'done',
-                                                    'short_url': `${config.host}/s/${alias}`,
+                                                    'short_url': `${config.short_host}/${alias}`,
                                                     'messages': {
                                                         type: 'success',
                                                         title: 'Well!',
@@ -799,7 +797,7 @@ module.exports.init = function init() {
                 } else {
                     res.json({
                         'Status': 'done',
-                        'short_url': `${config.host}/s/${alias}`,
+                        'short_url': `${config.short_host}/${alias}`,
                         'messages': {
                             type: 'success',
                             title: 'Well!',
@@ -853,186 +851,81 @@ module.exports.init = function init() {
         }
     });
 
-    // Shorten link alias retrive logic
-    app.get('/s/:alias', (req, res) => {
-        const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
-        const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
-        const language = process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES;
-        const location = country.findCounryNameFromCode(language.split('_')[0]);
-        if (alias) {
-            db.Url.find({
-                alias: alias
-            }, (err, docs) => {
-                if (err) res.redirect('/?error=alias_not_founded');
+    // POST /shorten/update
+    app.post('/shorten/update', (req, res) => {
+        const url_id = req.body.url_id != '' && req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false;
+        const description = req.body.description != '' && req.body.description != null && req.body.description != undefined ? req.body.description : null;
+        const expiration_time = req.body.expiration_time != '' && req.body.expiration_time != null && req.body.expiration_time != undefined ? req.body.expiration_time : null;
+        const device_select = req.body.device_select != '' && req.body.device_select != null && req.body.device_select != undefined && Array.isArray(req.body.device_select) ? req.body.device_select : null;
+        const devicetag_url = req.body.devicetag_url != '' && req.body.devicetag_url != null && req.body.devicetag_url != undefined ? req.body.devicetag_url : null;
+        const geo_select = req.body.geo_select != '' && req.body.geo_select != null && req.body.geo_select != undefined && Array.isArray(req.body.geo_select) ? req.body.geo_select : null;
+        const geotag_url = req.body.geotag_url != '' && req.body.geotag_url != null && req.body.geotag_url != undefined ? req.body.geotag_url : null;
+        const seo_title = req.body.seo_title != '' && req.body.seo_title != null && req.body.seo_title != undefined ? req.body.seo_title : null;
+        const seo_description = req.body.seo_description != '' && req.body.seo_description != null && req.body.seo_description != undefined ? req.body.seo_description : null;
 
-                // Update the clicks general counter
-                // Register the new referer if there's no one
-                // Update the referer if there's one
-                const clicks = docs[0].clicks + 1;
-                db.Url.updateOne({
-                    _id: docs[0]._id
-                }, {
-                    clicks: clicks
-                }, (err, confirm) => {
-                    if (err) console.log(err);
-                    if (confirm) {
+        let param = {};
 
-                        const password = docs[0].password;
-                        if (password != null) {
-                            res.render('alias', {
-                                session: req.isAuthenticated(),
-                                user: req.session.user,
-                                page: 'alias',
-                                alias: alias,
-                                messages: {
-                                    type: null,
-                                    title: null,
-                                    text: null
-                                }
-                            });
-                        } else {
-
-                            // First location 
-                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
-                            // Then device
-                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
-
-                            // Async analytics and wallet
-                            db.Analytic.find({
-                                url_id: docs[0]._id,
-                                user_id: docs[0].user_id,
-                                device: req.device.type,
-                                referer: referer,
-                                language: language,
-                                timestamp: {
-                                    $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
-                                }
-                            }, (err, items) => {
-                                if (items.length > 0) {
-                                    // The row exist so update the clicks value from the same referer
-                                    const click = items[0].clicks + 1;
-                                    const uniq_key = req.cookies.uniqueVisitor;
-                                    const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
-                                    db.Analytic.updateOne({
-                                        url_id: docs[0]._id,
-                                        user_id: docs[0].user_id,
-                                        device: req.device.type,
-                                        referer: referer,
-                                        language: language
-                                    }, {
-                                        clicks: click,
-                                        uniq_views: uniq_views
-                                    }, (err, confirm) => {});
-
-
-                                    if (items[0].uniq_views != undefined && items[0].uniq_views != null) {
-                                        // Uniq key retrieved
-                                        if (items[0].uniq_views.indexOf(uniq_key) === -1) {
-                                            // It's a new uniq view for the current day
-                                            if (docs[0].landing_page == 'standard') {
-                                                db.Wallet({
-                                                    user_id: docs[0].user_id,
-                                                    application_id: docs[0].application_id,
-                                                    url_id: docs[0]._id,
-                                                    amount: config.wallet.single_transaction
-                                                }).save(err => {});
-                                                db.User.find({
-                                                    _id: docs[0].user_id,
-                                                }, (err, user) => {
-                                                    if (!err && user.length > 0) {
-                                                        db.User.updateOne({
-                                                            _id: user[0]._id
-                                                        }, {
-                                                            wallet_amount: (user[0].wallet_amount + 0.00025)
-                                                        }, (err, confirm) => {});
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }
-
-                                } else {
-
-                                    db.Analytic({
-                                        url_id: docs[0]._id,
-                                        user_id: docs[0].user_id,
-                                        uniq_views: [req.cookies.uniqueVisitor],
-                                        clicks: 1,
-                                        device: req.device.type,
-                                        referer: referer,
-                                        language: language
-                                    }).save(err => {});
-
-                                    if (docs[0].landing_page == 'standard') {
-                                        db.Wallet({
-                                            user_id: docs[0].user_id,
-                                            application_id: docs[0].application_id,
-                                            url_id: docs[0]._id,
-                                            amount: config.wallet.single_transaction
-                                        }).save(err => {});
-                                        db.User.find({
-                                            _id: docs[0].user_id,
-                                        }, (err, user) => {
-                                            if (!err && user.length > 0) {
-                                                db.User.updateOne({
-                                                    _id: user[0]._id
-                                                }, {
-                                                    wallet_amount: (user[0].wallet_amount + 0.00025)
-                                                }, (err, confirm) => {});
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-
-                            res.render('s', {
-                                session: req.isAuthenticated(),
-                                user: req.session.user,
-                                page: 's',
-                                alias: alias,
-                                long_url: long_url,
-                                url: docs[0],
-                                messages: {
-                                    type: null,
-                                    title: null,
-                                    text: null
-                                }
-                            });
-                            // res.redirect(docs[0].long_url);
-                        }
-                    }
-                });
-
-            });
-        } else {
-            res.redirect('/?error=empty_alias');
+        if (description != null) {
+            param.description = description;
         }
-    });
+        if (expiration_time != null) {
+            param.expiration_time = expiration_time;
+        }
+        if (device_select != null) {
+            param.device_select = device_select;
+        }
+        if (devicetag_url != null) {
+            param.devicetag_url = devicetag_url;
+        }
+        if (geo_select != null) {
+            param.geo_select = geo_select;
+        }
+        if (geotag_url != null) {
+            param.geotag_url = geotag_url;
+        }
+        if (seo_title != null) {
+            param.seo_title = seo_title;
+        }
+        if (seo_description != null) {
+            param.seo_description = seo_description;
+        }
 
-    // Shorten link password protection verify
-    app.post('/p/verify', (req, res) => {
-        const alias = req.body.alias != undefined && req.body.alias != null && req.body.alias != '' ? req.body.alias : false;
-        const password = req.body.password != undefined && req.body.password != null && req.body.password != '' ? req.body.password : false;
-        if (alias && password) {
-            db.Url.find({
-                alias: alias
-            }, (err, docs) => {
-                if (err) res.json({
-                    'Error': 'Missing required fiends.'
-                });
-                if (!bcrypt.compareSync(password, docs[0].password)) {
+        if (url_id) {
+            db.Url.updateOne({
+                _id: url_id
+            }, param, (err, confirm) => {
+                if (err) {
                     res.json({
-                        'Error': 'Incorrect password.'
+                        'Error': 'Internal server error.',
+                        'title': 'Oops!',
+                        'text': 'Internal server error.'
                     });
                 } else {
-                    res.redirect(docs[0].long_url);
+                    if (confirm) {
+                        res.json({
+                            'Status': 'done',
+                            'message': {
+                                'title': 'Well!',
+                                'text': 'URL updated.'
+                            }
+                        });
+                    } else {
+                        res.json({
+                            'Error': 'Internal server error.',
+                            'title': 'Oops!',
+                            'text': 'Internal server error.'
+                        });
+                    }
                 }
             });
         } else {
             res.json({
-                'Error': 'Missing required fiends.'
+                'Error': 'Missing required data.',
+                'title': 'Oops!',
+                'text': 'Missing required data.'
             });
         }
+
     });
 
     // GET /pricing with the plan table
@@ -1257,6 +1150,168 @@ module.exports.init = function init() {
 
     });
 
+    // Shorten link alias retrive logic
+    app.get('/s/:alias', (req, res) => {
+        const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
+        const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
+        const accepted = req.headers['accept-language'] != null && req.headers['accept-language'] != undefined ? req.headers['accept-language'].split(';')[0] : undefined;
+        const acceptedLanguage = accepted != undefined ? `${accepted.split(',')[0].replace(/-/ig, '_')}.UTF-8` : undefined;
+        const language = acceptedLanguage || (process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES);
+        const location = country.findCounryNameFromCode(language.split('_')[0]);
+        if (alias) {
+            db.Url.find({
+                alias: alias
+            }, (err, docs) => {
+                if (err) res.redirect('/?error=alias_not_founded');
+
+                // Update the clicks general counter
+                // Register the new referer if there's no one
+                // Update the referer if there's one
+                const clicks = docs[0].clicks + 1;
+                db.Url.updateOne({
+                    _id: docs[0]._id
+                }, {
+                    clicks: clicks
+                }, (err, confirm) => {
+                    if (err) console.log(err);
+                    if (confirm) {
+
+                        const password = docs[0].password;
+                        if (password != null) {
+                            res.sendStatus(200);
+                        } else {
+
+                            // First location 
+                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                            // Then device
+                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+
+                            // Async analytics and wallet
+                            db.Analytic.find({
+                                url_id: docs[0]._id,
+                                user_id: docs[0].user_id,
+                                device: req.device.type,
+                                referer: referer,
+                                language: language,
+                                timestamp: {
+                                    $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
+                                }
+                            }, (err, items) => {
+                                if (items.length > 0) {
+                                    // The row exist so update the clicks value from the same referer
+                                    const click = items[0].clicks + 1;
+                                    const uniq_key = req.cookies.uniqueVisitor;
+                                    const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
+                                    db.Analytic.updateOne({
+                                        url_id: docs[0]._id,
+                                        user_id: docs[0].user_id,
+                                        device: req.device.type,
+                                        referer: referer,
+                                        language: language
+                                    }, {
+                                        clicks: click,
+                                        uniq_views: uniq_views
+                                    }, (err, confirm) => {});
+
+
+                                    if (items[0].uniq_views != undefined && items[0].uniq_views != null) {
+                                        // Uniq key retrieved
+                                        if (items[0].uniq_views.indexOf(uniq_key) === -1) {
+                                            // It's a new uniq view for the current day
+                                            if (docs[0].landing_page == 'standard') {
+                                                db.Wallet({
+                                                    user_id: docs[0].user_id,
+                                                    application_id: docs[0].application_id,
+                                                    url_id: docs[0]._id,
+                                                    amount: config.wallet.single_transaction
+                                                }).save(err => {});
+                                                db.User.find({
+                                                    _id: docs[0].user_id,
+                                                }, (err, user) => {
+                                                    if (!err && user.length > 0) {
+                                                        db.User.updateOne({
+                                                            _id: user[0]._id
+                                                        }, {
+                                                            wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                        }, (err, confirm) => {});
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                } else {
+
+                                    db.Analytic({
+                                        url_id: docs[0]._id,
+                                        user_id: docs[0].user_id,
+                                        uniq_views: [req.cookies.uniqueVisitor],
+                                        clicks: 1,
+                                        device: req.device.type,
+                                        referer: referer,
+                                        language: language
+                                    }).save(err => {});
+
+                                    if (docs[0].landing_page == 'standard') {
+                                        db.Wallet({
+                                            user_id: docs[0].user_id,
+                                            application_id: docs[0].application_id,
+                                            url_id: docs[0]._id,
+                                            amount: config.wallet.single_transaction
+                                        }).save(err => {});
+                                        db.User.find({
+                                            _id: docs[0].user_id,
+                                        }, (err, user) => {
+                                            if (!err && user.length > 0) {
+                                                db.User.updateOne({
+                                                    _id: user[0]._id
+                                                }, {
+                                                    wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                }, (err, confirm) => {});
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+                            res.sendStatus(200);
+                            // res.redirect(docs[0].long_url);
+                        }
+                    }
+                });
+
+            });
+        } else {
+            res.redirect('/?error=empty_alias');
+        }
+    });
+
+    // Shorten link password protection verify
+    app.post('/p/verify', (req, res) => {
+        const alias = req.body.alias != undefined && req.body.alias != null && req.body.alias != '' ? req.body.alias : false;
+        const password = req.body.password != undefined && req.body.password != null && req.body.password != '' ? req.body.password : false;
+        if (alias && password) {
+            db.Url.find({
+                alias: alias
+            }, (err, docs) => {
+                if (err) res.json({
+                    'Error': 'Missing required fiends.'
+                });
+                if (!bcrypt.compareSync(password, docs[0].password)) {
+                    res.json({
+                        'Error': 'Incorrect password.'
+                    });
+                } else {
+                    res.redirect(docs[0].long_url);
+                }
+            });
+        } else {
+            res.json({
+                'Error': 'Missing required fiends.'
+            });
+        }
+    });
+
     app.get('/logout', verifySession, function (req, res) {
         req.session.destroy(function (err) {
             req.logout();
@@ -1298,16 +1353,30 @@ module.exports.init = function init() {
             key: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/privkey.pem', 'utf8'),
             ca: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/chain.pem', 'utf8')
         };
-
         const servers = https.createServer(sslOptions, app).listen(443, () => {
-            console.log(colors.bold.green(`[SERVER] Started server on => https://localhost:${servers.address().port} for Process Id ${process.pid}`));
+            console.log(colors.bold.green(`[SERVER] Started server on => https://${config.host}:${servers.address().port} for Process Id ${process.pid}`));
+            console.log(colors.bold.green(`[SERVER] Started server on => https://${config.short_host}:${servers.address().port} for Process Id ${process.pid}`));
         });
     }
     // End get the https required modules
 
+    // Get the https required modules
+    // if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
+    //     const sslOptions = {
+    //         cert: fs.readFileSync('/etc/letsencrypt/live/hycn.it/fullchain.pem', 'utf8'),
+    //         key: fs.readFileSync('/etc/letsencrypt/live/hycn.it/privkey.pem', 'utf8'),
+    //         ca: fs.readFileSync('/etc/letsencrypt/live/hycn.it/chain.pem', 'utf8')
+    //     };
+    //     const servers = https.createServer(sslOptions, app).listen(444, () => {
+    //         console.log(colors.bold.green(`[SERVER] Started server on => https://localhost:${servers.address().port} for Process Id ${process.pid}`));
+    //     });
+    // }
+    // End get the https required modules
+
     const server = app.listen(process.env.PORT || config.port, () => {
         // console.log(`Server http is listening on port ${config.port}...`);
-        console.log(colors.bold.green(`[SERVER] Started server on => http://localhost:${server.address().port} for Process Id ${process.pid}`));
+        console.log(colors.bold.green(`[SERVER] Started server on => http://${config.host}:${server.address().port} for Process Id ${process.pid}`));
+        console.log(colors.bold.green(`[SERVER] Started server on => http://${config.short_host}:${server.address().port} for Process Id ${process.pid}`));
     });
 
     /*
