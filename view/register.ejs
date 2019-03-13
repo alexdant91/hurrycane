@@ -12,7 +12,8 @@
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/layout.css" />
-        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
         <!-- Facebook login/register logic -->
         <script type="text/javascript" src="/js/fb-login.js?v=1.0.5"></script>
     </head>
@@ -23,7 +24,7 @@
 
         <div class="flex-row">
             <div class="flex-container">
-                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 register-wrapper">
+                <div class="col-xl-4 col-lg-6 col-md-10 col-sm-12 col-xs-12 register-wrapper">
                     <form class="form" method="POST" action="" name="register" id="register">
                         <div class="row">
                             <div class="container text-center">
@@ -31,16 +32,16 @@
                             </div>
                         </div>
                         <div class="input field first">
-                            <label for="name"><b>What's your name?</b></label>
-                            <input type="text" id="name" name="name" placeholder="Name..." />
+                            <label for="name"><b>What's your first name?</b></label>
+                            <input type="text" id="name" name="name" placeholder="First name..." required />
                         </div>
                         <div class="input field">
                             <label for="email"><b>What's your email address?</b></label>
-                            <input type="email" id="email" name="email" placeholder="Email..." />
+                            <input type="email" id="email" name="email" placeholder="Email..." required />
                         </div>
                         <div class="input field">
                             <label for="password"><b>Choose a strong password!</b></label>
-                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." />
+                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." required />
                         </div>
                         <div class="row">
                             <div class="container text-right little-info-form">
@@ -76,35 +77,8 @@
         <?- include('./blocks/footer.ejs') -?>
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
-        <script>
-            const SerializeFormData = form => JSON.stringify(
-                Array.from(new FormData(form).entries()).reduce((m, [key, value]) => Object.assign(m, {
-                    [key]: value
-                }), {})
-            );
-
-            $('form').on('submit', function () {
-                let json = SerializeFormData(this);
-                $.ajax({
-                    url: '/register',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    dataType: 'json',
-                    data: json,
-                    success: function (data) {
-                        if (data.Error) alert(data.Error);
-                        if (data.Status === 'done') location.href = '/';
-                    },
-                    error: function (a, b, c) {
-                        console.log(a, b, c);
-                    }
-                });
-                return false;
-            });
-        </script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="/js/register.js"></script>
     </body>
 
 </html>

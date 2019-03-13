@@ -533,7 +533,14 @@ h1.url-title {
     -moz-transition: all 0.25s;
 }
 
-.advanced-option-wrapper .col-equal-input {
+.advanced-option-wrapper .equal-33 .col-equal-input {
+    width: 33.33%;
+    margin: 0 !important;
+    padding: 5px 0;
+    float: left;
+}
+
+.advanced-option-wrapper .equal-25 .col-equal-input {
     width: 25%;
     margin: 0 !important;
     padding: 5px 0;
@@ -548,14 +555,34 @@ h1.url-title {
     border-right: 1px solid rgba(34, 36, 38, 0.15);
 }
 
+.advanced-option-wrapper .col-equal-input .input.last-child input:focus {
+    border-right: 1px solid #85b7d9 !important;
+}
+
+.advanced-option-wrapper .col-equal-input .input input:focus {
+    border: 1px solid #85b7d9 !important;
+}
+
 .advanced-option-wrapper .col-equal-input .input b {
     font-size: 14px;
 }
 
 .advanced-option-wrapper .col-equal-input .input p {
-    font-size: 11px;
+    font-size: 12px;
     color: #9e9e9e;
     padding: 0 5px 0 0;
+}
+
+.input .placeholder-label {
+    position: absolute;
+    bottom: 19px;
+    left: 15px;
+    color: #858585;
+}
+
+.input .placeholder-label,
+.input .placeholder-label b {
+    font-size: 13px !important;
 }
 
 .little-info-form {
@@ -1334,5 +1361,54 @@ h1.url-title {
 
     .typed-center-wrapper {
         display: block;
+    }
+}
+
+@media screen and (max-width: 1020px) {
+    .col-equal-input {
+        width: 100% !important;
+    }
+
+    .col-equal-input input {
+        border-right: 1px solid #DFDFDF !important;
+    }
+
+    .input-url,
+    .button-url {
+        width: 100% !important;
+    }
+
+    .button-url {
+        text-align: center;
+    }
+
+    .left-side-menu,
+    .menu-side-wrapper-bottom {
+        transition: all 0.25s;
+        -webkit-transition: all 0.25s;
+        -moz-transition: all 0.25s;
+        -o-transition: all 0.25s;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+    }
+
+    .left-side-menu:not(.open),
+    .menu-side-wrapper-bottom:not(.open) {
+        transform: translateX(-251px);
+    }
+
+    .left-side-menu.open,
+    .menu-side-wrapper-bottom.open {
+        position: absolute;
+        z-index: 99;
+        transform: translateX(0);
+        -webkit-transition: all 0.25s;
+        -moz-transition: all 0.25s;
+        -o-transition: all 0.25s;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+    }
+
+    .right-side-wrapper {
+        width: 100vw !important;
+        position: absolute !important;
     }
 }

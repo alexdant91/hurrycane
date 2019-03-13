@@ -5,6 +5,20 @@ const SerializeFormData = form => JSON.stringify(
     }), {})
 );
 
+// Custom placeholder for Alias input
+if ($('input[name = "alias"]').val() != '') {
+    $('input[name = "alias"]').parent().find('.placeholder-label').addClass('hidden');
+} else {
+    $('input[name = "alias"]').parent().find('.placeholder-label').removeClass('hidden');
+}
+$(document).on('keyup', 'input[name="alias"]', function () {
+    if ($(this).val() != '') {
+        $(this).parent().find('.placeholder-label').addClass('hidden');
+    } else {
+        $(this).parent().find('.placeholder-label').removeClass('hidden');
+    }
+});
+
 $(document).on('click', '.a-link', function () {
     location.href = $(this).data('href');
 });
@@ -87,7 +101,18 @@ $(document).on('click', '#shortenUrl', function (e) {
                 $this.html("Let's Go!");
             }
             if (data.Status === 'done') {
-                $('#long-url-input').val(`That's it -> ${data.short_url}`);
+                // $('#long-url-input').val(data.short_url);
+                $('#long-url-input').val('');
+                $('#alias').val('');
+                $('#description').val('');
+                $('#password').val('');
+                $('#expire').val('');
+                $('#devicetag_url').val('');
+                $('#geotag_url').val('');
+                $('#seo_title').val('');
+                $('#seo_description').val('');
+                $('body').find('.after-select-wrapper').remove();
+
                 iziToast.show({
                     theme: 'dark',
                     icon: 'fal fa-check',
@@ -120,6 +145,7 @@ $(document).on('click', '#shortenUrl', function (e) {
                                     readonly class="share-box-url"
                                     value="${data.short_url}"
                                     onClick="this.select();" />
+                                    <button class="copy-button"><i class="fal fa-clone"></i> Copy</button>
                                 </div>
                             </div>
                         </div>
@@ -146,7 +172,7 @@ $(document).on('click', '#shortenUrl', function (e) {
                         </div>
                     </div>`).fadeIn(250);
 
-                $('#shortenUrl').attr('id', 'newShortenUrl').html('New Url!').css('background-color', '#20b3a5');
+                $('#shortenUrl').attr('id', 'newShortenUrl').html('New link!').css('background-color', '#20b3a5');
             }
         },
         error: function (a, b, c) {
@@ -173,7 +199,7 @@ $(document).on('click', '#newShortenUrl', function () {
     $('.share-box-wrapper').fadeOut(250, function () {
         $(this).html('');
     });
-    $('#long-url-input').val('');
+    $('#long-url-input').val('').focus().select();
     $('#alias').val('');
     $('#description').val('');
     $('#password').val('');
@@ -184,6 +210,7 @@ $(document).on('click', '#newShortenUrl', function () {
     $('#seo_description').val('');
     $('body').find('.after-select-wrapper').remove();
     $this.attr('id', 'shortenUrl').html('Let\'s Go!').prop('style', false);
+
 });
 
 $(document).on('click', '.add-verbal-select-btn', function () {
@@ -301,6 +328,21 @@ $(document).on('change', 'input[type="radio"][name="mode"]', function () {
         $('p.fast-mode').addClass('hidden');
         $('p.advanced-mode').removeClass('hidden');
     }
+});
+
+$(document).on('click', '.copy-button', function () {
+    $('body').find('.share-box-url').focus();
+    $('body').find('.share-box-url').select();
+    if (document.execCommand('copy', false)) {
+        iziToast.show({
+            theme: 'dark',
+            icon: 'fal fa-check',
+            position: 'topRight',
+            title: 'Copied!',
+            message: 'The link was copied to clipboard.',
+            progressBarColor: 'rgb(0, 255, 184)'
+        });
+    };
 });
 
 function sharePopup(url) {

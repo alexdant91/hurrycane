@@ -47,7 +47,7 @@ $(document).on('click', '#shortenUrl', function (e) {
                 $this.html("Let's Go!");
             }
             if (data.Status === 'done') {
-                $('#long-url-input').val(`That's it -> ${data.short_url}`);
+                $('#long-url-input').val(data.short_url);
                 iziToast.show({
                     theme: 'dark',
                     icon: 'fal fa-check',
@@ -56,7 +56,7 @@ $(document).on('click', '#shortenUrl', function (e) {
                     message: data.messages.text,
                     progressBarColor: 'rgb(0, 255, 184)'
                 });
-                $('#shortenUrl').attr('id', 'newShortenUrl').html('New Url!').css('background-color', '#20b3a5');
+                $('#shortenUrl').attr('id', 'newShortenUrl').html('New link!').css('background-color', '#20b3a5');
             }
         },
         error: function (a, b, c) {
@@ -76,4 +76,18 @@ $(document).on('click', '#newShortenUrl', function () {
     $('#password').val('');
     $('#expire').val('');
     $this.attr('id', 'shortenUrl').html('Let\'s Go!').prop('style', false);
+});
+
+// Custom placeholder for Alias input
+if ($('input[name = "alias"]').val() != '') {
+    $('input[name = "alias"]').parent().find('.placeholder-label').addClass('hidden');
+} else {
+    $('input[name = "alias"]').parent().find('.placeholder-label').removeClass('hidden');
+}
+$(document).on('keyup', 'input[name="alias"]', function () {
+    if ($(this).val() != '') {
+        $(this).parent().find('.placeholder-label').addClass('hidden');
+    } else {
+        $(this).parent().find('.placeholder-label').removeClass('hidden');
+    }
 });

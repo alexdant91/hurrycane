@@ -1,5 +1,5 @@
 $(document).on('click', '.url-delete-trigger', function (e) {
-    if (confirm('Are you sure you want to delete this application?')) {
+    if (confirm('Are you sure you want to delete this URL?')) {
         const $this = $(this);
         const url_id = $this.data('id');
         const counter = $('body').find('.active-urls-wrapper').length;

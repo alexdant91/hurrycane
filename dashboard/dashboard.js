@@ -35,7 +35,8 @@ router.get('/', (req, res) => {
                         data: {},
                         count: count
                     },
-                    countries: country.countriesToIndexArray()
+                    countries: country.countriesToIndexArray(),
+                    devices: config.devices.select
                 },
                 page: 'index',
                 messages: {
@@ -128,7 +129,8 @@ router.get('/urls/details/:id', (req, res) => {
                             urls: {
                                 data: response[0]
                             },
-                            countries: country.countriesToIndexArray()
+                            countries: country.countriesToIndexArray(),
+                            devices: config.devices.select
                         },
                         page: 'urls',
                         messages: {

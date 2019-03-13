@@ -12,7 +12,8 @@
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/layout.css" />
-        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
 
         <!-- Facebook login logic -->
         <script type="text/javascript" src="/js/fb-login.js?v=1.0.5"></script>
@@ -24,7 +25,7 @@
 
         <div class="flex-row">
             <div class="flex-container">
-                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 login-wrapper left">
+                <div class="col-xl-4 col-lg-6 col-md-10 col-sm-12 col-xs-12 login-wrapper left">
                     <form class="form" method="POST" action="" name="login" id="login">
                         <div class="row">
                             <div class="container text-center">
@@ -33,11 +34,11 @@
                         </div>
                         <div class="input field first">
                             <label><b>What's your email?</b></label>
-                            <input type="email" id="email" name="email" placeholder="Email..." />
+                            <input type="email" id="email" name="email" placeholder="Email..." required />
                         </div>
                         <div class="input field">
                             <label><b>And your password?</b></label>
-                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." />
+                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." required />
                         </div>
                         <div class="row">
                             <div class="container text-right little-info-form">
@@ -73,7 +74,7 @@
         <?- include('./blocks/footer.ejs') -?>
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
         <script type="text/javascript" src="/js/login.js?v=1.0.5"></script>
     </body>
 

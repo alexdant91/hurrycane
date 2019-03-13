@@ -24,7 +24,7 @@
                                                 <div class="input-url-wrapper">
                                                     <div class="input-url">
                                                         <i class="far fa-link"></i>
-                                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="Paste a long URL..." />
+                                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="Paste a long link to make it shorter ..." />
                                                     </div>
                                                     <div class="button-url">
                                                         <button type="button" id="shortenUrl" class="butt main-button blue-button">Let's Go!</button>
@@ -40,14 +40,15 @@
                                 <div class="container">
                                     <button type="button" class="custom-button-advanced"><i class="fal fa-cog"></i> Advanced options</button>
                                     <div class="row advanced-option-wrapper">
-                                        <div class="container">
+                                        <div class="container equal-33">
                                             <div class="col-equal-input">
-                                                <div class="input">
+                                                <div class="input custom-placeholder">
                                                     <label for="alias">
                                                         <b>Custom Alias</b>
-                                                        <p>If you need a custom alias, you can enter it below.</p>
+                                                        <p>Choose the last part of you link and brand it.</p>
                                                     </label>
-                                                    <input type="text" name="alias" id="alias" placeholder="Custom Alias..." />
+                                                    <label for="alias" class="placeholder-label">https://hycn.it/<u><b>Nike</b></u></label>
+                                                    <input type="text" name="alias" id="alias" />
                                                 </div>
                                             </div>
                                             <div class="col-equal-input">
@@ -60,7 +61,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-equal-input">
-                                                <div class="input">
+                                                <div class="input last-child">
                                                     <label for="password">
                                                         <label for="password">
                                                             <b>Password Protect</b>
@@ -68,15 +69,6 @@
                                                         </label>
                                                     </label>
                                                     <input type="text" name="password" id="password" placeholder="Password Protect..." />
-                                                </div>
-                                            </div>
-                                            <div class="col-equal-input">
-                                                <div class="input last-child">
-                                                    <label for="description">
-                                                        <b>Description</b>
-                                                        <p>This can be used to identify URLs on your account.</p>
-                                                    </label>
-                                                    <input type="text" name="description" id="description" placeholder="Description..." />
                                                 </div>
                                             </div>
                                         </div>

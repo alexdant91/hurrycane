@@ -403,7 +403,7 @@ module.exports.init = function init() {
                                         mailer.set({
                                             from: 'info@hurrycane.it',
                                             to: email,
-                                            subject: 'Welcome Alessandro!',
+                                            subject: `Welcome ${name}!`,
                                             text: 'Hi Alessandro, welcome to hurrycane.it',
                                             html: `<p>Hi ${name}, welcome to hurrycane.it</p>`,
                                         }).send((err, info) => {
@@ -493,16 +493,26 @@ module.exports.init = function init() {
                                             mailer.set({
                                                 from: 'info@hurrycane.it',
                                                 to: email,
-                                                subject: 'Welcome Alessandro!',
+                                                subject: `Welcome ${name}!`,
                                                 text: 'Hi Alessandro, welcome to hurrycane.it',
                                                 html: `<p>Hi ${name}, welcome to hurrycane.it</p>`,
                                             }).send((err, info) => {
                                                 console.log(err);
                                             });
                                             // END Async Send confirmation email
-                                            res.json({
-                                                'Status': 'done',
-                                                'ref': ref
+                                            db.User.find({
+                                                email: email
+                                            }, (err, user) => {
+                                                req.login(user[0], (err) => {
+                                                    if (err) res.json({
+                                                        'Error': 'Error during user login.'
+                                                    });;
+                                                    req.session.user = user[0];
+                                                    return res.json({
+                                                        'Status': 'done',
+                                                        'ref': ref
+                                                    });
+                                                })
                                             });
                                         }
 
@@ -818,10 +828,12 @@ module.exports.init = function init() {
     // Shorten url delete
     app.post('/shorten/delete', (req, res) => {
         const url_id = req.body.url_id != '' && req.body.url_id != null && req.body.url_id != undefined ? req.body.url_id : false;
+        const user_id = req.session.user._id;
         const session = req.isAuthenticated();
-        if (url_id && session) {
+        if (url_id && session && user_id) {
             db.Url.deleteOne({
-                _id: url_id
+                _id: url_id,
+                user_id: user_id
             }).then(confirm => {
                 if (confirm) {
                     // Delete thumbnail async
@@ -862,37 +874,38 @@ module.exports.init = function init() {
         const geotag_url = req.body.geotag_url != '' && req.body.geotag_url != null && req.body.geotag_url != undefined ? req.body.geotag_url : null;
         const seo_title = req.body.seo_title != '' && req.body.seo_title != null && req.body.seo_title != undefined ? req.body.seo_title : null;
         const seo_description = req.body.seo_description != '' && req.body.seo_description != null && req.body.seo_description != undefined ? req.body.seo_description : null;
+        const password = req.body.password != '' && req.body.password != null && req.body.password != undefined ? req.body.password : null;
+
+        const control = req.body.control != '' && req.body.control != null && req.body.control != undefined ? req.body.control : null;
+        const user_id = req.session.user._id;
 
         let param = {};
 
-        if (description != null) {
-            param.description = description;
-        }
-        if (expiration_time != null) {
-            param.expiration_time = expiration_time;
-        }
-        if (device_select != null) {
-            param.device_select = device_select;
-        }
-        if (devicetag_url != null) {
-            param.devicetag_url = devicetag_url;
-        }
-        if (geo_select != null) {
-            param.geo_select = geo_select;
-        }
-        if (geotag_url != null) {
-            param.geotag_url = geotag_url;
-        }
-        if (seo_title != null) {
-            param.seo_title = seo_title;
-        }
-        if (seo_description != null) {
-            param.seo_description = seo_description;
+        switch (control) {
+            case null:
+                // Set [] if it's null
+                param.device_select = device_select != null ? device_select : [];
+                param.geo_select = geo_select != null ? geo_select : [];
+                // Set null if it's null
+                param.description = description;
+                param.expiration_time = expiration_time;
+                param.geotag_url = geotag_url;
+                param.devicetag_url = devicetag_url;
+                param.seo_title = seo_title;
+                param.seo_description = seo_description;
+                break;
+            case 'password':
+                param.password = password != null ? bcrypt.hashSync(password) : null;
+                break;
+            default:
+                param = {};
+                break;
         }
 
-        if (url_id) {
+        if (url_id && user_id) {
             db.Url.updateOne({
-                _id: url_id
+                _id: url_id,
+                user_id: user_id
             }, param, (err, confirm) => {
                 if (err) {
                     res.json({
@@ -906,7 +919,7 @@ module.exports.init = function init() {
                             'Status': 'done',
                             'message': {
                                 'title': 'Well!',
-                                'text': 'URL updated.'
+                                'text': 'URL preferences updated.'
                             }
                         });
                     } else {

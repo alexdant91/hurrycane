@@ -4,13 +4,14 @@ const SerializeFormData = form => JSON.stringify(
     }), {})
 );
 
-$('form').on('submit', function () {
-    let json = SerializeFormData(this);
+$('form').on('submit', function (e) {
+    e.preventDefault();
     const $button = $(this).find('button[type="submit"]');
     const actualHTML = $button.html();
     $button.html(loaderHTMLTop);
+    let json = SerializeFormData(this);
     $.ajax({
-        url: '/login',
+        url: '/register',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,9 +25,9 @@ $('form').on('submit', function () {
                     title: 'Oops!',
                     message: data.Error
                 });
-            };
-            if (data.Status === 'done' && data.ref == undefined) location.href = '/dashboard';
-            if (data.Status === 'done' && data.ref != undefined) location.href = data.ref;
+                $button.html(actualHTML);
+            }
+            if (data.Status === 'done') location.href = '/dashboard';
         },
         error: function (a, b, c) {
             console.log(a, b, c);

@@ -22,7 +22,7 @@
                                 <div class="input-url-wrapper">
                                     <div class="input-url">
                                         <i class="far fa-link"></i>
-                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="Paste your long URL..." />
+                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="Paste a long link to make it shorter ..." />
                                     </div>
                                     <div class="button-url">
                                         <button type="button" id="shortenUrl" class="butt main-button blue-button">Let's Go!</button>
@@ -39,11 +39,11 @@
                 <div class="container">
 
                     <!-- <button type="button" class="custom-button-advanced"><i class="fal fa-cog"></i> Advanced options</button> -->
-                    <div class="row">
+                    <div class="row" style="margin-bottom: 20px;">
                         <div class="container pad-20 custom-radio">
-                            <input type="radio" name="mode" id="fast-mode" />
+                            <input type="radio" name="mode" id="fast-mode" checked />
                             <label for="fast-mode"><span>Fast mode</span></label>
-                            <input type="radio" name="mode" id="advanced-mode" checked />
+                            <input type="radio" name="mode" id="advanced-mode" />
                             <label for="advanced-mode"><span>Advanced mode</span></label>
                             <div class="right">
                                 <p class="alert alert-info margin-0 fast-mode hidden"><i class="fal fa-lightbulb"></i> It's the fastest way to generate a short link but you will lost a lot of features.</p>
@@ -53,14 +53,24 @@
                     </div>
 
                     <div class="row advanced-option-wrapper">
-                        <div class="container">
+                        <div class="container equal-25">
                             <div class="col-equal-input">
                                 <div class="input">
                                     <label for="alias">
                                         <b>Custom Alias</b>
-                                        <p>If you need a custom alias, you can enter it below.</p>
+                                        <p>Choose the last part of you link and brand it.</p>
                                     </label>
-                                    <input type="text" name="alias" id="alias" placeholder="Custom Alias..." />
+                                    <label for="alias" class="placeholder-label">https://hycn.it/<u><b>Nike</b></u></label>
+                                    <input type="text" name="alias" id="alias" />
+                                </div>
+                            </div>
+                            <div class="col-equal-input">
+                                <div class="input">
+                                    <label for="description">
+                                        <b>Description</b>
+                                        <p>This can be used to identify URLs on your account.</p>
+                                    </label>
+                                    <input type="text" name="description" id="description" placeholder="Description..." />
                                 </div>
                             </div>
                             <div class="col-equal-input">
@@ -73,7 +83,7 @@
                                 </div>
                             </div>
                             <div class="col-equal-input">
-                                <div class="input">
+                                <div class="input last-child">
                                     <label for="password">
                                         <label for="password">
                                             <b>Password Protect</b>
@@ -83,17 +93,8 @@
                                     <input type="text" name="password" id="password" placeholder="Password Protect..." />
                                 </div>
                             </div>
-                            <div class="col-equal-input">
-                                <div class="input last-child">
-                                    <label for="description">
-                                        <b>Description</b>
-                                        <p>This can be used to identify URLs on your account.</p>
-                                    </label>
-                                    <input type="text" name="description" id="description" placeholder="Description..." />
-                                </div>
-                            </div>
 
-                            <div class="row verbal-input-wrapper">
+                            <div class="row verbal-input-wrapper disabled">
                                 <div class="container">
 
                                     <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -112,14 +113,14 @@
                                 </div>
                             </div>
 
-                            <div class="row verbal-input-wrapper">
+                            <div class="row verbal-input-wrapper disabled">
                                 <div class="container">
-                                    <div class="verbal-title"><i class="far fa-laptop"></i> Do you want a custom url redirect based on device type?</div>
+                                    <div class="verbal-title"><i class="far fa-laptop"></i> Do you want to customize your link for mobile and/or tablet devices?</div>
                                     <div class="verbal-inputs">
-                                        Ok, we can do it! Simply choose your favourite option. So, if the connected device is
+                                        Alright! If the device is
                                         <span>
                                             <select name="device_select[]" class="verbal-select">
-                                                <? const devices = ['phone', 'tablet', 'desktop']; ?>
+                                                <? const devices = datas.devices ?>
                                                 <? for(let i = 0; i < devices.length; i++) { ?>
                                                 <option value="<?= devices[i] ?>">
                                                     a
@@ -129,7 +130,7 @@
                                             </select>
                                         </span>
                                         <button class="add-verbal-select-btn" type="button"><i class="fal fa-plus"></i></button>
-                                        then redirect the page to?
+                                        then redirect it to:
                                     </div>
                                 </div>
                             </div>
@@ -141,11 +142,11 @@
                                 </div>
                             </div>
 
-                            <div class="row verbal-input-wrapper">
+                            <div class="row verbal-input-wrapper disabled">
                                 <div class="container">
-                                    <div class="verbal-title"><i class="far fa-globe"></i> Do you want a custom url redirect based on user location?</div>
+                                    <div class="verbal-title"><i class="far fa-globe"></i> Do you want to customize your link for specific locations?</div>
                                     <div class="verbal-inputs">
-                                        Ok, we can do it! Simply choose your favourite option. So, if the connected device is in
+                                        Alright! If the device is in
                                         <span>
                                             <select name="geo_select[]" class="verbal-select">
                                                 <? for(let i = 0; i < datas.countries.length; i++) { ?>
@@ -156,7 +157,7 @@
                                             </select>
                                         </span>
                                         <button class="add-verbal-select-btn" type="button"><i class="fal fa-plus"></i></button>
-                                        then redirect the page to?
+                                        then redirect it to:
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +169,7 @@
                                 </div>
                             </div>
 
-                            <div class="row verbal-input-wrapper <? if(user.subscription != 'PREMIUM') { ?> disabled <? } ?>">
+                            <!-- <div class="row verbal-input-wrapper disabled">
                                 <div class="container">
                                     <div class="verbal-title"><i class="far fa-search"></i> Do you want custom title and description for SEO? <span class="premium-badge"><i class="fal fa-star"></i> Premium</span></div>
                                     <div class="verbal-inputs">
@@ -185,7 +186,7 @@
                                         <input type="text" name="seo_description" id="seo_description" placeholder="Custom SEO link description..." />
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                         </div>
 

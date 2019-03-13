@@ -1,3 +1,4 @@
+const loaderHTMLTop = `<div class="lds-ellipsis" style="top: -20px !important;"><div></div><div></div><div></div><div></div></div>`;
 $(document).on('submit', '#update-url', function (e) {
     const $this = $(this);
     const $button = $this.find('button[type="submit"]');
@@ -71,5 +72,111 @@ $(document).on('submit', '#update-url', function (e) {
         }
     });
 
+    return false;
+});
+
+$(document).on('change', '#password_protection', function () {
+    if ($(this).val() == 'on') {
+        $(this).val('off');
+        $('#password').prop('disabled', true).val('');
+    } else {
+        $(this).val('on');
+        $('#password').prop('disabled', false);
+    }
+});
+
+$(document).on('submit', '#update-url-password', function (e) {
+    e.preventDefault();
+    const $this = $(this);
+    const $button = $this.find('button[type="submit"]');
+    $button.html(loaderHTML);
+    const url_id = $('#url_id').val();
+    const password = $('#password').val();
+    $.ajax({
+        url: '/shorten/update',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
+        data: JSON.stringify({
+            url_id: url_id,
+            password: password,
+            control: 'password'
+        }),
+        success: function (data) {
+            if (data.Error) {
+                iziToast.error({
+                    position: 'topRight',
+                    title: data.title,
+                    message: data.text
+                });
+            }
+            if (data.Status === 'done') {
+                iziToast.show({
+                    theme: 'dark',
+                    icon: 'fal fa-check',
+                    position: 'topRight',
+                    title: data.message.title,
+                    message: data.message.text,
+                    progressBarColor: 'rgb(0, 255, 184)'
+                });
+            }
+            $button.html('<i class="fal fa-save white-text"></i> Save');
+        },
+        error: function (a, b, c) {
+            console.log(a, b, c);
+            $button.html('<i class="fal fa-save white-text"></i> Save');
+            iziToast.error({
+                title: 'Oops!',
+                message: 'Internal server error.'
+            });
+        }
+    });
+    return false;
+});
+
+$(document).on('click', '.url-main-delete-trigger', function (e) {
+    e.preventDefault()
+    const $this = $(this);
+    const $button = $this;
+    $button.html(loaderHTMLTop);
+    if (confirm('Are you shure to delete this URL?')) {
+        const url_id = $this.data('id');
+        $.ajax({
+            url: '/shorten/delete',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            data: JSON.stringify({
+                url_id: url_id
+            }),
+            success: function (data) {
+                if (data.Error) {
+                    iziToast.error({
+                        position: 'topRight',
+                        title: data.title,
+                        message: data.text
+                    });
+                }
+                if (data.Status === 'done') {
+                    location.href = '/dashboard/urls';
+                }
+                $button.html('<i class="fal fa-trash white-text"></i> Delete This URL');
+            },
+            error: function (a, b, c) {
+                console.log(a, b, c);
+                $button.html('<i class="fal fa-trash white-text"></i> Delete This URL');
+                iziToast.error({
+                    title: 'Oops!',
+                    message: 'Internal server error.'
+                });
+            }
+        });
+    } else {
+        $button.html('<i class="fal fa-trash white-text"></i> Delete This URL');
+    }
     return false;
 });

@@ -1,3 +1,5 @@
+const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+const loaderHTMLTop = `<div class="lds-ellipsis" style="top: -20px !important;"><div></div><div></div><div></div><div></div></div>`;
 window.fbAsyncInit = function () {
     FB.init({
         appId: '2207619446232939',
@@ -21,6 +23,9 @@ window.fbAsyncInit = function () {
 // successful.  See statusChangeCallback() for when this call is made.
 function GetFbUserObject() {
     FB.login(function (response) {
+        const $button = $(this).find('button[type="submit"]');
+        const actualHTML = $button.html();
+        $button.html(loaderHTML);
         if (response.authResponse) {
             FB.api('/me?fields=id,name,first_name,last_name,email,picture.height(960)', function (response) {
                 $.ajax({
@@ -52,11 +57,17 @@ function GetFbUserObject() {
                     },
                     error: function (a, b, c) {
                         console.log(a, b, c);
+                        $button.html(actualHTML);
                     }
                 });
             });
         } else {
             console.log('User cancelled login or did not fully authorize.');
+            iziToast.error({
+                position: 'topRight',
+                title: 'Oops!',
+                message: 'User cancelled login or did not fully authorize.'
+            });
         }
     }, {
         scope: 'public_profile,email',

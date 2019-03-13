@@ -14,7 +14,7 @@
         <link rel="stylesheet" type="text/css" href="/css/layout.css" />
         <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
         <link rel="stylesheet" type="text/css" href="/css/selectize.css" />
-        <link rel="stylesheet" type="text/css" href="https://pro.fontawesome.com/releases/v5.7.1/css/all.css" />
+        <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/css/iziModal.min.css" />
         <script>
@@ -59,6 +59,57 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">You can restrict the access by setting a password.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 offset-md-2">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-lock"></i> Password protection
+                                        </h6>
+                                    </div>
+                                </div>
+                                <form action="/dashboard/shorten" method="POST" id="update-url-password">
+                                    <div class="form-new-application">
+                                        <div class="input field">
+                                            <div class="control-group">
+                                                <label for="password">Set or change the URL password</label>
+                                                <? if(datas.urls.data.password != null) { ?>
+                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="Your-supersecret-password" placeholder="URL password..." />
+                                                <? } else { ?>
+                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="" placeholder="URL password..." disabled />
+                                                <? } ?>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                <div class="onoffswitch">
+                                    <? if(datas.urls.data.password != null) { ?>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="password_protection" value="<? if(datas.urls.data.password != null) { ?>on<? } else { ?>off<? } ?>" checked="checked">
+                                    <? } else { ?>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="password_protection" value="<? if(datas.urls.data.password != null) { ?>on<? } else { ?>off<? } ?>">
+                                    <? } ?>
+                                    <label class="onoffswitch-label" for="password_protection">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">You can edit some of the URL settings and informations.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
@@ -78,12 +129,6 @@
                                                 <input type="text" name="description" id="description" value="<?= datas.urls.data.description ?>" placeholder="URL description..." />
                                             </div>
                                         </div>
-                                        <!-- <div class="input field">
-                                            <div class="control-group">
-                                                <label for="password">Set or change the URL password</label>
-                                                <input type="password" name="password" id="password" value="" placeholder="URL password..." />
-                                            </div>
-                                        </div> -->
                                         <div class="input field">
                                             <div class="control-group">
                                                 <label for="expiration_time">Set or change the URL expiration time</label>
@@ -115,15 +160,15 @@
 
                                         <div class="row verbal-input-wrapper">
                                             <div class="container">
-                                                <div class="verbal-title"><i class="far fa-laptop"></i> Do you want a custom url redirect based on device type?</div>
+                                                <div class="verbal-title" style="font-size: 15px;"><i class="far fa-laptop"></i> Do you want to customize your link for mobile and/or tablet devices?</div>
                                                 <div class="verbal-inputs">
-                                                    Ok, we can do it! Simply choose your favourite option. So, if the connected device is
+                                                    Alright! If the device is
+                                                    <? const devices = datas.devices ?>
                                                     <? if(datas.urls.data.device_select.length > 0) { ?>
                                                     <? for(let i = 0; i < datas.urls.data.device_select.length; i++) { ?>
                                                     <? if(i == 0) { ?>
                                                     <span>
                                                         <select name="device_select[]" class="verbal-select">
-                                                            <? let devices = ['phone', 'desktop', 'tablet'] ?>
                                                             <? for(let a = 0; a < devices.length; a++) { ?>
                                                             <? if(devices[a] == datas.urls.data.device_select[i]) { ?>
                                                             <option value="<?= devices[a] ?>" selected>a
@@ -144,7 +189,6 @@
                                                     <? let random = new Date().getTime() ?>
                                                     <span class="relative after-select-wrapper" id="select-<?= random ?>"> or
                                                         <select class="verbal-select select-<?= random ?>" name="device_select[]">
-                                                            <? let devices = ['phone', 'desktop', 'tablet'] ?>
                                                             <? for(let a = 0; a < devices.length; a++) { ?>
                                                             <? if(i && devices[a] == datas.urls.data.device_select[i]) { ?>
                                                             <option value="<?= devices[a] ?>" selected>a
@@ -167,7 +211,6 @@
                                                     <? } else { ?>
                                                     <span>
                                                         <select name="device_select[]" class="verbal-select">
-                                                            <? let devices = ['phone', 'desktop', 'tablet'] ?>
                                                             <? for(let a = 0; a < devices.length; a++) { ?>
                                                             <option value="<?= devices[a] ?>">a
                                                                 <?= devices[a] ?>
@@ -177,7 +220,7 @@
                                                     </span>
                                                     <button class="add-verbal-select-btn" type="button"><i class="fal fa-plus"></i></button>
                                                     <? } ?>
-                                                    then redirect the page to?
+                                                    then redirect it to:
                                                 </div>
                                             </div>
                                         </div>
@@ -191,9 +234,9 @@
 
                                         <div class="row verbal-input-wrapper">
                                             <div class="container">
-                                                <div class="verbal-title"><i class="far fa-globe"></i> Do you want a custom url redirect based on user location?</div>
+                                                <div class="verbal-title" style="font-size: 15px;"><i class="far fa-globe"></i> Do you want to customize your link for specific locations?</div>
                                                 <div class="verbal-inputs">
-                                                    Ok, we can do it! Simply choose your favourite option. So, if the connected device is in
+                                                    Alright! If the device is in
                                                     <? if(datas.urls.data.geo_select.length > 0) { ?>
                                                     <? for(let i = 0; i < datas.urls.data.geo_select.length; i++) { ?>
                                                     <? if(i == 0) { ?>
@@ -250,7 +293,7 @@
                                                     </span>
                                                     <button class="add-verbal-select-btn" type="button"><i class="fal fa-plus"></i></button>
                                                     <? } ?>
-                                                    then redirect the page to?
+                                                    then redirect it to:
                                                 </div>
                                             </div>
                                         </div>
