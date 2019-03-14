@@ -742,6 +742,7 @@ function ArraySameValues(array) {
 // GET /dashboard/wallet
 router.get('/wallet', (req, res) => {
     const user_id = req.session.user._id;
+    const page = req.query.page != '' && req.query.page != null && req.query.page != undefined ? req.query.page : 1;
     if (user_id) {
         db.Plan.find({
             name: req.session.user.subscription
@@ -753,6 +754,7 @@ router.get('/wallet', (req, res) => {
             db.Wallet.paginate({
                 user_id: user_id
             }, {
+                page: page,
                 limit: 18,
                 sort: {
                     timestamp: 'desc'
@@ -1629,6 +1631,7 @@ router.post('/api/webhooks/:application_id/new', (req, res) => {
 // GET /dashboard/api/webhooks/:application_id/details
 router.get('/api/webhooks/:application_id/details', (req, res) => {
     const user_id = req.isAuthenticated() ? req.session.user._id : false;
+    const page = req.query.page != '' && req.query.page != null && req.query.page != undefined ? req.query.page : 1;
     const application_id = req.params.application_id != '' && req.params.application_id != null && req.params.application_id != undefined ? req.params.application_id : false;
     const webhook_self_id = req.query.webhook_self_id != '' && req.query.webhook_self_id != null && req.query.webhook_self_id != undefined ? req.query.webhook_self_id : false;
     if (user_id && application_id && webhook_self_id) {
@@ -1661,18 +1664,12 @@ router.get('/api/webhooks/:application_id/details', (req, res) => {
                                 user_id: user_id,
                                 application_id: application_id
                             }, {
-                                page: 1,
+                                page: page,
                                 limit: 18,
                                 sort: {
                                     creation_time: 'desc'
                                 }
                             }).then(response_w => {
-                                console.log({
-                                    webhookEvents: {
-                                        data: response_w.docs,
-                                        count: response_w.docs.length
-                                    }
-                                });
                                 res.render('./dashboard/webhooks-details', {
                                     session: req.isAuthenticated(),
                                     user: user,

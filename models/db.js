@@ -198,7 +198,7 @@ const applicationSchema = Schema({
 const applicationEventSchema = Schema({
     user_id: {
         type: String,
-        required: true
+        required: false
     },
     application_id: String,
     param: Object,
@@ -250,7 +250,7 @@ const applicationWebhooksEndpoints = Schema({
 const applicationWebhooksEndpointsEvents = Schema({
     user_id: {
         type: String,
-        required: true
+        required: false
     },
     webhook_id: {
         type: String,

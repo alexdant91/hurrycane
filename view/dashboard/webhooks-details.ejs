@@ -117,6 +117,12 @@
                                                 <div class="container" style="margin-top: 10px !important;">
                                                     <input class="all-checks allevents" type="checkbox" name="allevents" id="all_events" value="all" />
                                                     <label for="all_events"><span>All events</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('auth_token') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="auth_token" id="auth_token" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="auth_token" id="auth_token" />
+                                                    <? } ?>
+                                                    <label for="auth_token"><span>auth_token</span></label>
                                                     <? if(datas.webhooks.data.events.indexOf('link_created') > -1) { ?>
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_created" id="link_created" checked />
                                                     <? } else { ?>
@@ -147,6 +153,12 @@
                                                     <input class="item-checks events" type="checkbox" name="events" value="link_list" id="link_list" />
                                                     <? } ?>
                                                     <label for="link_list"><span>link_list</span></label>
+                                                    <? if(datas.webhooks.data.events.indexOf('link_paginate') > -1) { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_paginate" id="link_paginate" checked />
+                                                    <? } else { ?>
+                                                    <input class="item-checks events" type="checkbox" name="events" value="link_paginate" id="link_paginate" />
+                                                    <? } ?>
+                                                    <label for="link_paginate"><span>link_paginate</span></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,11 +204,11 @@
                                         <? for(let i = 0; i < datas.webhookEvents.data.docs.length; i++) {
                                         let options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
                                         let date = new Date(datas.webhookEvents.data.docs[i].creation_time*1000);
-                                        let timeToLocale = `${date.getFullYear()}-${(date.getMonth()+1) < 10 ? 0+''+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate() < 10 ? 0+''+date.getDate() : date.getDate()}`;
+                                        let timeToLocale = `${date.getFullYear()}-${(date.getMonth()+1) < 10 ? 0+''+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate() < 10 ? 0+''+date.getDate() : date.getDate()} ${date.getHours() > 9 ? date.getHours() : 0+''+date.getHours()}:${date.getMinutes() > 9 ? date.getMinutes() : 0+''+date.getMinutes()}:${date.getSeconds() > 9 ? date.getSeconds() : 0+''+date.getSeconds()}`;
                                         ?>
                                         <tr>
                                             <td>
-                                                <span class="label label-green">
+                                                <span class="label <? if(datas.webhookEvents.data.docs[i].request_response == '200 OK') { ?>label-green<? } else { ?>label-red<? } ?>">
                                                     <?= datas.webhookEvents.data.docs[i].request_response ?>
                                                 </span>
                                             </td>

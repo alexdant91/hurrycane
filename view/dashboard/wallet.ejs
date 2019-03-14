@@ -143,15 +143,15 @@
                                         <div class="box-pagination-wrapper">
                                             <? if(datas.wallet.data.hasPrevPage) { ?>
                                             <a href="<?= `/dashboard/${page}?page=1` ?>" class="pagination-item first">First</a>
-                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.prevPage}` ?>" class="pagination-item prev"><i class="fal fa-arrow-left"></i></a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.wallet.data.prevPage}` ?>" class="pagination-item prev"><i class="fal fa-arrow-left"></i></a>
                                             <? } ?>
                                             <a class="pagination-item number">
                                                 <?= datas.wallet.data.page ?> of
                                                 <?= datas.wallet.data.totalPages ?>
                                             </a>
                                             <? if(datas.wallet.data.hasNextPage) { ?>
-                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.nextPage}` ?>" class="pagination-item next"><i class="fal fa-arrow-right"></i></a>
-                                            <a href="<?= `/dashboard/${page}?page=${datas.urls.data.totalPages}` ?>" class="pagination-item last">Last</a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.wallet.data.nextPage}` ?>" class="pagination-item next"><i class="fal fa-arrow-right"></i></a>
+                                            <a href="<?= `/dashboard/${page}?page=${datas.wallet.data.totalPages}` ?>" class="pagination-item last">Last</a>
                                             <? } ?>
                                         </div>
                                     </div>

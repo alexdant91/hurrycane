@@ -576,7 +576,7 @@ h1.url-title {
 .input .placeholder-label {
     position: absolute;
     bottom: 19px;
-    left: 15px;
+    left: 14px;
     color: #858585;
 }
 
@@ -1190,6 +1190,11 @@ h1.url-title {
     background-color: #c9f8b9;
 }
 
+.label.label-red {
+    color: #6b1913;
+    background-color: #ff9f9a;
+}
+
 .typed-center-wrapper {
     display: none;
 }
@@ -1401,6 +1406,7 @@ h1.url-title {
         position: absolute;
         z-index: 99;
         transform: translateX(0);
+        transition: all 0.25s;
         -webkit-transition: all 0.25s;
         -moz-transition: all 0.25s;
         -o-transition: all 0.25s;
