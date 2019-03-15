@@ -1,4 +1,7 @@
 const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+
+typeof canRunAds === "undefined" ? alert('AdBlock detected!') : false;
+
 const SerializeFormData = form => JSON.stringify(
     Array.from(new FormData(form).entries()).reduce((m, [key, value]) => Object.assign(m, {
         [key]: value

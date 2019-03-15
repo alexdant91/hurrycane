@@ -70,6 +70,11 @@ input {
     height: 56px !important;
 }
 
+input[type="date"] {
+    -webkit-min-logical-width: 100%;
+    -webkit-appearance: none;
+}
+
 input.blurred {
     color: transparent !important;
     text-shadow: 0 0 10px rgba(0, 0, 0, .5);
@@ -171,6 +176,9 @@ form.url-input-dashboard {
     font: normal normal 400 normal 13px / 18.5714px "Open Sans";
     outline: rgb(36, 40, 47) none 0px;
     float: left;
+    width: auto;
+    height: auto;
+    display: block;
 }
 
 svg#wave {
@@ -437,7 +445,7 @@ h1.url-title {
 
 .input-url i.far {
     position: absolute;
-    z-index: 10;
+    z-index: 9;
     font-size: 26px;
     top: 16px;
     left: 4px;
@@ -1332,6 +1340,45 @@ h1.url-title {
     color: #0e5d7b !important;
 }
 
+.menu-top-mobile-dashboard {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: white;
+    width: 100vw;
+    padding: 10px 20px;
+    display: none;
+    z-index: 10;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .15) !important;
+}
+
+.menu-top-mobile-dashboard .bars-button {
+    border: none;
+    font-size: 25px;
+    outline: none;
+    cursor: pointer;
+}
+
+.menu-overflow {
+    position: fixed;
+    background: rgba(0, 0, 0, .4);
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    display: none;
+}
+
+.logs-wrapper {
+    min-width: 100% !important;
+    overflow-x: auto;
+}
+
+.logs-wrapper table {
+    min-width: 640px !important;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;
@@ -1403,7 +1450,7 @@ h1.url-title {
 
     .left-side-menu.open,
     .menu-side-wrapper-bottom.open {
-        position: absolute;
+        position: fixed;
         z-index: 99;
         transform: translateX(0);
         transition: all 0.25s;
@@ -1416,5 +1463,14 @@ h1.url-title {
     .right-side-wrapper {
         width: 100vw !important;
         position: absolute !important;
+    }
+
+    .menu-top-mobile-dashboard {
+        display: block;
+    }
+
+    input[type="date"]:not(.has-value):before {
+        color: lightgray;
+        content: attr(placeholder);
     }
 }

@@ -114,7 +114,7 @@ body {
 
 .right-side-wrapper {
     width: calc(100vw - 251px);
-    height: 100vh;
+    height: auto;
     float: left;
     position: relative;
     right: 0;

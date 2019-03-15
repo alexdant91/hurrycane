@@ -3525,7 +3525,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
-    height: 100% !important;
+    height: auto;
     overflow-x: hidden !important;
     font-size: 13px;
     color: #4b4b4b;

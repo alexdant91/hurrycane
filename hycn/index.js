@@ -36,57 +36,64 @@ router.get('/:alias', (req, res) => {
             alias: alias
         }, (err, docs) => {
             if (err) res.redirect('/?error=alias_not_founded');
+            const time_now = Math.round(Date.now() / 1000);
+            const expiration_time = docs[0].expiration_time;
+            if (time_now < expiration_time) {
 
-            // Update the clicks general counter
-            // Register the new referer if there's no one
-            // Update the referer if there's one
-            const clicks = docs[0].clicks + 1;
-            db.Url.updateOne({
-                _id: docs[0]._id
-            }, {
-                clicks: clicks
-            }, (err, confirm) => {
-                if (err) console.log(err);
-                if (confirm) {
+                // Update the clicks general counter
+                // Register the new referer if there's no one
+                // Update the referer if there's one
+                const clicks = docs[0].clicks + 1;
+                db.Url.updateOne({
+                    _id: docs[0]._id
+                }, {
+                    clicks: clicks
+                }, (err, confirm) => {
+                    if (err) console.log(err);
+                    if (confirm) {
 
-                    const password = docs[0].password;
-                    if (password != null) {
-                        res.render('alias', {
-                            // session: req.isAuthenticated(),
-                            // user: req.session.user,
-                            page: 'alias',
-                            alias: alias,
-                            messages: {
-                                type: null,
-                                title: null,
-                                text: null
-                            }
-                        });
-                    } else {
+                        const password = docs[0].password;
+                        if (password != null) {
+                            res.render('alias', {
+                                // session: req.isAuthenticated(),
+                                // user: req.session.user,
+                                page: 'alias',
+                                alias: alias,
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                        } else {
 
-                        // First location 
-                        const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
-                        // Then device
-                        const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+                            // First location 
+                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                            // Then device
+                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
 
-                        res.render('s', {
-                            // session: req.isAuthenticated(),
-                            // user: req.session.user,
-                            page: 's',
-                            iframe: `${config.host}/s/${alias}`,
-                            alias: alias,
-                            long_url: long_url,
-                            url: docs[0],
-                            messages: {
-                                type: null,
-                                title: null,
-                                text: null
-                            }
-                        });
-                        // res.redirect(docs[0].long_url);
+                            res.render('s', {
+                                // session: req.isAuthenticated(),
+                                // user: req.session.user,
+                                page: 's',
+                                iframe: `${config.host}/s/${alias}`,
+                                alias: alias,
+                                long_url: long_url,
+                                url: docs[0],
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                            // res.redirect(docs[0].long_url);
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                let err = new Error('The link was expired yet.');
+                throw err;
+            }
 
         });
     } else {

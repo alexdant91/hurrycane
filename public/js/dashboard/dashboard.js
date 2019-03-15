@@ -345,6 +345,16 @@ $(document).on('click', '.copy-button', function () {
     };
 });
 
+$(document).on('click touchend', '.bars-button', function () {
+    $('.left-side-menu, .menu-side-wrapper-bottom').toggleClass('open');
+    $('.menu-overflow').fadeToggle();
+});
+
+$(document).on('click touchend', '.menu-overflow', function () {
+    $('.left-side-menu, .menu-side-wrapper-bottom').toggleClass('open');
+    $('.menu-overflow').fadeToggle();
+});
+
 function sharePopup(url) {
     const left = (document.body.clientWidth / 2) - 250;
     const top = (document.body.clientHeight / 2) - 250;
