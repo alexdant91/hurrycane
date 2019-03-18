@@ -25,17 +25,15 @@ $(document).on('click', '#shortenUrl', function (e) {
     $this.html(loaderHTML);
     const long_url = $('#long-url-input').val();
     const alias = $('#alias').val();
-    const description = $('#description').val();
     const password = $('#password').val();
     const expiration_time = $('#expire').val();
 
     $.ajax({
-        url: '/shorten',
+        url: '/shorten/direct',
         method: 'POST',
         data: {
             long_url,
             alias,
-            description,
             password,
             expiration_time
         },

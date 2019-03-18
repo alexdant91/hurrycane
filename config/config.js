@@ -3,8 +3,8 @@ class Config {
     constructor() {
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
-        this.host = 'https://hurrycane.it';
-        this.short_host = 'https://hycn.it';
+        this.host = process.env.NODE_ENV == 'staging' ? 'localhost' : 'https://hurrycane.it';
+        this.short_host = process.env.NODE_ENV == 'staging' ? 'hycn.localhost' : 'https://hycn.it';
         this.cluster = process.env.CLUSTER_ENV || false;
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {

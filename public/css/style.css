@@ -163,9 +163,9 @@ form.url-input {
 form.url-input-dashboard {
     box-sizing: border-box;
     color: rgb(36, 40, 47);
-    width: 96%;
-    margin: 2%;
     height: auto;
+    width: 100%;
+    float: left;
     text-decoration: none solid rgb(36, 40, 47);
     column-rule-color: rgb(36, 40, 47);
     perspective-origin: 570px 67.5px;
@@ -175,9 +175,6 @@ form.url-input-dashboard {
     border-radius: 10px;
     font: normal normal 400 normal 13px / 18.5714px "Open Sans";
     outline: rgb(36, 40, 47) none 0px;
-    float: left;
-    width: auto;
-    height: auto;
     display: block;
 }
 
@@ -462,11 +459,11 @@ h1.url-title {
 
 .custom-button-advanced {
     cursor: pointer;
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: 15px;
+    font-size: 14px;
     font-weight: 400;
-    background-color: #2B3440;
-    color: #ffffff !important;
+    background-color: #FFC107;
+    color: #003661 !important;
     border: 0;
     float: left;
     border-radius: 100px;
@@ -476,6 +473,7 @@ h1.url-title {
     letter-spacing: 0;
     margin: 12px 10px;
     line-height: 0;
+    text-transform: uppercase;
 }
 
 .custom-button-advanced i {
@@ -524,7 +522,7 @@ h1.url-title {
 }
 
 .advanced-option-wrapper {
-    display: block;
+    display: none;
     height: auto;
     width: -webkit-fill-available !important;
     float: left;
@@ -572,13 +570,14 @@ h1.url-title {
 }
 
 .advanced-option-wrapper .col-equal-input .input b {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .advanced-option-wrapper .col-equal-input .input p {
-    font-size: 12px;
+    font-size: 14px;
     color: #9e9e9e;
     padding: 0 5px 0 0;
+    min-height: 36px;
 }
 
 .input .placeholder-label {
@@ -1379,6 +1378,19 @@ h1.url-title {
     min-width: 640px !important;
 }
 
+.main-url-container {
+    padding: 40px;
+}
+
+.title-test-center {
+    margin: 20px 0;
+    color: #ffffff;
+    font-weight: 300;
+    min-height: 60px;
+    text-align: center;
+    width: auto;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;
@@ -1472,5 +1484,9 @@ h1.url-title {
     input[type="date"]:not(.has-value):before {
         color: lightgray;
         content: attr(placeholder);
+    }
+
+    .main-url-container {
+        padding: 0;
     }
 }
