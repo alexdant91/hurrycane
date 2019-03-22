@@ -36,6 +36,7 @@ module.exports.init = function init() {
     const puppeteer = require('puppeteer');
     const sharp = require('sharp');
     const device = require('express-device');
+    const rp = require('request-promise');
 
     // Security
     const helmet = require('helmet');
@@ -53,8 +54,8 @@ module.exports.init = function init() {
 
     // Routers for api and dashboard
     const api = require(`../api/${config.api.version}`);
-    const dashboard = require('../dashboard/dashboard');
-    const hycn = require('../hycn/index');
+    const dashboard = require('./dashboard');
+    const hycn = require('./hycn');
 
     // Protect functions with CORS
     const cors = require('cors');
@@ -248,6 +249,7 @@ module.exports.init = function init() {
     // The public logic
     app.get('/', (req, res) => {
         res.render('index', {
+            premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
             page: 'index',
@@ -266,6 +268,7 @@ module.exports.init = function init() {
     // create the login get and post routes
     app.get('/login', verifySessionInverse, (req, res) => {
         res.render('login', {
+            premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
             page: 'login',
@@ -308,6 +311,7 @@ module.exports.init = function init() {
     // create the register get and post routes
     app.get('/register', verifySessionInverse, (req, res) => {
         res.render('register', {
+            premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
             page: 'register',
@@ -586,64 +590,80 @@ module.exports.init = function init() {
                                     });
                                 } else {
                                     if (docs.length === 0) {
-                                        getHeadHTML(long_url, (html) => {
-                                            headHTML(html, (head_html) => {
-                                                head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
-                                                head_html = head_html.replace(/%domain_name%/ig, domain_name);
-                                                head_html = head_html.replace(/%protocol%/ig, domain_protocol);
-                                                new HtmlParser(head_html).getFavicon((err, favicon) => {
-                                                    if (favicon != undefined && favicon != null) {
-                                                        sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
-                                                        favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
-                                                    }
-                                                    db.Url({
-                                                        long_url,
-                                                        domain_name,
-                                                        application_id,
-                                                        user_id,
-                                                        alias,
-                                                        description,
-                                                        password,
-                                                        expiration_time,
-                                                        timestamp,
-                                                        head_html,
-                                                        favicon,
-                                                        device_select,
-                                                        devicetag_url,
-                                                        page_screenshot,
-                                                        page_seotags,
-                                                        geo_select,
-                                                        geotag_url,
-                                                        seo_title,
-                                                        seo_description
-                                                    }).save((err, newUrl) => {
-                                                        if (err) {
-                                                            res.json({
-                                                                'Error': 'Error while data saving.'
-                                                            });
-                                                        } else {
-                                                            // Get async screenshot of the page
-                                                            if (page_screenshot) {
-                                                                getPagePic({
-                                                                    url: long_url,
-                                                                    live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
-                                                                    temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
-                                                                });
+                                        getHeadHTML(long_url, (err, html) => {
+                                            if (err) {
+                                                res.json({
+                                                    'Error': 'We can not fetch the provided site, maybe the page need more authorizzation. <b>Try the fast mode</b>',
+                                                    'title': 'Oops!',
+                                                    'text': 'We can not fetch the provided site, maybe the page need more authorizzation. <b>Try the fast mode</b>'
+                                                });
+                                            } else {
+                                                headHTML(html, (err, head_html) => {
+                                                    if (err) {
+                                                        res.json({
+                                                            'Error': 'We can not analyze the content of the provided site, maybe the page need more authorizzation. <b>Try the fast mode</b>',
+                                                            'title': 'Oops!',
+                                                            'text': 'We can not analyze the content of the provided site, maybe the page need more authorizzation. <b>Try the fast mode</b>'
+                                                        });
+                                                    } else {
+                                                        head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                                        head_html = head_html.replace(/%domain_name%/ig, domain_name);
+                                                        head_html = head_html.replace(/%protocol%/ig, domain_protocol);
+                                                        new HtmlParser(head_html).getFavicon((err, favicon) => {
+                                                            if (favicon != undefined && favicon != null) {
+                                                                sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
+                                                                favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
                                                             }
-                                                            // Get the response
-                                                            res.json({
-                                                                'Status': 'done',
-                                                                'short_url': `${config.short_host}/${alias}`,
-                                                                'messages': {
-                                                                    type: 'success',
-                                                                    title: 'Well!',
-                                                                    text: 'Your shorten link it\s ready :)',
+                                                            db.Url({
+                                                                long_url,
+                                                                domain_name,
+                                                                application_id,
+                                                                user_id,
+                                                                alias,
+                                                                description,
+                                                                password,
+                                                                expiration_time,
+                                                                timestamp,
+                                                                head_html,
+                                                                favicon,
+                                                                device_select,
+                                                                devicetag_url,
+                                                                page_screenshot,
+                                                                page_seotags,
+                                                                geo_select,
+                                                                geotag_url,
+                                                                seo_title,
+                                                                seo_description
+                                                            }).save((err, newUrl) => {
+                                                                if (err) {
+                                                                    res.json({
+                                                                        'Error': 'Error while data saving.'
+                                                                    });
+                                                                } else {
+                                                                    // Get async screenshot of the page
+                                                                    if (page_screenshot) {
+                                                                        getPagePic({
+                                                                            url: long_url,
+                                                                            live_path: `${__dirname}/../public/img/thumbnails/${newUrl._id}.png`,
+                                                                            temp_path: `${__dirname}/../public/img/temp/temp-${newUrl._id}.png`
+                                                                        });
+                                                                    }
+                                                                    // Get the response
+                                                                    res.json({
+                                                                        'Status': 'done',
+                                                                        'short_url': `${config.short_host}/${alias}`,
+                                                                        'messages': {
+                                                                            type: 'success',
+                                                                            title: 'Well!',
+                                                                            text: 'Your shorten link it\s ready :)',
+                                                                        }
+                                                                    });
                                                                 }
                                                             });
-                                                        }
-                                                    });
+                                                        });
+                                                    }
                                                 });
-                                            });
+                                            }
                                         });
                                     } else {
                                         res.json({
@@ -951,6 +971,7 @@ module.exports.init = function init() {
                     res.json(err);
                 } else {
                     res.render('upgrade', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: req.session.user,
                         page: 'pricing',
@@ -967,6 +988,7 @@ module.exports.init = function init() {
             });
         } else {
             res.render('upgrade', {
+                premium: config.premium.active,
                 session: req.isAuthenticated(),
                 user: req.session.user,
                 page: 'pricing',
@@ -1033,6 +1055,7 @@ module.exports.init = function init() {
                 res.redirect('/upgrade');
             } else {
                 res.render('upgrade-premium', {
+                    premium: config.premium.active,
                     session: req.isAuthenticated(),
                     user: req.session.user,
                     page: 'login',
@@ -1509,7 +1532,8 @@ module.exports.init = function init() {
         const temp_path = param.temp_path; // `./public/img/temp/temp-${Date.now()}.png`;
         const browser = await puppeteer.launch({
             'args': [
-                '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
+                // '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
+                '--disable-gpu', '--no-sandbox'
             ]
         });
         const page = await browser.newPage();
@@ -1531,18 +1555,12 @@ module.exports.init = function init() {
         await browser.close();
     }
 
-    async function getHeadHTML(url, done) {
-        const browser = await puppeteer.launch({
-            'args': [
-                '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
-            ]
+    function getHeadHTML(url, done) {
+        rp(url).then(function (html) {
+            return done(null, html);
+        }).catch(function (err) {
+            return done(err);
         });
-        const page = await browser.newPage();
-        await page.goto(url);
-        const headHandle = await page.$('head');
-        const html = await page.evaluate(head => head.innerHTML, headHandle);
-        await browser.close();
-        return await done(html)
     }
 
     function headHTML(html, done) {
@@ -1584,7 +1602,7 @@ module.exports.init = function init() {
             elem.property != undefined && elem.property != null ? html_head.push(`<meta property="${elem.property}" content="${elem.content}" />`) : false;
         });
         html_head = html_head.join("");
-        return done(html_head);
+        return done(null, html_head);
     }
 
     return app;

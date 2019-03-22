@@ -24,6 +24,10 @@ body {
     font-family: "Font Awesome 5 Brands" !important;
 }
 
+.advanced-option-wrapper {
+    display: block !important;
+}
+
 .menu-top-dashboard {
     width: -webkit-fill-available;
     height: auto;
@@ -376,7 +380,7 @@ span.relative .verbal-select {
     box-sizing: border-box;
     color: rgb(36, 40, 47);
     width: -webkit-fill-available;
-    margin: 20px 2% 0 2%;
+    margin: 0 0 20px 0;
     padding: 25px;
     height: auto;
     text-decoration: none solid rgb(36, 40, 47);
@@ -574,7 +578,7 @@ span.relative .verbal-select {
     margin: 10px 0;
     float: left;
     width: 100%;
-    padding: 25px;
+    padding: 35px 25px 25px 25px;
     border-radius: 10px;
     transition: box-shadow 0.25s;
     -webkit-transition: box-shadow 0.25s;
@@ -675,12 +679,14 @@ span.relative .verbal-select {
 }
 
 .overlay-background {
-    width: 100%;
+    width: calc(100% - 251px);
     height: 100%;
     position: fixed;
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, .15);
     z-index: 10;
     display: none;
+    top: 0;
+    left: 251px;
 }
 
 .input-search-results {
@@ -763,6 +769,77 @@ span.relative .verbal-select {
     box-shadow: none;
 }
 
+.url-header {
+    height: 135px;
+    background-position: top center;
+    background-size: cover;
+    position: relative;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.url-header.empty-site {
+    background-size: 90px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #03a8f486;
+}
+
+.url-header .url-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, .2);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.url-icon-box {
+    position: absolute;
+    top: 104px;
+    left: calc(50% - 30px);
+    background: white;
+    padding: 15px;
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+
+.url-text {
+    height: 65px;
+    padding-top: 35px;
+    font-size: 18px;
+}
+
+.url-action {
+    margin-top: 20px;
+}
+
+.url-action a {
+    width: 33.33%;
+    float: left;
+    padding: 12px 12px 16px 12px;
+    text-align: center;
+    font-size: 14px !important;
+    border-top: 1px solid #e2e7ed;
+}
+
+.url-action a:hover {
+    background-color: #f6f8f9;
+}
+
+.url-action a.first {
+    border-right: 1px solid #e2e7ed;
+    border-bottom-left-radius: 15px;
+}
+
+.url-action a.last {
+    border-left: 1px solid #e2e7ed;
+    border-bottom-right-radius: 15px;
+}
+
 @media screen and (min-width: 1488px) {
     form.url-input {
         width: 100%;
@@ -778,7 +855,7 @@ span.relative .verbal-select {
     }
 }
 
-@media screen and (min-width: 1020px) and (max-width: 1487px) {
+@media screen and (min-width: 1180px) and (max-width: 1487px) {
     form.url-input {
         width: 80%;
         margin: 0 10%;

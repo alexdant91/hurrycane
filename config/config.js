@@ -1,10 +1,13 @@
 class Config {
 
     constructor() {
+        this.premium = {
+            active: false
+        }
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
         this.port = 80;
-        this.host = process.env.NODE_ENV == 'staging' ? 'localhost' : 'https://hurrycane.it';
-        this.short_host = process.env.NODE_ENV == 'staging' ? 'hycn.localhost' : 'https://hycn.it';
+        this.host = process.env.NODE_ENV == 'staging' ? 'http://localhost' : 'https://hurrycane.it';
+        this.short_host = process.env.NODE_ENV == 'staging' ? 'http://hycn.localhost' : 'https://hycn.it';
         this.cluster = process.env.CLUSTER_ENV || false;
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
@@ -24,7 +27,7 @@ class Config {
             version: 'v1'
         };
         this.wallet = {
-            single_transaction: 0.00050
+            single_transaction: 0.00025
         };
         this.devices = {
             select: ['phone', 'tablet']

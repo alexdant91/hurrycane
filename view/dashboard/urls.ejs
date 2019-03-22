@@ -49,10 +49,35 @@
                         </div>
                         <? } ?>
                         <? for(let i = 0; i < datas.urls.data.docs.length; i++) { ?>
-                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12" id="<?= datas.urls.data.docs[i]['_id'] ?>">
+                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12 " id="<?= datas.urls.data.docs[i]['_id'] ?>" style="padding: 10px;">
+                            <div class="active-urls-wrapper" style="padding: 0;">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 0;">
+                                    <? let bgImg = datas.urls.data.docs[i].page_screenshot ? `/img/thumbnails/${datas.urls.data.docs[i]._id}.png` : '/img/empty-site.svg'; ?>
+                                    <? let bgClass = datas.urls.data.docs[i].page_screenshot ? '' : 'empty-site'; ?>
+                                    <div class="url-header <?= bgClass ?>" style="background-image: url(<?=bgImg?>)">
+                                        <div class="url-overlay"></div>
+                                    </div>
+                                    <div class="url-icon-box">
+                                        <? let favicon = datas.urls.data.docs[i]['favicon'] != null && datas.urls.data.docs[i]['favicon'] != undefined && datas.urls.data.docs[i]['favicon'] != '' ? datas.urls.data.docs[i]['favicon'] : '/img/empty_favicon.png' ?>
+                                        <img src="<?= favicon ?>" class="url-icon" alt="Logo" />
+                                    </div>
+                                    <div class="url-text text-center">
+                                        <a href="<?= short_host ?>/<?= datas.urls.data.docs[i]['alias'] ?>" target="_blank">
+                                            <?= `${datas.urls.data.docs[i]['domain_name']} - ${datas.urls.data.docs[i]['alias']}` ?>
+                                        </a>
+                                    </div>
+                                    <div class="url-action">
+                                        <a href="/dashboard/urls/analytics/<?= datas.urls.data.docs[i]._id ?>" class="url-actions first"><i class="fal fa-chart-bar"></i> Chart</a>
+                                        <a href="/dashboard/urls/details/<?= datas.urls.data.docs[i]._id ?>" class="url-actions center"><i class="fal fa-pencil"></i> Edit</a>
+                                        <a href="#delete" class="url-actions url-delete-trigger last" data-id="<?= datas.urls.data.docs[i]['_id'] ?>"><i class="fal fa-trash"></i> Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12" id="<?= datas.urls.data.docs[i]['_id'] ?>">
                             <div class="active-urls-wrapper">
                                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                    <? let favicon = datas.urls.data.docs[i]['favicon'] != null && datas.urls.data.docs[i]['favicon'] != undefined && datas.urls.data.docs[i]['favicon'] != '' ? datas.urls.data.docs[i]['favicon'] : '/img/empty_favicon.png' ?>
+                                    <?  favicon = datas.urls.data.docs[i]['favicon'] != null && datas.urls.data.docs[i]['favicon'] != undefined && datas.urls.data.docs[i]['favicon'] != '' ? datas.urls.data.docs[i]['favicon'] : '/img/empty_favicon.png' ?>
                                     <img src="<?= favicon ?>" class="url-icon" alt="Favicon" />
                                 </div>
                                 <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -71,7 +96,7 @@
                                     </a>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <? } ?>
                     </div>
 

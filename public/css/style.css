@@ -274,7 +274,7 @@ h1.url-title {
     height: auto;
     z-index: 9;
     margin: 0;
-    display: none;
+    display: block;
     transition: box-shadow 0.25s;
     -webkit-transition: box-shadow 0.25s;
     -moz-transition: box-shadow 0.25s;
@@ -317,14 +317,14 @@ h1.url-title {
 .menu-container ol li {
     list-style: none;
     display: inline-block;
-    margin: 0 2px;
+    margin: 0 4px;
     padding: 0;
 }
 
 .menu-container ol li a {
     padding: 10px 20px;
     color: #ffffff !important;
-    font-size: 14px;
+    font-size: 16px;
     border: none;
     border-bottom: 3px solid transparent;
     cursor: pointer;
@@ -482,6 +482,7 @@ h1.url-title {
 }
 
 .login-body {
+    height: 100vh;
     background: rgba(0, 0, 0, 0) linear-gradient(150deg, rgb(85, 51, 255) 15%, rgb(0, 186, 224) 70%, rgb(90, 220, 144) 94%) repeat scroll 0% 0% / auto padding-box border-box;
 }
 
@@ -597,6 +598,7 @@ h1.url-title {
 }
 
 .register-body {
+    height: 100vh;
     background: rgba(0, 0, 0, 0) linear-gradient(150deg, rgb(85, 51, 255) 15%, rgb(0, 186, 224) 70%, rgb(90, 220, 144) 94%) repeat scroll 0% 0% / auto padding-box border-box;
 }
 
@@ -663,7 +665,7 @@ h1.url-title {
 .disclainer-wrapper {
     width: 90vw;
     /* margin-top: 100px; */
-    margin-top: 20px;
+    margin-top: 100px;
     margin-bottom: 100px;
     margin-left: 5vw;
     float: left;
@@ -1203,7 +1205,7 @@ h1.url-title {
 }
 
 .typed-center-wrapper {
-    display: none;
+    display: block;
 }
 
 /* INPUT GROUP CHECKBOX */
@@ -1408,9 +1410,13 @@ h1.url-title {
     .typed-center-wrapper {
         display: block;
     }
+
+    .advanced-option-wrapper {
+        display: none;
+    }
 }
 
-@media screen and (min-width: 1020px) and (max-width: 1487px) {
+@media screen and (min-width: 1180px) and (max-width: 1487px) {
     form.url-input {
         width: 80%;
         margin: 0 10%;
@@ -1426,9 +1432,13 @@ h1.url-title {
     .typed-center-wrapper {
         display: block;
     }
+
+    .advanced-option-wrapper {
+        display: none;
+    }
 }
 
-@media screen and (max-width: 1020px) {
+@media screen and (max-width: 1180px) {
     .col-equal-input {
         width: 100% !important;
     }
@@ -1481,6 +1491,10 @@ h1.url-title {
         display: block;
     }
 
+    form.url-input-dashboard {
+        margin-top: 20px;
+    }
+
     input[type="date"]:not(.has-value):before {
         color: lightgray;
         content: attr(placeholder);
@@ -1488,5 +1502,72 @@ h1.url-title {
 
     .main-url-container {
         padding: 0;
+    }
+
+    .typed-center-wrapper {
+        display: none;
+    }
+
+    .form-container {
+        top: 70px;
+    }
+
+    .menu-top {
+        height: 100vh;
+        background: #3787ff;
+        width: 250px;
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-251px);
+        transition: transform 0.25s;
+    }
+
+    .menu-top.open {
+        transform: translateX(0);
+    }
+
+    .menu-container ol li {
+        list-style: none;
+        display: block;
+        margin: 0 4px;
+        padding: 0;
+    }
+
+    .menu-top .right-side {
+        float: right;
+        padding-right: 10px;
+        width: 100%;
+    }
+
+    .menu-container ol {
+        width: 100%;
+    }
+
+    .menu-container ol li {
+        float: left;
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .menu-container ol li a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .advanced-option-wrapper {
+        display: none;
+    }
+
+    .login-wrapper, .register-wrapper {
+        margin: 75px 50% !important;
+    }
+
+}
+
+@media screen and (max-width: 740px) {
+    .advanced-option-wrapper {
+        display: block;
     }
 }

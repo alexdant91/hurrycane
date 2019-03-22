@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
             let user = req.session.user;
             user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
             res.render('./dashboard/index', {
+                premium: config.premium.active,
                 session: req.isAuthenticated(),
                 user: user,
                 datas: {
@@ -76,6 +77,8 @@ router.get('/urls', (req, res) => {
             let user = req.session.user;
             user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
             res.render('./dashboard/urls', {
+                premium: config.premium.active,
+                short_host: config.short_host,
                 session: req.isAuthenticated(),
                 user: user,
                 datas: {
@@ -119,6 +122,7 @@ router.get('/urls/details/:id', (req, res) => {
                     let user = req.session.user;
                     user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
                     res.render('./dashboard/urls-details', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: user,
                         datas: {
@@ -265,6 +269,7 @@ router.get('/subscription', (req, res) => {
                     if (err) throw err;
                     // Retrieved the card for the payment
                     res.render('./dashboard/subscription', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: user,
                         license: licens[0],
@@ -316,6 +321,7 @@ router.get('/settings', (req, res) => {
             }, (err, user) => {
                 if (err) throw err;
                 res.render('./dashboard/settings', {
+                    premium: config.premium.active,
                     session: req.isAuthenticated(),
                     user: user[0],
                     datas: {
@@ -554,6 +560,7 @@ router.get('/urls/analytics/:id', (req, res) => {
                         totalViews += e.uniq_views.length;
                     });
                     res.render('./dashboard/urls-analytics', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: user,
                         localhost: config.host,
@@ -765,6 +772,7 @@ router.get('/wallet', (req, res) => {
                 }, (err, urls) => {
                     if (err) throw err;
                     res.render('./dashboard/wallet.ejs', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: user,
                         localhost: config.host,
@@ -848,6 +856,7 @@ router.get('/wallet/payout', (req, res) => {
                 }, (err, user) => {
                     console.log(user);
                     res.render('./dashboard/payout-new.ejs', {
+                        premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: req.session.user,
                         localhost: config.host,
@@ -1071,6 +1080,7 @@ router.get('/api', (req, res) => {
             }, (err, count) => {
                 if (err) throw err;
                 res.render('./dashboard/api', {
+                    premium: config.premium.active,
                     session: req.isAuthenticated(),
                     user: user,
                     datas: {
@@ -1116,6 +1126,7 @@ router.get('/api/new', (req, res) => {
         }, (err, count) => {
             if (err) throw err;
             res.render('./dashboard/api-new', {
+                premium: config.premium.active,
                 session: req.isAuthenticated(),
                 user: user,
                 datas: {
@@ -1305,6 +1316,7 @@ router.get('/api/details/:id', (req, res) => {
                             application_id: application_id
                         }, (err, webhooks) => {
                             res.render('./dashboard/api-details', {
+                                premium: config.premium.active,
                                 session: req.isAuthenticated(),
                                 user: user,
                                 datas: {
@@ -1559,6 +1571,7 @@ router.get('/api/webhooks/:application_id/new', (req, res) => {
                     }, (err, count) => {
                         if (err) throw err;
                         res.render('./dashboard/webhooks-new', {
+                            premium: config.premium.active,
                             session: req.isAuthenticated(),
                             user: user,
                             datas: {
@@ -1671,6 +1684,7 @@ router.get('/api/webhooks/:application_id/details', (req, res) => {
                                 }
                             }).then(response_w => {
                                 res.render('./dashboard/webhooks-details', {
+                                    premium: config.premium.active,
                                     session: req.isAuthenticated(),
                                     user: user,
                                     datas: {

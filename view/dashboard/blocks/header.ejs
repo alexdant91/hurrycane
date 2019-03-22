@@ -11,19 +11,20 @@
                     <ol>
                         <li class="<? if(page == 'index') { ?>active<? } ?>"><a href="/">Home</a></li>
                         <? if(!session) { ?>
-                        <li class="<? if(page == 'products') { ?>active<? } ?>"><a href="/products">Products</a></li>
-                        <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
-                        <li class="<? if(page == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in"></i> Login</a></li>
-                        <li class="<? if(page == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button">Get Started</a></li>
+                            <li class="<? if(page == 'products') { ?>active<? } ?>"><a href="/products">Products</a></li>
+                            <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
+                            <li class="<? if(page == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in"></i> Login</a></li>
+                            <li class="<? if(page == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button">Get Started</a></li>
                         <? } else { ?>
-                        <? if(user.subscription != 'PREMIUM') { ?>
-                        <li><a href="/upgrade" class="upgrade"><i class="fal fa-star"></i> Upgrade</a></li>
-                        <? } else { ?>
-                        <li><a href="/dashboard/subscription" class="upgrade"><i class="fal fa-star"></i> My Premium</a></li>
-                        <? } ?>
-                        <li><a href="/dashboard"><i class="fal fa-user"></i> Hi
-                                <?= user.name ?>!</a></li>
-                        <li><a href="/logout"><i class="fal fa-sign-out"></i> logout</a></li>
+                            <? if(premium == 'true') { ?>
+                                <? if(user.subscription != 'PREMIUM') { ?>
+                                    <li><a href="/upgrade" class="upgrade"><i class="fal fa-star"></i> Upgrade</a></li>
+                                <? } else { ?>
+                                    <li><a href="/dashboard/subscription" class="upgrade"><i class="fal fa-star"></i> My Premium</a></li>
+                                <? } ?>
+                            <? } ?>
+                            <li><a href="/dashboard"><i class="fal fa-user"></i> Hi <?= user.name ?>!</a></li>
+                            <li><a href="/logout"><i class="fal fa-sign-out"></i> logout</a></li>
                         <? } ?>
                     </ol>
                 </div>
@@ -36,6 +37,7 @@
     <div class="row">
         <div class="container">
             <button class="bars-button left"><i class="fal fa-bars"></i></button>
+            <a class="butt main-button blue-button right" href="/">Home</button>
         </div>
     </div>
 </div>

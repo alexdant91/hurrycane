@@ -1,6 +1,6 @@
 const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 
-typeof canRunAds === "undefined" ? alert('AdBlock detected!') : false;
+// typeof canRunAds === "undefined" ? alert('AdBlock detected!') : false;
 
 const SerializeFormData = form => JSON.stringify(
     Array.from(new FormData(form).entries()).reduce((m, [key, value]) => Object.assign(m, {
@@ -91,4 +91,14 @@ $(document).on('keyup', 'input[name="alias"]', function () {
     } else {
         $(this).parent().find('.placeholder-label').removeClass('hidden');
     }
+});
+
+$(document).on('click touchend', '.bars-button', function () {
+    $('.menu-top').toggleClass('open');
+    $('.menu-overflow').fadeToggle();
+});
+
+$(document).on('click touchend', '.menu-overflow', function () {
+    $('.menu-top').toggleClass('open');
+    $('.menu-overflow').fadeToggle();
 });

@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>
-            Shorten.io -
+            Hurrycane.it -
             <?= page ?>
         </title>
         <link rel="stylesheet" type="text/css" href="/css/fw.css" />
@@ -15,18 +15,16 @@
         <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
     </head>
 
-    <body class="login-body">
+    <body class="login-body" style="height: 100vh;">
 
-        <?- include('./blocks/header.ejs') -?>
-
-        <div class="row">
-            <div class="container">
-                <div class="login-wrapper">
+        <div class="flex-row">
+            <div class="flex-container">
+                <div class="col-xl-4 col-lg-6 col-md-10 col-sm-12 col-xs-12 login-wrapper left">
                     <form class="form" method="POST" action="/p/verify" name="alias" id="alias">
                         <input type="hidden" name="alias" value="<?= alias ?>" />
                         <div class="row">
                             <div class="container text-center">
-                                <h4 class="text-center"><i class="fal fa-lock"></i> Password Protect</h4>
+                                <h4 class="text-center"><i class="fal fa-lock"></i> Password</h4>
                             </div>
                         </div>
                         <div class="input field first">

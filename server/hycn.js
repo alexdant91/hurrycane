@@ -11,10 +11,14 @@ const puppeteer = require('puppeteer');
 const device = require('express-device');
 const sharp = require('sharp');
 const router = express.Router();
+const path = require('path');
+const bodyParser = require('body-parser');
 
 router.use(device.capture());
-router.use(express.static(__dirname + '/../public', {
-    dotfiles: 'allow'
+router.use(express.static(path.join(__dirname, '/public')));
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({
+    extended: false
 }));
 
 // router.get('/', (req, res) => {
@@ -34,12 +38,11 @@ router.get('/:alias', (req, res) => {
     if (alias) {
         db.Url.find({
             alias: alias
-        }, (err, docs) => {
-            if (err) res.redirect('/?error=alias_not_founded');
+        }).then(docs => {
+            //if (err) res.redirect('/?error=alias_not_founded');
             const time_now = Math.round(Date.now() / 1000);
-            const expiration_time = docs[0].expiration_time;
-            if (time_now < expiration_time) {
-
+            const expiration_time = docs[0]['expiration_time'] != null && docs[0]['expiration_time'] != undefined ? docs[0]['expiration_time'] : 0;
+            if (time_now < expiration_time || expiration_time == 0) {
                 // Update the clicks general counter
                 // Register the new referer if there's no one
                 // Update the referer if there's one
@@ -48,35 +51,24 @@ router.get('/:alias', (req, res) => {
                     _id: docs[0]._id
                 }, {
                     clicks: clicks
-                }, (err, confirm) => {
-                    if (err) console.log(err);
+                }).then(confirm => {
+                    // if (err) console.log(err);
                     if (confirm) {
-
                         const password = docs[0].password;
                         if (password != null) {
-                            res.render('alias', {
-                                // session: req.isAuthenticated(),
-                                // user: req.session.user,
-                                page: 'alias',
-                                alias: alias,
-                                messages: {
-                                    type: null,
-                                    title: null,
-                                    text: null
-                                }
-                            });
+                            res.redirect(`/s/auth/verify/${alias}`);
                         } else {
-
                             // First location 
-                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                            const long_url_location = docs[0].geo_select.indexOf(location) !== -1 && docs[0].geotag_url != null ? docs[0].geotag_url : docs[0].long_url;
                             // Then device
-                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+                            const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 && docs[0].devicetag_url != null ? docs[0].devicetag_url : long_url_location;
 
                             res.render('s', {
                                 // session: req.isAuthenticated(),
                                 // user: req.session.user,
                                 page: 's',
                                 iframe: `${config.host}/s/${alias}`,
+                                env: process.env.NODE_ENV,
                                 alias: alias,
                                 long_url: long_url,
                                 url: docs[0],
@@ -88,13 +80,84 @@ router.get('/:alias', (req, res) => {
                             });
                             // res.redirect(docs[0].long_url);
                         }
+                    } else {
+                        console.log('CONFIRM:', confirm);
                     }
+                }).catch(err => {
+                    console.log('ERROR: ', err);
                 });
             } else {
-                let err = new Error('The link was expired yet.');
-                throw err;
+                res.status(500).json({
+                    'Error': `The link was expired on ${expiration_time}`
+                });
             }
 
+        }).catch(err => {
+            // console.log('ERROR: ', err);
+        });
+    } else {
+        res.redirect('/?error=empty_alias');
+    }
+});
+
+router.get('/s/auth/verify/:alias', (req, res) => {
+    const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
+    const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
+    const accepted = req.headers['accept-language'] != null && req.headers['accept-language'] != undefined ? req.headers['accept-language'].split(';')[0] : undefined;
+    const acceptedLanguage = accepted != undefined ? `${accepted.split(',')[0].replace(/-/ig, '_')}.UTF-8` : undefined;
+    const language = acceptedLanguage || (process.env.LANG || process.env.LANGUAGE || process.env.LC_ALL || process.env.LC_MESSAGES);
+    const location = country.findCounryNameFromCode(language.split('_')[0]);
+    if (alias) {
+        db.Url.find({
+            alias: alias
+        }).then(docs => {
+            //if (err) res.redirect('/?error=alias_not_founded');
+            const time_now = Math.round(Date.now() / 1000);
+            const expiration_time = docs[0]['expiration_time'] != null && docs[0]['expiration_time'] != undefined ? docs[0]['expiration_time'] : 0;
+            if (time_now < expiration_time || expiration_time == 0) {
+                // Update the clicks general counter
+                // Register the new referer if there's no one
+                // Update the referer if there's one
+                const clicks = docs[0].clicks + 1;
+                db.Url.updateOne({
+                    _id: docs[0]._id
+                }, {
+                    clicks: clicks
+                }).then(confirm => {
+                    // if (err) console.log(err);
+                    if (confirm) {
+                        const password = docs[0].password;
+                        if (password != null) {
+                            res.render('alias', {
+                                page: 'alias',
+                                env: process.env.NODE_ENV,
+                                alias: alias,
+                                url: docs[0],
+                                messages: {
+                                    type: null,
+                                    title: null,
+                                    text: null
+                                }
+                            });
+                        } else {
+                            // First location 
+                            res.redirect(`${short_host}/${alias}`);
+                            // res.redirect(docs[0].long_url);
+                        }
+                    } else {
+                        console.log('CONFIRM:', confirm);
+                    }
+                }).catch(err => {
+                    console.log('ERROR: ', err);
+                });
+            } else {
+                res.status(500).json({
+                    'Error': `The link was expired on ${expiration_time}`
+                });
+            }
+
+        }).catch(err => {
+            // console.log('ERROR: ', err);
         });
     } else {
         res.redirect('/?error=empty_alias');
@@ -117,7 +180,7 @@ router.post('/p/verify', (req, res) => {
                     'Error': 'Incorrect password.'
                 });
             } else {
-                res.redirect(docs[0].long_url);
+                res.redirect(`http://${config.short_host}/${docs[0].alias}`);
             }
         });
     } else {

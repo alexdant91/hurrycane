@@ -39,19 +39,27 @@
 
                     <?- include('./blocks/search-fields.ejs') -?>
 
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
-                        <div class="general-box-wrapper relative">
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2" style="margin-top: 15px;">
+                        <? let bgImg = datas.urls.data.page_screenshot ? `/img/thumbnails/${datas.urls.data._id}.png` : '/img/empty-site.svg'; ?>
+                        <? let bgClass = datas.urls.data.page_screenshot ? '' : 'empty-site'; ?>
+                        <div class="url-header <?= bgClass ?>" style="background-image: url(<?=bgImg?>); z-index: 1;">
+                            <div class="url-overlay"></div>
+                        </div>
+                        <div class="general-box-wrapper relative" style="margin-top: -10px;z-index: 0;">
                             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 text-center">
-                                <i class="fal fa-link" style="font-size: 44px;"></i>
+                                <? let favicon = datas.urls.data.favicon != null && datas.urls.data.favicon != undefined && datas.urls.data.favicon != '' ? datas.urls.data.favicon : '/img/empty_favicon.png' ?>
+                                <img src="<?= favicon ?>" class="url-icon" alt="Logo" />
                             </div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 form-new-application">
                                 <h4 class="application-main-title">
                                     <?= `${datas.urls.data.domain_name} - ${datas.urls.data.alias}` ?>
                                 </h4>
                                 <div class="app-sub-title">
-                                    ID:
-                                    <?= `${datas.urls.data._id}` ?>
+                                    ID: <?= `${datas.urls.data._id}` ?>
                                 </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                                <a class="butt main-button blue-button" href="/dashboard/urls/analytics/<?= datas.urls.data._id ?>" style="display: block;transform: translateY(25%);"><i class="fal fa-chart-bar white-text"></i> Charts</a>
                             </div>
                         </div>
                     </div>
@@ -76,9 +84,9 @@
                                             <div class="control-group">
                                                 <label for="password">Set or change the URL password</label>
                                                 <? if(datas.urls.data.password != null) { ?>
-                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="Your-supersecret-password" placeholder="URL password..." />
+                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="Your-supersecret-password" placeholder="URL password..." required />
                                                 <? } else { ?>
-                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="" placeholder="URL password..." disabled />
+                                                <input type="password" onfocus="return this.select();" name="password" id="password" value="" placeholder="URL password..." required disabled />
                                                 <? } ?>
                                             </div>
                                         </div>

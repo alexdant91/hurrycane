@@ -8,25 +8,37 @@
                 <div class="menu-container">
                     <ol>
                         <li class="<? if(page == 'index') { ?>active<? } ?>"><a href="/">Home</a></li>
-                        <? if(!session) { ?>
                         <li class="<? if(page == 'products') { ?>active<? } ?>"><a href="/products">Products</a></li>
-                        <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
-                        <li class="<? if(page == 'advertiser') { ?>active<? } ?>"><a href="/advertiser">Advertiser</a></li>
-                        <li class="<? if(page == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in white-text"></i> Login</a></li>
-                        <li class="<? if(page == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button white-button">Get Started</a></li>
+                        <li class="<? if(page == 'works') { ?>active<? } ?>"><a href="/how-it-works">How it works?</a></li>
+                        <? if(!session) { ?>
+                            <!-- <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
+                            <li class="<? if(page == 'advertiser') { ?>active<? } ?>"><a href="/advertiser">Advertiser</a></li> -->
+                            <li class="<? if(page == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in white-text"></i> Login</a></li>
+                            <li class="<? if(page == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button white-button">Get Started</a></li>
                         <? } else { ?>
-                        <li><a href="/dashboard"><i class="fal fa-user white-text"></i> Hi
-                                <?= user.name ?>!</a></li>
-                        <? if(user.subscription == 'PREMIUM') { ?>
-                        <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/dashboard/subscription" class="butt main-button white-button"><i class="fal fa-star"></i> My Premium</a></li>
-                        <? } else { ?>
-                        <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/upgrade" class="butt main-button white-button"><i class="fal fa-star"></i> Upgrade</a></li>
-                        <? } ?>
-                        <li><a href="/logout"><i class="fal fa-sign-out white-text"></i> logout</a></li>
+                            <!-- <li><a href="/dashboard"><i class="fal fa-user white-text"></i> Hi <?= user.name ?>!</a></li> -->
+                            <li><a href="/dashboard"> Dashboard</a></li>
+                            <? if(premium == 'true') { ?>
+                                <? if(user.subscription == 'PREMIUM') { ?>
+                                    <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/dashboard/subscription" class="butt main-button white-button"><i class="fal fa-star"></i> My Premium</a></li>
+                                <? } else { ?>
+                                    <li class="<? if(page == 'upgrade') { ?>active<? } ?>"><a href="/upgrade" class="butt main-button white-button"><i class="fal fa-star"></i> Upgrade</a></li>
+                                <? } ?>
+                            <? } ?>
+                            <li><a href="/logout"><i class="fal fa-sign-out white-text"></i> logout</a></li>
                         <? } ?>
                     </ol>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="menu-overflow"></div>
+<div class="menu-top-mobile-dashboard">
+    <div class="row">
+        <div class="container">
+            <button class="bars-button left"><i class="fal fa-bars"></i></button>
         </div>
     </div>
 </div>

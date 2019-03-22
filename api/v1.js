@@ -553,132 +553,144 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                             });
                                                         } else {
                                                             if (docs.length === 0) {
-                                                                getHeadHTML(long_url, (html) => {
-                                                                    headHTML(html, (head_html) => {
-                                                                        head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
-                                                                        head_html = head_html.replace(/%domain_name%/ig, domain_name);
-                                                                        head_html = head_html.replace(/%protocol%/ig, domain_protocol);
-                                                                        new HtmlParser(head_html).getFavicon((err, favicon) => {
-                                                                            if (favicon != undefined && favicon != null) {
-                                                                                sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
-                                                                                favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
-                                                                            }
-                                                                            db.Url({
-                                                                                long_url,
-                                                                                domain_name,
-                                                                                user_id,
-                                                                                application_id,
-                                                                                alias,
-                                                                                description,
-                                                                                password,
-                                                                                expiration_time,
-                                                                                timestamp,
-                                                                                head_html,
-                                                                                favicon,
-                                                                                device_select,
-                                                                                devicetag_url,
-                                                                                page_screenshot,
-                                                                                page_seotags,
-                                                                                geo_select,
-                                                                                geotag_url,
-                                                                                seo_title,
-                                                                                seo_description
-                                                                            }).save((err, urls) => {
-                                                                                if (err) {
-                                                                                    res.status(500).json({
-                                                                                        'Error': 'Error while data saving.'
-                                                                                    });
-                                                                                } else {
-                                                                                    // Get async pic of the page
-                                                                                    if (page_screenshot) {
-                                                                                        getPagePic({
-                                                                                            url: long_url,
-                                                                                            live_path: `${__dirname}/../public/img/thumbnails/${urls._id}.png`,
-                                                                                            temp_path: `${__dirname}/../public/img/temp/temp-${urls._id}.png`
-                                                                                        });
-                                                                                    }
-                                                                                    // Register the application event async
-                                                                                    db.ApplicationEvent({
-                                                                                        user_id: user_id,
-                                                                                        application_id: application_id,
-                                                                                        param: {
-                                                                                            url_id: urls._id,
-                                                                                        },
-                                                                                        event_description: 'Create a new short link.',
-                                                                                        event_method: 'POST',
-                                                                                        event_request: `/${config.api.version}/shorten`,
-                                                                                        event_response: '200 OK',
-                                                                                        request_origin: origin
-                                                                                    }).save((err, doc) => {});
-                                                                                    // Link created so find webhooks events if isset
-                                                                                    db.Webhook.find({
-                                                                                        application_id: application_id,
-                                                                                        user_id: user_id
-                                                                                    }, (err, webhook) => {
-                                                                                        if (webhook.length > 0) {
-                                                                                            // Isset webhook so check if the event is registered
-                                                                                            const events = webhook[0].events;
-                                                                                            if (events.indexOf('link_created') !== -1) {
-                                                                                                // Send webhook async mode
-                                                                                                const uri = webhook[0].endpoint;
-                                                                                                rp({
-                                                                                                    method: 'POST',
-                                                                                                    uri: uri,
-                                                                                                    body: {
-                                                                                                        data: {
-                                                                                                            user_id: user_id,
-                                                                                                            application_id: application_id,
-                                                                                                            long_url: long_url,
-                                                                                                            short_url: `${config.short_host}/s/${alias}`,
-                                                                                                            api_version: config.api.version,
-                                                                                                            event: 'link_created',
-                                                                                                            status: 'success',
-                                                                                                            created: Math.round(Date.now() / 1000)
-                                                                                                        },
-                                                                                                        signature: webhook[0].webhook_self_signature
-                                                                                                    },
-                                                                                                    json: true
-                                                                                                }).then((parsedBody) => {
-                                                                                                    // POST succeeded so register the event
-                                                                                                    db.WebhookEvent({
-                                                                                                        url_id: urls._id,
-                                                                                                        user_id: user_id,
-                                                                                                        webhook_id: webhook[0]._id,
-                                                                                                        application_id: application_id,
-                                                                                                        endpoint: `/${config.api.version}/shorten`,
-                                                                                                        request_response: '200 OK',
-                                                                                                        request_method: 'POST',
-                                                                                                        api_version: config.api.version,
-                                                                                                        event_type: 'link_created',
-                                                                                                        creation_time: Math.round(Date.now() / 1000)
-                                                                                                    }).save(err => {
-                                                                                                        if (err) console.log(err);
-                                                                                                    });
-                                                                                                }).catch((err) => {
-                                                                                                    // POST failed...
-                                                                                                    console.log('Failed webhook request')
-                                                                                                    console.log(err);
-                                                                                                });
-
-                                                                                            }
-                                                                                        }
-                                                                                    });
-
-                                                                                    // Send response
-                                                                                    // Send webhook event async
-                                                                                    // Registering events async
-                                                                                    res.status(200).json({
-                                                                                        'Status': 'success',
-                                                                                        'url': {
-                                                                                            'id': urls._id,
-                                                                                            'short_url': `${config.short_host}/s/${alias}`,
-                                                                                            'alias': urls.alias,
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            });
+                                                                getHeadHTML(long_url, (err, html) => {
+                                                                    if (err) {
+                                                                        res.status(500).json({
+                                                                            'Error': 'We can not fetch the provided site, maybe the page need more authorizzation. Try the fast mode instead.',
                                                                         });
-                                                                    });
+                                                                    } else {
+                                                                        headHTML(html, (err, head_html) => {
+                                                                            if (err) {
+                                                                                res.status(500).json({
+                                                                                    'Error': 'We can not analyze the provided site html, maybe the page need more authorizzation. Try the fast mode instead.',
+                                                                                });
+                                                                            } else {
+                                                                                head_html = head_html != '' && head_html != null && head_html != undefined ? head_html : null;
+                                                                                head_html = head_html.replace(/%domain_name%/ig, domain_name);
+                                                                                head_html = head_html.replace(/%protocol%/ig, domain_protocol);
+                                                                                new HtmlParser(head_html).getFavicon((err, favicon) => {
+                                                                                    if (favicon != undefined && favicon != null) {
+                                                                                        sanitizedFavicon = isUrl(favicon) || favicon.charAt(0) == '/' ? favicon : `/${favicon}`;
+                                                                                        favicon = isUrl(sanitizedFavicon) ? sanitizedFavicon : `${domain_protocol}://${domain_name}${sanitizedFavicon}`;
+                                                                                    }
+                                                                                    db.Url({
+                                                                                        long_url,
+                                                                                        domain_name,
+                                                                                        user_id,
+                                                                                        application_id,
+                                                                                        alias,
+                                                                                        description,
+                                                                                        password,
+                                                                                        expiration_time,
+                                                                                        timestamp,
+                                                                                        head_html,
+                                                                                        favicon,
+                                                                                        device_select,
+                                                                                        devicetag_url,
+                                                                                        page_screenshot,
+                                                                                        page_seotags,
+                                                                                        geo_select,
+                                                                                        geotag_url,
+                                                                                        seo_title,
+                                                                                        seo_description
+                                                                                    }).save((err, urls) => {
+                                                                                        if (err) {
+                                                                                            res.status(500).json({
+                                                                                                'Error': 'Error while data saving.'
+                                                                                            });
+                                                                                        } else {
+                                                                                            // Get async pic of the page
+                                                                                            if (page_screenshot) {
+                                                                                                getPagePic({
+                                                                                                    url: long_url,
+                                                                                                    live_path: `${__dirname}/../public/img/thumbnails/${urls._id}.png`,
+                                                                                                    temp_path: `${__dirname}/../public/img/temp/temp-${urls._id}.png`
+                                                                                                });
+                                                                                            }
+                                                                                            // Register the application event async
+                                                                                            db.ApplicationEvent({
+                                                                                                user_id: user_id,
+                                                                                                application_id: application_id,
+                                                                                                param: {
+                                                                                                    url_id: urls._id,
+                                                                                                },
+                                                                                                event_description: 'Create a new short link.',
+                                                                                                event_method: 'POST',
+                                                                                                event_request: `/${config.api.version}/shorten`,
+                                                                                                event_response: '200 OK',
+                                                                                                request_origin: origin
+                                                                                            }).save((err, doc) => { });
+                                                                                            // Link created so find webhooks events if isset
+                                                                                            db.Webhook.find({
+                                                                                                application_id: application_id,
+                                                                                                user_id: user_id
+                                                                                            }, (err, webhook) => {
+                                                                                                if (webhook.length > 0) {
+                                                                                                    // Isset webhook so check if the event is registered
+                                                                                                    const events = webhook[0].events;
+                                                                                                    if (events.indexOf('link_created') !== -1) {
+                                                                                                        // Send webhook async mode
+                                                                                                        const uri = webhook[0].endpoint;
+                                                                                                        rp({
+                                                                                                            method: 'POST',
+                                                                                                            uri: uri,
+                                                                                                            body: {
+                                                                                                                data: {
+                                                                                                                    user_id: user_id,
+                                                                                                                    application_id: application_id,
+                                                                                                                    long_url: long_url,
+                                                                                                                    short_url: `${config.short_host}/${alias}`,
+                                                                                                                    api_version: config.api.version,
+                                                                                                                    event: 'link_created',
+                                                                                                                    status: 'success',
+                                                                                                                    created: Math.round(Date.now() / 1000)
+                                                                                                                },
+                                                                                                                signature: webhook[0].webhook_self_signature
+                                                                                                            },
+                                                                                                            json: true
+                                                                                                        }).then((parsedBody) => {
+                                                                                                            // POST succeeded so register the event
+                                                                                                            db.WebhookEvent({
+                                                                                                                url_id: urls._id,
+                                                                                                                user_id: user_id,
+                                                                                                                webhook_id: webhook[0]._id,
+                                                                                                                application_id: application_id,
+                                                                                                                endpoint: `/${config.api.version}/shorten`,
+                                                                                                                request_response: '200 OK',
+                                                                                                                request_method: 'POST',
+                                                                                                                api_version: config.api.version,
+                                                                                                                event_type: 'link_created',
+                                                                                                                creation_time: Math.round(Date.now() / 1000)
+                                                                                                            }).save(err => {
+                                                                                                                if (err) console.log(err);
+                                                                                                            });
+                                                                                                        }).catch((err) => {
+                                                                                                            // POST failed...
+                                                                                                            console.log('Failed webhook request')
+                                                                                                            console.log(err);
+                                                                                                        });
+    
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+    
+                                                                                            // Send response
+                                                                                            // Send webhook event async
+                                                                                            // Registering events async
+                                                                                            res.status(200).json({
+                                                                                                'Status': 'success',
+                                                                                                'url': {
+                                                                                                    'id': urls._id,
+                                                                                                    'short_url': `${config.short_host}/${alias}`,
+                                                                                                    'alias': urls.alias,
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                    });
+                                                                                });
+                                                                            }
+                                                                        });
+                                                                    }
                                                                 });
                                                             } else {
                                                                 res.status(500).json({
@@ -834,7 +846,7 @@ router.post(['/shorten/direct', `/${config.api.version}/shorten/direct`], (req, 
                                                 user_id: user_id,
                                                 application_id: application_id,
                                                 long_url: long_url,
-                                                short_url: `${config.short_host}/s/${alias}`,
+                                                short_url: `${config.short_host}/${alias}`,
                                                 api_version: config.api.version,
                                                 event: 'link_created',
                                                 status: 'success',
@@ -876,7 +888,7 @@ router.post(['/shorten/direct', `/${config.api.version}/shorten/direct`], (req, 
                             'Status': 'success',
                             'url': {
                                 'id': urls._id,
-                                'short_url': `${config.short_host}/s/${alias}`,
+                                'short_url': `${config.short_host}/${alias}`,
                                 'alias': urls.alias,
                             }
                         });
@@ -1296,7 +1308,7 @@ router.get(['/link', `/${config.api.version}/link`], (req, res) => {
                                             application_id: urls[0].application_id,
                                             long_url: urls[0].long_url,
                                             domain_name: urls[0].domain_name,
-                                            short_url: `${config.short_host}/s/${urls[0].alias}`,
+                                            short_url: `${config.short_host}/${urls[0].alias}`,
                                             alias: urls[0].alias,
                                             favicon: urls[0].favicon,
                                             properties: {
@@ -1471,7 +1483,7 @@ router.get(['/link/all', `/${config.api.version}/link/all`], (req, res) => {
                                                 application_id: item.application_id,
                                                 long_url: item.long_url,
                                                 domain_name: item.domain_name,
-                                                short_url: `${config.short_host}/s/${item.alias}`,
+                                                short_url: `${config.short_host}/${item.alias}`,
                                                 alias: item.alias,
                                                 favicon: item.favicon,
                                                 properties: {
@@ -1827,7 +1839,7 @@ async function getPagePic(param) {
     const temp_path = param.temp_path; // `./public/img/temp/temp-${Date.now()}.png`;
     const browser = await puppeteer.launch({
         'args': [
-            '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
+            '--disable-gpu', '--no-sandbox'
         ]
     });
     const page = await browser.newPage();
@@ -1850,17 +1862,11 @@ async function getPagePic(param) {
 }
 
 async function getHeadHTML(url, done) {
-    const browser = await puppeteer.launch({
-        'args': [
-            '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process'
-        ]
+    rp(url).then(function (html) {
+        return done(null, html);
+    }).catch(function (err) {
+        return done(err);
     });
-    const page = await browser.newPage();
-    await page.goto(url);
-    const headHandle = await page.$('head');
-    const html = await page.evaluate(head => head.innerHTML, headHandle);
-    await browser.close();
-    return await done(html)
 }
 
 function headHTML(html, done) {
@@ -1902,7 +1908,7 @@ function headHTML(html, done) {
         elem.property != undefined && elem.property != null ? html_head.push(`<meta property="${elem.property}" content="${elem.content}" />`) : false;
     });
     html_head = html_head.join("");
-    return done(html_head);
+    return done(null, html_head);
 }
 
 module.exports = router;
