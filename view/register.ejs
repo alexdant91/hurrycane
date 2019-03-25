@@ -28,39 +28,39 @@
                     <form class="form" method="POST" action="" name="register" id="register">
                         <div class="row">
                             <div class="container text-center">
-                                <h4 class="text-center"><i class="fal fa-sign-in"></i> Register</h4>
+                                <h4 class="text-center"><i class="fal fa-sign-in"></i> <?= translation.Register ?></h4>
                             </div>
                         </div>
                         <div class="input field first">
-                            <label for="name"><b>What's your first name?</b></label>
-                            <input type="text" id="name" name="name" placeholder="First name..." required />
+                            <label for="name"><b><?= translation.Whats_your_first_name ?>?</b></label>
+                            <input type="text" id="name" name="name" placeholder="<?= translation.First_name ?>..." required />
                         </div>
                         <div class="input field">
-                            <label for="email"><b>What's your email address?</b></label>
-                            <input type="email" id="email" name="email" placeholder="Email..." required />
+                            <label for="email"><b><?= translation.Whats_your_email_address ?>?</b></label>
+                            <input type="email" id="email" name="email" placeholder="<?= translation.Email ?>..." required />
                         </div>
                         <div class="input field">
-                            <label for="password"><b>Choose a strong password!</b></label>
-                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Password..." required />
+                            <label for="password"><b><?= translation.Choose_a_strong_password ?>!</b></label>
+                            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="<?= translation.Password ?>..." required />
                         </div>
                         <div class="row">
                             <div class="container text-right little-info-form">
-                                <a href="/login"><i class="fal fa-user"></i> Already registered?</a>
+                                <a href="/login"><i class="fal fa-user"></i> <?= translation.Already_registered ?>?</a>
                             </div>
                         </div>
                         <div class="input field text-center first">
-                            <button type="submit" class="butt register-button blue-button"><i class="fal fa-lock white-text"></i> Sign Up</button>
+                            <button type="submit" class="butt register-button blue-button"><i class="fal fa-lock white-text"></i> <?= translation.Sign_up ?></button>
                         </div>
                         <div class="row">
                             <div class="container">
                                 <div class="divider">
-                                    <span>or</span>
+                                    <span><?= translation.Or ?></span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="container text-center social-login-wrapper">
-                                <a href="" class="fb-share-button share-button full" onclick="GetFbUserObject(); return false;"><i class="fab fa-facebook-square"></i> Continue with facebook</a>
+                                <a href="" class="fb-share-button share-button full" onclick="GetFbUserObject(); return false;"><i class="fab fa-facebook-square"></i> <?= translation.Continue_with_facebook ?></a>
                             </div>
                         </div>
                         <!-- <div class="row" style="margin-top: 10px;">

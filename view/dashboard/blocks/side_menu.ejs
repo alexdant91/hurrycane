@@ -4,15 +4,15 @@
             <? if(user.avatar == null) { ?>
                 <div class="user-side-icon lazy-load" style="background-image: url(data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==);" data-src="/img/user_blank_avatar.jpg"></div>
             <? } else { ?>
-                <div class="user-side-icon lazy-load" style="background-image: url(/img/user_blank_avatar.jpg);" data-src="<?= user.avatar?>"></div>
+                <div class="user-side-icon lazy-load" style="background-image: url(/img/user_blank_avatar.jpg);" data-src="<?= user.avatar ?>"></div>
             <? } ?>
-            <div class="overlay-edit-avatar"><i class="fal fa-pencil"></i></div>
+            <div class="overlay-edit-avatar"><i class="fal fa-pencil a-link" data-href="/dashboard/settings"></i></div>
         </div>
         <div class="user-side-name text-center">
             <? if(user.subscription == 'PREMIUM') { ?>
                 <i class="fal fa-star premium-star"></i>
             <? } ?>
-            Hi <?= user.name ?>! <i class="fal fa-pencil edit-name pointer"></i>
+            Hi <span><?= user.name ?></span>! <i class="fal fa-pencil edit-name pointer a-link" data-href="/dashboard/settings"></i>
         </div>
     </div>
 </div>

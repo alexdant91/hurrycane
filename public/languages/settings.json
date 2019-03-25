@@ -1,0 +1,8 @@
+{
+    "default": "en_EN",
+    "supported_languages": ["en_EN", "it_IT"],
+    "languages": [
+        {"key": "en_EN", "label": "English"},
+        {"key": "it_IT", "label": "Italiano"}
+    ]
+}

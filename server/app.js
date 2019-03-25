@@ -61,6 +61,9 @@ module.exports.init = function init() {
     const cors = require('cors');
     const osLocale = require('os-locale');
 
+    // Languages support
+    const localLanguage = require('../models/local-language');
+
     // Mongoose connection for session storage in Atlas
     const mongoose = require('mongoose');
     const url_connection = config.NODE_ENV === 'staging' ? 'mongodb://localhost:27017/url_shortner' : `mongodb+srv://${config.mongoDbAtlas.user.username}:${config.mongoDbAtlas.user.password}@clusterhurrycane-nebin.mongodb.net/url_shortner`;
@@ -199,11 +202,9 @@ module.exports.init = function init() {
     app.set('views', __dirname + '/../view');
     app.set('view engine', 'ejs');
 
-    app.use((req, res, next) => {
-        // console.log(colors.bold.blue(`[SERVER]: Worker on process id ${process.pid}.`));
-        // console.log(req.cookies.session);
-        next();
-    });
+    app.use(localLanguage({
+        default: 'en_EN'
+    }));
 
     // Mailer configuration
     const Mailer = require('../models/mailer');
@@ -248,7 +249,9 @@ module.exports.init = function init() {
 
     // The public logic
     app.get('/', (req, res) => {
+        // console.log(req.translation, req.clang, req.languages);
         res.render('index', {
+            translation: req.translation,
             premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
@@ -268,6 +271,7 @@ module.exports.init = function init() {
     // create the login get and post routes
     app.get('/login', verifySessionInverse, (req, res) => {
         res.render('login', {
+            translation: req.translation,
             premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
@@ -300,6 +304,7 @@ module.exports.init = function init() {
             req.login(user, (err) => {
                 if (err) return next(err);
                 req.session.user = user;
+                req.session.user.avatar = req.session.user.avatar != null ? (isUrl(req.session.user.avatar) == false ? `/img/avatars/${req.session.user._id}/${req.session.user.avatar}` : req.session.user.avatar) : null;
                 return res.json({
                     'Status': 'done',
                     'ref': ref
@@ -311,6 +316,7 @@ module.exports.init = function init() {
     // create the register get and post routes
     app.get('/register', verifySessionInverse, (req, res) => {
         res.render('register', {
+            translation: req.translation,
             premium: config.premium.active,
             session: req.isAuthenticated(),
             user: req.session.user,
@@ -359,6 +365,7 @@ module.exports.init = function init() {
                                 'Error': 'Error during user login.'
                             });;
                             req.session.user = user[0];
+                            req.session.user.avatar = req.session.user.avatar != null ? (isUrl(req.session.user.avatar) == false ? `/img/avatars/${req.session.user._id}/${req.session.user.avatar}` : req.session.user.avatar) : null;
                             return res.json({
                                 'Status': 'done',
                                 'ref': ref
@@ -422,6 +429,7 @@ module.exports.init = function init() {
                                                     'Error': 'Error during user login.'
                                                 });;
                                                 req.session.user = user[0];
+                                                req.session.user.avatar = req.session.user.avatar != null ? (isUrl(req.session.user.avatar) == false ? `/img/avatars/${req.session.user._id}/${req.session.user.avatar}` : req.session.user.avatar) : null;
                                                 return res.json({
                                                     'Status': 'done',
                                                     'ref': ref
@@ -512,6 +520,7 @@ module.exports.init = function init() {
                                                         'Error': 'Error during user login.'
                                                     });;
                                                     req.session.user = user[0];
+                                                    req.session.user.avatar = req.session.user.avatar != null ? (isUrl(req.session.user.avatar) == false ? `/img/avatars/${req.session.user._id}/${req.session.user.avatar}` : req.session.user.avatar) : null;
                                                     return res.json({
                                                         'Status': 'done',
                                                         'ref': ref
@@ -971,6 +980,7 @@ module.exports.init = function init() {
                     res.json(err);
                 } else {
                     res.render('upgrade', {
+                        translation: req.translation,
                         premium: config.premium.active,
                         session: req.isAuthenticated(),
                         user: req.session.user,
@@ -988,6 +998,7 @@ module.exports.init = function init() {
             });
         } else {
             res.render('upgrade', {
+                translation: req.translation,
                 premium: config.premium.active,
                 session: req.isAuthenticated(),
                 user: req.session.user,
@@ -1014,6 +1025,7 @@ module.exports.init = function init() {
                     res.json(err);
                 } else {
                     res.render('upgrade', {
+                        translation: req.translation,
                         session: req.isAuthenticated(),
                         user: req.session.user,
                         page: 'pricing',
@@ -1030,6 +1042,7 @@ module.exports.init = function init() {
             });
         } else {
             res.render('upgrade', {
+                translation: req.translation,
                 session: req.isAuthenticated(),
                 user: req.session.user,
                 page: 'pricing',
@@ -1055,6 +1068,7 @@ module.exports.init = function init() {
                 res.redirect('/upgrade');
             } else {
                 res.render('upgrade-premium', {
+                    translation: req.translation,
                     premium: config.premium.active,
                     session: req.isAuthenticated(),
                     user: req.session.user,

@@ -28,6 +28,7 @@ $(document).on('submit', '#update-user', function (e) {
                     message: data.text
                 });
             } else if (data.Status == 'done') {
+                $('.user-side-name').find('span').html(name);
                 iziToast.show({
                     theme: 'dark',
                     icon: 'fal fa-check',

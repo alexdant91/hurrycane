@@ -42,6 +42,71 @@
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
+                                <span class="tooltiptext">Change your profile image uploading a new one
+                                    <? if(user.facebook_id != undefined && user.facebook_id != null) { ?> 
+                                        or get it from your facebook profile 
+                                    <? } ?>.</span>
+                                <i class="fal fa-info-circle"></i>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 offset-md-2">
+                                <div class="row">
+                                    <div class="container pad-20">
+                                        <h6 class="text-center">
+                                            <i class="fal fa-image"></i> Profile Avatar
+                                        </h6>
+                                    </div>
+                                </div>
+
+                                <div class="row avatar-form-wrapper">
+                                    <div class="container pad-20">
+                                        <div class="user-side-image relative">
+                                            <? if(user.avatar == null) { ?>
+                                            <div class="user-side-icon lazy-load" style="background-image: url(data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==);" data-src="/img/user_blank_avatar.jpg"></div>
+                                            <? } else { ?>
+                                            <div class="user-side-icon lazy-load" style="background-image: url(/img/user_blank_avatar.jpg);" data-src="<?= user.avatar?>"></div>
+                                            <? } ?>
+                                            <div class="image-overlay image-trigger">
+                                                <i class="fal fa-sync"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form action="/dashboard/settings/avatar/update" method="POST" id="update-user-avatar" enctype="multipart/form-data">
+                                    <div class="form-new-application">
+                                        <div class="input field hidden">
+                                            <label for="avatar"></label>
+                                            <input type="file" name="avatar" id="avatar" required />
+                                        </div>
+                                        <div class="row">
+                                            <div class="container text-center" style="padding: 25px 25px 0 25px;">
+                                                <!-- <a class="butt main-button red-button" href="/dashboard/api"><i class="fal fa-ban"></i> Annulla</a> -->
+                                                <button type="submit" class="butt main-button blue-button"><i class="fal fa-save white-text"></i> Save</button>
+                                            </div>
+                                        </div>
+                                        <? if(user.facebook_id != undefined && user.facebook_id != null) { ?>
+                                            <div class="row">
+                                                <div class="container">
+                                                    <div class="divider">
+                                                        <span>or</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="container text-center social-login-wrapper left">
+                                                    <a href="" class="fb-share-button" id="get-from-facebook" onclick="return false;" style="width: 222px;margin-left: calc(50% - 111px);"><i class="fab fa-facebook-square"></i> Get from facebook</a>
+                                                </div>
+                                            </div>
+                                        <? } ?>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                        <div class="general-box-wrapper relative">
+                            <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">You can edit your preferences.</span>
                                 <i class="fal fa-info-circle"></i>
                             </div>
@@ -164,6 +229,7 @@
         <script type="text/javascript" src="/js/dashboard/dashboard.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/applications.js?v=1.0.0"></script>
         <script type="text/javascript" src="/js/dashboard/user-details.js?v=1.0.0"></script>
+        <script type="text/javascript" src="/js/dashboard/fb-avatar.js?v=1.0.5"></script>
 
         <script typt="text/javascript" src="/js/selectize.js"></script>
         <script>
@@ -209,24 +275,30 @@
                     }
                 });
 
-                $(document).on('click', '.webhook_self', function () {
-                    const $this = $(this);
-                    const $secret_key = $('#secret_key');
-                    const application_id = $('#application_id').val();
-                    const webhook_self_id = $this.data('self-id');
+                $(document).on('change', '#avatar', function() {
+                    readURL(this);
+                });
+                
+                $(document).on('click', '.image-trigger', function() {
+                    $('#avatar').trigger('click');
+                });
+
+                $(document).on('submit', '#update-user-avatar', function (e) {
+                    e.preventDefault();
+                    const $button = $(this).find('button[type="submit"]');
+                    const button = $button.html();
+                    $button.html(loaderHTML);
+
+                    const avatar = document.getElementById("avatar").files[0];
+                    const formData = new FormData();
+                    formData.append("avatar", avatar);
 
                     $.ajax({
-                        url: '/dashboard/api/protected-requests',
+                        url: '/dashboard/settings/avatar/update',
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        dataType: 'json',
-                        data: JSON.stringify({
-                            action: 'retrieveWebhooks',
-                            application_id: application_id,
-                            webhook_self_id: webhook_self_id
-                        }),
+                        processData: false,
+                        contentType: false,
+                        data: formData,
                         success: function (data) {
                             if (data.Error) {
                                 iziToast.error({
@@ -235,68 +307,37 @@
                                     message: data.text
                                 });
                             } else if (data.Status == 'done') {
-                                console.log(data);
-                                $("#webhooks_modal").iziModal({
-                                    title: 'Manage your webhook',
-                                    headerColor: '#88A0B9',
-                                    onClosed: function () {
-                                        $("#webhooks_modal .iziModal-content").html('');
-                                    }
+                                $('.user-side-icon').css('background-image', `url(${data.path})`);
+                                iziToast.show({
+                                    theme: 'dark',
+                                    icon: 'fal fa-check',
+                                    position: 'topRight',
+                                    title: data.messages.title,
+                                    message: data.messages.text,
+                                    progressBarColor: 'rgb(0, 255, 184)'
                                 });
-                                $("#webhooks_modal .iziModal-content").html(`
-                                    <div class="row">
-                                        <div class="container pad-20">
-                                            <div class="row">
-                                                <div class="container">
-                                                    <div class="input field">
-                                                        <label for="webhook_url"><b>The webhook's url callback endpoint</b></label>
-                                                        <div class="button-input">
-                                                            <input type="text" name="webhook_url" id="webhook_url" value="${data.endpoint}" readonly style="margin-top: 10px;" />
-                                                            <button class="copy-to-clip" data-target="webhook_url"><i class="fal fa-copy"></i> Copy</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="container">
-                                                    <div class="input field" style="margin-top: 20px;">
-                                                        <label for="webhook_sign">
-                                                            <b>
-                                                                <div class="info-box relative inline tooltip">
-                                                                    <span class="tooltiptext">The signature allows you to verify the authenticity of the request. Check in your backend that the signature matches to confirm its origin.</span>
-                                                                    <i class="fal fa-info-circle"></i>
-                                                                </div> The webhook's unique signature
-                                                            </b>
-                                                        </label>
-                                                        <div class="button-input">
-                                                            <input type="text" name="webhook_sign" id="webhook_sign" value="${data.webhook_self_signature}" readonly style="margin-top: 10px;" />
-                                                            <button class="copy-to-clip" data-target="webhook_sign"><i class="fal fa-copy"></i> Copy</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="container text-center" style="padding: 20px 0 10px 0 !important;">
-                                                    <div class="wrapper left text-center" style="width: 100%;    margin-top: 20px;">
-                                                        <a href="/dashboard/api/webhooks/${application_id}/details?webhook_self_id=${webhook_self_id}" class="butt main-button blue-button"><i class="fal fa-cog white-text"></i> Settings</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>    
-                                    </div>
-                                `);
-                                $("#webhooks_modal").iziModal('open');
-                                // modal.stopLoading();
                             }
-
+                            $button.html(button);
+                            $('#avatar').val('');
                         },
                         error: function (a, b, c) {
                             console.log(a, b, c);
-                            $this.html('<i class="fal fa-eye"></i> Show');
+                            $button.html(button);
+                            $('#avatar').val('');
                         }
                     });
-
+                    return false;
                 });
+
+                function readURL(input) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('.avatar-form-wrapper').find('.user-side-icon').css('background-image', `url(${e.target.result})`);
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
             })
         </script>
     </body>

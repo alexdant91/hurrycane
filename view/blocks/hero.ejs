@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="container">
                         <div class="typed-center-wrapper">
-                            <h2 class="title-test-center">Make your link shorter!</h1>
+                            <h2 class="title-test-center"><?= translation.Make_your_link_shorter ?>!</h1>
                         </div>
                     </div>
                 </div>
@@ -24,10 +24,10 @@
                                                 <div class="input-url-wrapper">
                                                     <div class="input-url">
                                                         <i class="far fa-link"></i>
-                                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="Paste your link..." />
+                                                        <input type="text" class="long-url-input" id="long-url-input" name="longUrlInput" placeholder="<?= translation.Paste_your_link ?>" />
                                                     </div>
                                                     <div class="button-url">
-                                                        <button type="button" id="shortenUrl" class="butt main-button blue-button">Let's Go!</button>
+                                                        <button type="button" id="shortenUrl" class="butt main-button blue-button"><?= translation.Lets_go ?>!</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -38,24 +38,24 @@
                             </div>
                             <div class="row">
                                 <div class="container">
-                                    <button type="button" class="custom-button-advanced">Advanced options</button>
+                                    <button type="button" class="custom-button-advanced"><?= translation.Advanced_options ?></button>
                                     <div class="row advanced-option-wrapper">
                                         <div class="container equal-33">
                                             <div class="col-equal-input">
                                                 <div class="input custom-placeholder">
                                                     <label for="alias">
-                                                        <b>Custom Alias</b>
-                                                        <p>Make the last part of your link branded.</p>
+                                                        <b><?= translation.Custom_alias ?></b>
+                                                        <p><?= translation.Make_the_last_part_of_your_link_branded ?>.</p>
                                                     </label>
-                                                    <label for="alias" class="placeholder-label">https://hycn.it/<u><b>Nike</b></u></label>
+                                                    <label for="alias" class="placeholder-label">https://hycn.it/<u><b><?= translation.Nike ?></b></u></label>
                                                     <input type="text" name="alias" id="alias" />
                                                 </div>
                                             </div>
                                             <div class="col-equal-input">
                                                 <div class="input">
                                                     <label for="expire">
-                                                        <b>Link Expiration</b>
-                                                        <p>Set an expiration date to disable the URL.</p>
+                                                        <b><?= translation.Link_expiration ?></b>
+                                                        <p><?= translation.Set_an_expiration_date_to_disable_the_URL ?>.</p>
                                                     </label>
                                                     <input type="date" name="expire" id="expire" placeholder="yyyy/mm/dd" onchange="this.className=(this.value!=''?'has-value':'')" />
                                                 </div>
@@ -64,11 +64,11 @@
                                                 <div class="input last-child">
                                                     <label for="password">
                                                         <label for="password">
-                                                            <b>Password Protect</b>
-                                                            <p>Add a password to restrict the access.</p>
+                                                            <b><?= translation.Password_protect ?></b>
+                                                            <p><?= translation.Add_a_password_to_restrict_the_access ?>.</p>
                                                         </label>
                                                     </label>
-                                                    <input type="text" name="password" id="password" placeholder="Choose your password..." />
+                                                    <input type="text" name="password" id="password" placeholder="<?= translation.Choose_your_password ?>..." />
                                                 </div>
                                             </div>
                                         </div>

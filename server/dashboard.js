@@ -9,6 +9,7 @@ const router = express.Router();
 const PaymentSystem = require('../modules/payment-system/v1')(config.stripe.secretKey);
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt-nodejs');
+const fs = require('fs');
 
 // GET /dashboard/
 router.get('/', (req, res) => {
@@ -22,7 +23,6 @@ router.get('/', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
             res.render('./dashboard/index', {
                 premium: config.premium.active,
                 session: req.isAuthenticated(),
@@ -75,7 +75,7 @@ router.get('/urls', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            
             res.render('./dashboard/urls', {
                 premium: config.premium.active,
                 short_host: config.short_host,
@@ -120,7 +120,7 @@ router.get('/urls/details/:id', (req, res) => {
                     if (err) throw err;
                     // If the avatar is an url (facebook, twitter) remove the directory from path
                     let user = req.session.user;
-                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    
                     res.render('./dashboard/urls-details', {
                         premium: config.premium.active,
                         session: req.isAuthenticated(),
@@ -258,7 +258,7 @@ router.get('/subscription', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            
             db.License.find({
                 license_id: req.session.user.license_id
             }, (err, licens) => {
@@ -314,12 +314,11 @@ router.get('/settings', (req, res) => {
         }, (err, docs) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
-            let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
             db.User.find({
                 _id: req.session.user._id
             }, (err, user) => {
-                if (err) throw err;
+                    if (err) throw err;
+                    user[0].avatar = user[0].avatar != null ? (isUrl(user[0].avatar) == false ? `/img/avatars/${user[0]._id}/${user[0].avatar}` : user[0].avatar) : null;
                 res.render('./dashboard/settings', {
                     premium: config.premium.active,
                     session: req.isAuthenticated(),
@@ -543,7 +542,7 @@ router.get('/urls/analytics/:id', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            
             db.Url.find({
                 _id: url_id,
                 user_id: req.session.user._id
@@ -757,7 +756,7 @@ router.get('/wallet', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            
             db.Wallet.paginate({
                 user_id: user_id
             }, {
@@ -1074,7 +1073,7 @@ router.get('/api', (req, res) => {
             if (err) throw err;
             // If the avatar is an url (facebook, twitter) remove the directory from path
             let user = req.session.user;
-            user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+            
             db.Url.countDocuments({
                 user_id: req.session.user._id
             }, (err, count) => {
@@ -1120,7 +1119,7 @@ router.get('/api/new', (req, res) => {
         if (err) throw err;
         // If the avatar is an url (facebook) remove the directory from path
         let user = req.session.user;
-        user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+        
         db.Url.countDocuments({
             user_id: req.session.user._id
         }, (err, count) => {
@@ -1305,7 +1304,7 @@ router.get('/api/details/:id', (req, res) => {
                     if (err) throw err;
                     // If the avatar is an url (facebook, twitter) remove the directory from path
                     let user = req.session.user;
-                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    
                     db.Url.countDocuments({
                         user_id: req.session.user._id
                     }, (err, count) => {
@@ -1565,7 +1564,7 @@ router.get('/api/webhooks/:application_id/new', (req, res) => {
                     if (err) throw err;
                     // If the avatar is an url (facebook, twitter) remove the directory from path
                     let user = req.session.user;
-                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    
                     db.Url.countDocuments({
                         user_id: req.session.user._id
                     }, (err, count) => {
@@ -1661,7 +1660,7 @@ router.get('/api/webhooks/:application_id/details', (req, res) => {
                     if (err) throw err;
                     // If the avatar is an url (facebook, twitter) remove the directory from path
                     let user = req.session.user;
-                    user.avatar = isUrl(user.avatar) == false ? `/img/avatars/${user._id}/${user.avatar}` : user.avatar;
+                    
                     db.Url.countDocuments({
                         user_id: req.session.user._id
                     }, (err, count) => {
@@ -1822,6 +1821,124 @@ router.post('/api/webhooks/delete', (req, res) => {
             'title': 'Fatal!',
             'text': 'You are not authorized.'
         })
+    }
+});
+
+const multer = require('multer');
+router.post('/settings/avatar/update', (req, res) => {
+    const dir = `${__dirname}/../public/img/avatars/${req.session.user._id}`;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, dir)
+        },
+        filename: function (req, file, cb) {
+            req.fileupload = {
+                avatar: `img/avatars/${req.session.user._id}/${file.fieldname}-${Date.now()}.${file.mimetype.split('/')[1]}`,
+                name: `${file.fieldname}-${Date.now()}.${file.mimetype.split('/')[1]}`
+            };
+            cb(null, `${file.fieldname}-${Date.now()}.${file.mimetype.split('/')[1]}`)
+        }
+    });
+    const uploadAvatar = multer({
+        storage: storage,
+        limits: {
+            fileSize: '50mb'
+        }
+    }).single('avatar');
+
+    uploadAvatar(req, res, (err) => {
+        if (err) {
+            console.log(err);
+            res.json({
+                'Error': 'Internal server error.',
+                'title': 'Oops!',
+                'text': 'Internal server error.'
+            });
+        } else {
+            db.User.updateOne({
+                _id: req.session.user._id
+            }, {
+                avatar: req.fileupload.name
+            }).then(confirm => {
+                if (confirm.n > 0) {
+                    // Update session information
+                    req.session.user.avatar = `/img/avatars/${req.session.user._id}/${req.fileupload.name}`;
+                    // Send the response
+                    res.json({
+                        'Status': 'done',
+                        'messages': {
+                            'title': 'Well!',
+                            'text': 'Avatar uploaded successfully.'
+                        },
+                        'path': `${config.host}/${req.fileupload.avatar}`
+                    });
+                } else {
+                    console.log(confirm);
+                    res.json({
+                        'Error': 'Internal server error.',
+                        'title': 'Oops!',
+                        'text': 'Internal server error.'
+                    });
+                }
+            }).catch(err => {
+                console.log(err);
+                res.json({
+                    'Error': 'Internal server error.',
+                    'title': 'Oops!',
+                    'text': 'Internal server error.'
+                });
+            });
+        }
+    });
+
+});
+
+router.post('/fbavatar/update', (req, res) => {
+    const fbid = req.session.user.facebook_id != '' && req.session.user.facebook_id != null && req.session.user.facebook_id != undefined ? req.session.user.facebook_id : false;
+    
+    if (fbid) {
+        const avatar = `https://graph.facebook.com/${fbid}/picture?type=large&width=960&height=960`;
+        db.User.updateOne({
+            _id: req.session.user._id
+        }, {
+            avatar: avatar
+        }).then(confirm => {
+            if (confirm.n > 0) {
+                // Update session information
+                req.session.user.avatar = avatar;
+                // Send the response
+                res.json({
+                    'Status': 'done',
+                    'messages': {
+                        'title': 'Well!',
+                        'text': 'Avatar uploaded successfully.'
+                    },
+                    'path': avatar
+                });
+            } else {
+                res.json({
+                    'Error': 'Internal server error.',
+                    'title': 'Oops!',
+                    'text': 'Internal server error.'
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+            res.json({
+                'Error': 'Internal server error.',
+                'title': 'Oops!',
+                'text': 'Internal server error.'
+            });
+        });
+    } else {
+        res.json({
+            'Error': 'You cannot set the image from facebook if you have not logged in with facebook.',
+            'title': 'Oops!',
+            'text': 'You cannot set the image from facebook if you have not logged in with facebook.'
+        });
     }
 });
 

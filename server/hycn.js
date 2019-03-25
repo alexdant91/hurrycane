@@ -13,12 +13,18 @@ const sharp = require('sharp');
 const router = express.Router();
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const localLanguage = require('../models/local-language');
 
+router.use(cookieParser());
 router.use(device.capture());
 router.use(express.static(path.join(__dirname, '/public')));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({
     extended: false
+}));
+router.use(localLanguage({
+    default: 'en_EN'
 }));
 
 // router.get('/', (req, res) => {
@@ -66,6 +72,7 @@ router.get('/:alias', (req, res) => {
                             res.render('s', {
                                 // session: req.isAuthenticated(),
                                 // user: req.session.user,
+                                translation: req.translation,
                                 page: 's',
                                 iframe: `${config.host}/s/${alias}`,
                                 env: process.env.NODE_ENV,
@@ -129,6 +136,7 @@ router.get('/s/auth/verify/:alias', (req, res) => {
                         const password = docs[0].password;
                         if (password != null) {
                             res.render('alias', {
+                                translation: req.translation,
                                 page: 'alias',
                                 env: process.env.NODE_ENV,
                                 alias: alias,
