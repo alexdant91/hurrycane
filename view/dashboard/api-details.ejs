@@ -28,11 +28,11 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
 
             <div class="flex-row">
                 <div class="flex-container">
@@ -169,11 +169,13 @@
                                         <? } ?>
                                     </tbody>
                                 </table>
+                                <? if(datas.webhooks.data.length <= 0) { ?>
                                 <div class="row">
                                     <div class="container text-center" style="padding: 25px 25px 0 25px;">
                                         <a href="/dashboard/api/webhooks/<?= datas.applications.data._id ?>/new" class="butt main-button blue-button"><i class="fal fa-plus white-text"></i> New endpoint</a>
                                     </div>
                                 </div>
+                                <? } ?>
                             </div>
                         </div>
                     </div>
@@ -262,7 +264,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 

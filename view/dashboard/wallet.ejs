@@ -26,17 +26,17 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
             <div class="flex-row">
                 <div class="flex-container">
 
                     <?- include('./blocks/search-fields.ejs') -?>
 
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                    <div class="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">See the total amount of the current user wallet.</span>
@@ -44,21 +44,21 @@
                             </div>
                             <div class="row">
                                 <div class="container pad-20">
-                                    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <h4 class="text-left">
                                             <i class="fal fa-wallet"></i> Wallet
                                         </h4>
                                     </div>
-                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="right">
+                                    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: 20px;">
+                                        <div class="text-center">
                                             Payouts requested <br>
                                             <h5 class="total-payout-amount">
                                                 <i class="fal fa-sync fa-spin"></i>
                                             </h5>
                                         </div>
                                     </div>
-                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="right">
+                                    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: 20px;">
+                                        <div class="text-center">
                                             Wallet amount <br>
                                             <h5 class="total-wallet-amount">
                                                 <i class="fal fa-sync fa-spin"></i>
@@ -66,7 +66,7 @@
                                         </div>
                                     </div>
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="row" style="margin-top: 30px;">
+                                        <div class="row" style="margin: 40px 0 0 0;">
                                             <div class="container text-center">
                                                 <a href="/dashboard/wallet/payout" class="butt main-button blue-button">Request a payout</a>
                                             </div>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2">
+                    <div class="col-xl-7 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="general-box-wrapper relative">
                             <div class="info-box absolute tooltip">
                                 <span class="tooltiptext">See all the transactions in current user wallet.</span>
@@ -165,7 +165,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 

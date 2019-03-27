@@ -27,11 +27,11 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
 
             <div class="flex-row">
                 <div class="flex-container">
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                                <button class="butt main-button blue-button"><i class="fal fa-redo white-text" data-fa-transform="flip-h"></i> Send test webhook</button>
+                                <button class="butt main-button blue-button" id="send-test-webhook"><i class="fal fa-redo white-text" data-fa-transform="flip-h"></i> Send test webhook</button>
                             </div>
                         </div>
                     </div>
@@ -291,7 +291,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 

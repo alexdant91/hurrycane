@@ -27,11 +27,11 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
 
             <div class="flex-row">
                 <div class="flex-container">
@@ -67,7 +67,7 @@
                                         <div class="row">
                                             <div class="container pad-5 text-center">
                                                 <div class="alert alert-orange">
-                                                    You can request a minimum payout of € 5,00:
+                                                    You can request a minimum payout of <b>€ 5,00</b>
                                                 </div>
                                             </div>
                                         </div>
@@ -88,7 +88,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 

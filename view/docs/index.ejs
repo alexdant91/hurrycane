@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            Hurrycane.it - <?= page ?>
+        </title>
+        <link rel="stylesheet" type="text/css" href="/css/fw.css" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/css/layout.css" />
+        <link rel="stylesheet" type="text/css" href="/css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+
+        <!-- <script type="text/javascript" src="/js/ads.js?v=1.0.2"></script> -->
+    </head>
+
+    <body>
+
+        <?- include('./blocks/header.ejs') -?>
+
+        <div class="flex-row" style="padding: 20px 0 150px 0">
+            <div class="flex-container">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 docs-menu">
+                    <?- include(`./menu/${menu}.ejs`) ?>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                    <?- include(`./pages/${page}.ejs`) -?>
+                </div>
+            </div>
+        </div>
+
+        <?- include('./blocks/footer.ejs') -?>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+        <script type="text/javascript" src="/js/iziModal.min.js"></script>
+        <script type="text/javascript" src="/js/index.js?v=1.0.2"></script>
+        <!-- <script type="text/javascript" src="/js/ads.js"></script>
+        <script>
+            if (document.getElementById('hWFlqznbUrgu')) {
+                console.log('Blocking Ads: No');
+            } else {
+                console.log('Blocking Ads: Yes');
+            }
+        </script> -->
+        <!-- <script>
+            var typed = new Typed("#typed", {
+                strings: [
+                    '<i class="fal fa-link"></i> Get more from your links!',
+                    '<i class="fal fa-chart-line"></i> Track your traffics!',
+                    '<i class="fal fa-hand-holding-usd"></i> Get fees every page view!'
+                ],
+                typeSpeed: 40,
+                backSpeed: 20,
+                backDelay: 2000,
+                startDelay: 1000,
+                showCursor: true,
+                loop: true
+            });
+        </script> -->
+    </body>
+
+</html>

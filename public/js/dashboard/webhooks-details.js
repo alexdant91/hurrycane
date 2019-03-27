@@ -150,3 +150,47 @@ $(document).on('click', '.webhooks-main-delete-trigger', function (e) {
         });
     }
 });
+
+$(document).on('click', '#send-test-webhook', function () {
+    const $this = $(this);
+    const actualHTML = $this.html();
+    $this.html(loaderHTML);
+
+    const application_id = $('#application_id').val();
+    const webhook_self_id = $('#webhook_self_id').val();
+    $.ajax({
+        url: `/dashboard/api/webhooks/test`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
+        data: JSON.stringify({
+            application_id: application_id,
+            webhook_self_id: webhook_self_id
+        }),
+        success: function (data) {
+            if (data.Error) {
+                iziToast.error({
+                    position: 'topRight',
+                    title: data.title,
+                    message: data.text
+                });
+            } else if (data.Status == 'done') {
+                iziToast.show({
+                    theme: 'dark',
+                    icon: 'fal fa-check',
+                    position: 'topRight',
+                    title: data.messages.title,
+                    message: data.messages.text,
+                    progressBarColor: 'rgb(0, 255, 184)'
+                });
+            }
+            $this.html(actualHTML);
+        },
+        error: function (a, b, c) {
+            console.log(a, b, c);
+            $this.html(actualHTML);
+        }
+    });
+});

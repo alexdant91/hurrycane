@@ -128,9 +128,13 @@ const payoutSchema = Schema({
         type: Boolean,
         default: false
     },
-    timestamp: {
+    created_at: {
         type: Number,
         default: config.time()
+    },
+    payed_at: {
+        type: Number,
+        default: 0
     }
 });
 

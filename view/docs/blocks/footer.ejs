@@ -1,0 +1,99 @@
+<section class="body-index relative left" style="height: auto;">
+    <img src="/img/bottom_5.svg" alt="bottom styles border" style="position: absolute;bottom: 0;width: 100%;left: 0;" />
+</section>
+<footer class="left" style="width: 100vw;background: white;">
+    <div class="footer left" style="width: 100vw;">
+        <div class="row">
+            <div class="container">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="footer-block">
+                        <ol>
+                            <li class="logo"><a href="/">Hurrycane</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.Informations ?></li>
+                                <li>
+                                    <a href=""><?= translation.About_us ?></a>
+                                </li>
+                                <li>
+                                    <a href=""><?= translation.How_it_works ?></a>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.Social ?></li>
+                                <li>
+                                    <a href="">Facebook</a>
+                                </li>
+                                <li>
+                                    <a href="">Instgram</a>
+                                </li>
+                                <li>
+                                    <a href="">LinkedIn</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.Help ?></li>
+                                <li>
+                                    <a href="">FAQ</a>
+                                </li>
+                                <li>
+                                    <a href=""><?= translation.Contact_us ?></a>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.APIs ?></li>
+                                <li>
+                                    <a href=""><?= translation.Documentation ?></a>
+                                </li>
+                                <li>
+                                    <a href=""><?= translation.Get_started ?></a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.Legal_center ?></li>
+                                <li>
+                                    <a href=""><?= translation.Terms_conditions ?></a>
+                                </li>
+                                <li>
+                                    <a href=""><?= translation.Cookies_privacy ?></a>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="footer-block">
+                            <ol>
+                                <li class="title"><?= translation.Languages ?></li>
+                                <? const languages = [{"key": "en_EN", "label": "English"}, {"key": "it_IT", "label": "Italiano"}] ?>
+                                <? languages.forEach(elem => { ?>
+                                <li>
+                                    <a href="?clang=<?= elem.key ?>"><?= elem.label ?></a>
+                                </li>
+                                <? }); ?>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

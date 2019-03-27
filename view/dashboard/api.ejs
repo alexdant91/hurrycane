@@ -26,11 +26,11 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
 
             <div class="flex-row">
                 <div class="flex-container">
@@ -58,6 +58,7 @@
                         <? for(let i = 0; i < datas.applications.data.docs.length; i++) { ?>
                         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-xs-12" id="<?= datas.applications.data.docs[i]['_id'] ?>">
                             <div class="active-applications-wrapper relative">
+                                <div class="application-active <? if(datas.applications.data.docs[i].active) { ?>active<? } else { ?>disabled<? } ?>"></div>
                                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
                                     <img src="/img/api-logo.png" class="url-icon" alt="Api application logo" />
                                 </div>
@@ -67,9 +68,6 @@
                                     </a>
                                     <br>
                                     <a href="/dashboard/api/events/<?= datas.applications.data.docs[i]._id ?>" class="url-actions"><i class="fal fa-chart-bar"></i> Events</a> - <a href="#delete" class="url-actions application-delete-trigger" data-id="<?= datas.applications.data.docs[i]['_id'] ?>"><i class="fal fa-trash"></i> Delete</a>
-                                </div>
-                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12 col-xs-12">
-                                    <div class="application-active <? if(datas.applications.data.docs[i].active) { ?>active<? } else { ?>disabled<? } ?>"></div>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +98,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 

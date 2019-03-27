@@ -55,6 +55,7 @@ module.exports.init = function init() {
     // Routers for api and dashboard
     const api = require(`../api/${config.api.version}`);
     const dashboard = require('./dashboard');
+    const docs = require('./docs');
     const hycn = require('./hycn');
 
     // Protect functions with CORS
@@ -107,6 +108,7 @@ module.exports.init = function init() {
     const vhost = require('../modules/vhost/v1');
     app.use(vhost('api', api));
     app.use(vhost('dashboard', dashboard));
+    app.use(vhost('docs', docs));
     app.use(vhost('hycn', hycn));
     // End api subdomain
 
@@ -236,10 +238,11 @@ module.exports.init = function init() {
     // The live API logic
     app.use(`/api/${config.api.version}`, api);
     // The test API logic
-    app.use(`/test/api/${config.api.version}`, api);
-
+    app.use(`/test/api/${config.api.version}`, api); // @TODO: Create the test api logic
     // The dashboard logic
     app.use('/dashboard', verifySession, dashboard);
+    // The docs logic
+    app.use('/docs', docs);
 
     // The test webhook endpoint callback
     app.post('/test/wh', (req, res) => {

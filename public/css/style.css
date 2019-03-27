@@ -5,6 +5,8 @@
 
 * {
     box-sizing: border-box !important;
+    line-height: 18px;
+    font-family: "proxima-nova", sans-serif !important;
 }
 
 *:not(.fa),
@@ -1314,32 +1316,43 @@ h1.url-title {
 .alert {
     float: left;
     width: auto;
-    padding: 15px 10px;
+    padding: 15px 15px;
     border-radius: 3px;
 }
 
 .alert.block {
-    width: 100% !important;
+    width: 100%;
 }
 
 .alert-orange {
-    background: #ffc57e !important;
-    color: #503400 !important;
+    background: #ffc57e;
+    color: #503400;
     font-size: 15px;
 }
 
 .alert-orange i {
-    color: #503400 !important;
+    color: #503400;
 }
 
 .alert-info {
-    background: #d5f2ff !important;
-    color: #0e5d7b !important;
+    background: #d5f2ff;
+    color: #0e5d7b;
     font-size: 15px;
 }
 
 .alert-info i {
-    color: #0e5d7b !important;
+    color: #0e5d7b;
+}
+
+.alert-info.basic {
+    border: 1px solid #88c2f9;
+    background: #ffffff;
+    color: #1073c1;
+    font-size: 15px;
+}
+
+.alert-info.basic i {
+    color: #1073c1;
 }
 
 .menu-top-mobile-dashboard {
@@ -1356,9 +1369,14 @@ h1.url-title {
 
 .menu-top-mobile-dashboard .bars-button {
     border: none;
-    font-size: 25px;
-    outline: none;
+    font-size: 30px;
+    outline: 0;
     cursor: pointer;
+    margin-top: 5px;
+}
+
+.menu-top-mobile-dashboard a.butt {
+    line-height: 22px;
 }
 
 .menu-overflow {

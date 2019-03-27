@@ -27,11 +27,11 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="left-side-menu">
+        <div class="left-side-menu <?= theme.inverse ?>">
             <?- include('./blocks/side_menu.ejs') -?>
         </div>
 
-        <div class="right-side-wrapper">
+        <div class="right-side-wrapper <?= theme.inverse ?>">
 
             <div class="flex-row">
                 <div class="flex-container">
@@ -116,7 +116,7 @@
 
         </div>
 
-        <div class="row menu-side-wrapper-bottom">
+        <div class="row menu-side-wrapper-bottom <?= theme.inverse ?>">
             <?- include('./blocks/side_menu_bottom.ejs') -?>
         </div>
 
@@ -152,6 +152,7 @@
                 $(document).on('submit', '#new-webhook', function (e) {
                     e.preventDefault();
                     const $this = $(this);
+                    const actualHTML = $this.find('button[type="submit"]').html();
                     $this.find('button[type="submit"]').html(loaderHTML);
 
                     const endpoint = $('#endpoint').val();
@@ -183,9 +184,11 @@
                             } else if (data.Status == 'done') {
                                 location.href = '/dashboard/api/details/<?= datas.applications.data._id ?>'
                             }
+                            $this.find('button[type="submit"]').html(actualHTML);
                         },
                         error: function (a, b, c) {
                             console.log(a, b, c);
+                            $this.find('button[type="submit"]').html(actualHTML);
                         }
                     });
 

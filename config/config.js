@@ -12,7 +12,8 @@ class Config {
         this.sessionSecretKey = 'sessionsecretkey';
         this.api = {
             requestTimeLimitRange: 60 * 60 * 1000,
-            requestNumberLimit: process.env.REQUEST_NUMBER_LIMIT || 2
+            requestNumberLimit: process.env.REQUEST_NUMBER_LIMIT || 2,
+            version: 'v1'
         };
         this.stripe = {
             secretKey: "sk_test_Y7gX79Tue6uErVfdl0uooR6y"
@@ -23,15 +24,17 @@ class Config {
                 password: '18Gmgaa2'
             }
         };
-        this.api = {
-            version: 'v1'
-        };
         this.wallet = {
             single_transaction: 0.00025
         };
         this.devices = {
             select: ['phone', 'tablet']
         };
+        this.dashboard = {
+            theme: {
+                inverse: 'inverse'
+            }
+        }
     }
 
     // Utils
