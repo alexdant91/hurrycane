@@ -12,10 +12,16 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const sharp = require('sharp');
 const fs = require('fs');
+const bodyParser = require('body-parser');
 
 // Configurations
 const Config = require('../config/config');
 const config = new Config();
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({
+    extended: false
+}));
 
 /* 
  * Now only the 200 OK event are saved both ia
@@ -98,7 +104,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                     application_id: application_id,
                                                     endpoint: `/${config.api.version}/token`,
                                                     request_response: '404 NOT FOUND',
-                                                    request_method: 'POST',
+                                                    request_method: 'GET',
                                                     api_version: config.api.version,
                                                     event_type: 'auth_token',
                                                     creation_time: Math.round(Date.now() / 1000)
@@ -127,7 +133,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                         application_id: application_id,
                                                         endpoint: `/${config.api.version}/token`,
                                                         request_response: '403 FORBIDDEN',
-                                                        request_method: 'POST',
+                                                        request_method: 'GET',
                                                         api_version: config.api.version,
                                                         event_type: 'auth_token',
                                                         creation_time: Math.round(Date.now() / 1000)
@@ -226,7 +232,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                                                             application_id: application_id,
                                                                                             endpoint: `/${config.api.version}/token`,
                                                                                             request_response: '200 OK',
-                                                                                            request_method: 'POST',
+                                                                                            request_method: 'GET',
                                                                                             api_version: config.api.version,
                                                                                             event_type: 'auth_token',
                                                                                             creation_time: Math.round(Date.now() / 1000)
@@ -266,7 +272,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                                                 application_id: application_id,
                                                                                 endpoint: `/${config.api.version}/token`,
                                                                                 request_response: '403 FORBIDDEN',
-                                                                                request_method: 'POST',
+                                                                                request_method: 'GET',
                                                                                 api_version: config.api.version,
                                                                                 event_type: 'auth_token',
                                                                                 creation_time: Math.round(Date.now() / 1000)
@@ -296,7 +302,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                                             application_id: application_id,
                                                                             endpoint: `/${config.api.version}/token`,
                                                                             request_response: '500 BAD REQUEST',
-                                                                            request_method: 'POST',
+                                                                            request_method: 'GET',
                                                                             api_version: config.api.version,
                                                                             event_type: 'auth_token',
                                                                             creation_time: Math.round(Date.now() / 1000)
@@ -325,7 +331,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                                         application_id: application_id,
                                                                         endpoint: `/${config.api.version}/token`,
                                                                         request_response: '500 BAD REQUEST',
-                                                                        request_method: 'POST',
+                                                                        request_method: 'GET',
                                                                         api_version: config.api.version,
                                                                         event_type: 'auth_token',
                                                                         creation_time: Math.round(Date.now() / 1000)
@@ -354,7 +360,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                                                     application_id: application_id,
                                                                     endpoint: `/${config.api.version}/token`,
                                                                     request_response: '404 NOT FOUND',
-                                                                    request_method: 'POST',
+                                                                    request_method: 'GET',
                                                                     api_version: config.api.version,
                                                                     event_type: 'auth_token',
                                                                     creation_time: Math.round(Date.now() / 1000)
@@ -390,7 +396,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                         application_id: application_id,
                                         endpoint: `/${config.api.version}/token`,
                                         request_response: '403 FORBIDDEN',
-                                        request_method: 'POST',
+                                        request_method: 'GET',
                                         api_version: config.api.version,
                                         event_type: 'auth_token',
                                         creation_time: Math.round(Date.now() / 1000)
@@ -420,7 +426,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                                     application_id: application_id,
                                     endpoint: `/${config.api.version}/token`,
                                     request_response: '403 FORBIDDEN',
-                                    request_method: 'POST',
+                                    request_method: 'GET',
                                     api_version: config.api.version,
                                     event_type: 'auth_token',
                                     creation_time: Math.round(Date.now() / 1000)
@@ -452,7 +458,7 @@ router.get(['/token', `/${config.api.version}/token`], (req, res) => {
                         application_id: application_id,
                         endpoint: `/${config.api.version}/token`,
                         request_response: '403 FORBIDDEN',
-                        request_method: 'POST',
+                        request_method: 'GET',
                         api_version: config.api.version,
                         event_type: 'auth_token',
                         creation_time: Math.round(Date.now() / 1000)
@@ -491,6 +497,7 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
         } else {
             // Now the auth it's ok, let's create the short link
             // Here the basic features
+            console.log(req.body);
             const long_url = req.body.long_url != '' && req.body.long_url != undefined ? req.body.long_url : false && isUrl(req.body.long_url); // Required
             const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, 9);
             const description = req.body.description != '' && req.body.description != undefined && req.body.description != null ? req.body.description : null;
@@ -619,7 +626,7 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                                                                 event_request: `/${config.api.version}/shorten`,
                                                                                                 event_response: '200 OK',
                                                                                                 request_origin: origin
-                                                                                            }).save((err, doc) => { });
+                                                                                            }).save((err, doc) => {});
                                                                                             // Link created so find webhooks events if isset
                                                                                             db.Webhook.find({
                                                                                                 application_id: application_id,
@@ -669,11 +676,11 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                                                                             console.log('Failed webhook request')
                                                                                                             console.log(err);
                                                                                                         });
-    
+
                                                                                                     }
                                                                                                 }
                                                                                             });
-    
+
                                                                                             // Send response
                                                                                             // Send webhook event async
                                                                                             // Registering events async
@@ -958,7 +965,7 @@ router.delete(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                 fs.unlink(`${__dirname}/../public/img/thumbnails/${url_id}.png`, err => {});
                                                 // Register the application event async
                                                 db.ApplicationEvent({
-                                                    user_id: user._id,
+                                                    user_id: user_id,
                                                     application_id: application_id,
                                                     param: {
                                                         url_id: url_id,
@@ -1148,7 +1155,7 @@ router.put(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                 if (confirm.n > 0) {
                                                     // Register the application event async
                                                     db.ApplicationEvent({
-                                                        user_id: user._id,
+                                                        user_id: user_id,
                                                         application_id: application_id,
                                                         param: {
                                                             url_id: url_id,
@@ -1300,110 +1307,121 @@ router.get(['/link', `/${config.api.version}/link`], (req, res) => {
                                     db.Url.find({
                                         _id: url_id,
                                         user_id: user_id,
-                                        application_id: application_id
+                                        //application_id: application_id
                                     }, (err, urls) => {
-                                        let url = {
-                                            id: urls[0]._id,
-                                            user_id: urls[0].user_id,
-                                            application_id: urls[0].application_id,
-                                            long_url: urls[0].long_url,
-                                            domain_name: urls[0].domain_name,
-                                            short_url: `${config.short_host}/${urls[0].alias}`,
-                                            alias: urls[0].alias,
-                                            favicon: urls[0].favicon,
-                                            properties: {
-                                                description: urls[0].description,
-                                                password: urls[0].password != null,
-                                                expires: urls[0].expiration_time,
-                                            },
-                                            rules: {
-                                                geo_tag: urls[0].geo_select,
-                                                geo_tag_url: urls[0].geotag_url,
-                                                device_tag: urls[0].device_select,
-                                                device_tag_url: urls[0].devicetag_url
-                                            },
-                                            seo: {
-                                                seo_title: urls[0].seo_title,
-                                                seo_description: urls[0].seo_description
-                                            },
-                                            created: urls[0].timestamp
-                                        };
-
-                                        if (err) {
-                                            res.status(500).json({
-                                                'Error': 'Internal server error.'
-                                            });
-                                        } else {
-                                            // Register the application event async
-                                            db.ApplicationEvent({
-                                                user_id: user._id,
-                                                application_id: application_id,
-                                                param: {
-                                                    url_id: url_id,
+                                        if (urls.length > 0) {
+                                            let url = {
+                                                id: urls[0]._id,
+                                                user_id: urls[0].user_id,
+                                                application_id: urls[0].application_id,
+                                                long_url: urls[0].long_url,
+                                                domain_name: urls[0].domain_name,
+                                                short_url: `${config.short_host}/${urls[0].alias}`,
+                                                alias: urls[0].alias,
+                                                favicon: urls[0].favicon,
+                                                properties: {
+                                                    description: urls[0].description,
+                                                    password: urls[0].password != null,
+                                                    expires: urls[0].expiration_time,
                                                 },
-                                                event_description: 'Retrieve a short link obj.',
-                                                event_method: 'GET',
-                                                event_request: `/${config.api.version}/link`,
-                                                event_response: '200 OK',
-                                                request_origin: origin
-                                            }).save((err, doc) => {});
-                                            // Link retrieved so find webhooks events if isset
-                                            db.Webhook.find({
-                                                application_id: application_id,
-                                                user_id: user_id
-                                            }, (err, webhook) => {
-                                                if (webhook.length > 0) {
-                                                    // Isset webhook so check if the event is registered
-                                                    const events = webhook[0].events;
-                                                    if (events.indexOf('link_retrieve') !== -1) {
-                                                        // Send webhook async mode
-                                                        const uri = webhook[0].endpoint;
-                                                        rp({
-                                                            method: 'POST',
-                                                            uri: uri,
-                                                            body: {
-                                                                data: {
-                                                                    url_id: url_id,
-                                                                    user_id: user_id,
-                                                                    application_id: application_id,
-                                                                    api_version: config.api.version,
-                                                                    event: 'link_retrieve',
-                                                                    status: 'success',
-                                                                    created: Math.round(Date.now() / 1000)
+                                                rules: {
+                                                    geo_tag: urls[0].geo_select,
+                                                    geo_tag_url: urls[0].geotag_url,
+                                                    device_tag: urls[0].device_select,
+                                                    device_tag_url: urls[0].devicetag_url
+                                                },
+                                                seo: {
+                                                    seo_title: urls[0].seo_title,
+                                                    seo_description: urls[0].seo_description
+                                                },
+                                                created: urls[0].timestamp
+                                            };
+
+                                            if (err) {
+                                                res.status(500).json({
+                                                    'Error': 'Internal server error.'
+                                                });
+                                            } else {
+                                                // Register the application event async
+                                                db.ApplicationEvent({
+                                                    user_id: user_id,
+                                                    application_id: application_id,
+                                                    param: {
+                                                        url_id: url_id,
+                                                    },
+                                                    event_description: 'Retrieve a short link obj.',
+                                                    event_method: 'GET',
+                                                    event_request: `/${config.api.version}/link`,
+                                                    event_response: '200 OK',
+                                                    request_origin: origin
+                                                }).save((err, doc) => {});
+                                                // Link retrieved so find webhooks events if isset
+                                                db.Webhook.find({
+                                                    application_id: application_id,
+                                                    user_id: user_id
+                                                }, (err, webhook) => {
+                                                    if (webhook.length > 0) {
+                                                        // Isset webhook so check if the event is registered
+                                                        const events = webhook[0].events;
+                                                        if (events.indexOf('link_retrieve') !== -1) {
+                                                            // Send webhook async mode
+                                                            const uri = webhook[0].endpoint;
+                                                            rp({
+                                                                method: 'POST',
+                                                                uri: uri,
+                                                                body: {
+                                                                    data: {
+                                                                        url_id: url_id,
+                                                                        user_id: user_id,
+                                                                        application_id: application_id,
+                                                                        api_version: config.api.version,
+                                                                        event: 'link_retrieve',
+                                                                        status: 'success',
+                                                                        created: Math.round(Date.now() / 1000)
+                                                                    },
+                                                                    signature: webhook[0].webhook_self_signature
                                                                 },
-                                                                signature: webhook[0].webhook_self_signature
-                                                            },
-                                                            json: true
-                                                        }).then((parsedBody) => {
-                                                            // POST succeeded so register the event
-                                                            db.WebhookEvent({
-                                                                user_id: user_id,
-                                                                webhook_id: webhook[0]._id,
-                                                                application_id: application_id,
-                                                                endpoint: `/${config.api.version}/link`,
-                                                                request_response: '200 OK',
-                                                                request_method: 'GET',
-                                                                api_version: config.api.version,
-                                                                event_type: 'link_retrieve',
-                                                                creation_time: Math.round(Date.now() / 1000)
-                                                            }).save(err => {
-                                                                if (err) console.log(err);
+                                                                json: true
+                                                            }).then((parsedBody) => {
+                                                                // POST succeeded so register the event
+                                                                db.WebhookEvent({
+                                                                    user_id: user_id,
+                                                                    webhook_id: webhook[0]._id,
+                                                                    application_id: application_id,
+                                                                    endpoint: `/${config.api.version}/link`,
+                                                                    request_response: '200 OK',
+                                                                    request_method: 'GET',
+                                                                    api_version: config.api.version,
+                                                                    event_type: 'link_retrieve',
+                                                                    creation_time: Math.round(Date.now() / 1000)
+                                                                }).save(err => {
+                                                                    if (err) console.log(err);
+                                                                });
+                                                            }).catch((err) => {
+                                                                // POST failed...
+                                                                console.log('Failed webhook request')
+                                                                console.log(err);
                                                             });
-                                                        }).catch((err) => {
-                                                            // POST failed...
-                                                            console.log('Failed webhook request')
-                                                            console.log(err);
-                                                        });
 
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
 
-                                            // Send response
-                                            // Send webhook event async
-                                            // Registering events async
-                                            res.status(200).json({
-                                                'url': url
+                                                // Send response
+                                                // Send webhook event async
+                                                // Registering events async
+                                                res.status(200).json({
+                                                    'url': url
+                                                });
+                                            }
+                                        } else {
+                                            res.status(404).json({
+                                                'Error': 'Id not founded.',
+                                                'Query': {
+                                                    _id: url_id,
+                                                    user_id: user_id,
+                                                    application_id: application_id
+                                                }
                                             });
                                         }
                                     });
@@ -1473,109 +1491,118 @@ router.get(['/link/all', `/${config.api.version}/link/all`], (req, res) => {
                                 if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Url.find({
                                         user_id: user_id,
-                                        application_id: application_id
+                                        // application_id: application_id
                                     }, (err, urls) => {
-                                        let url = [];
-                                        urls.forEach(item => {
-                                            url.push({
-                                                id: item._id,
-                                                user_id: item.user_id,
-                                                application_id: item.application_id,
-                                                long_url: item.long_url,
-                                                domain_name: item.domain_name,
-                                                short_url: `${config.short_host}/${item.alias}`,
-                                                alias: item.alias,
-                                                favicon: item.favicon,
-                                                properties: {
-                                                    description: item.description,
-                                                    password: item.password != null,
-                                                    expires: item.expiration_time,
-                                                },
-                                                rules: {
-                                                    geo_tag: item.geo_select,
-                                                    geo_tag_url: item.geotag_url,
-                                                    device_tag: item.device_select,
-                                                    device_tag_url: item.devicetag_url
-                                                },
-                                                seo: {
-                                                    seo_title: item.seo_title,
-                                                    seo_description: item.seo_description
-                                                },
-                                                created: item.timestamp
+                                        if (urls.length > 0) {
+                                            let url = [];
+                                            urls.forEach(item => {
+                                                url.push({
+                                                    id: item._id,
+                                                    user_id: item.user_id,
+                                                    application_id: item.application_id,
+                                                    long_url: item.long_url,
+                                                    domain_name: item.domain_name,
+                                                    short_url: `${config.short_host}/${item.alias}`,
+                                                    alias: item.alias,
+                                                    favicon: item.favicon,
+                                                    properties: {
+                                                        description: item.description,
+                                                        password: item.password != null,
+                                                        expires: item.expiration_time,
+                                                    },
+                                                    rules: {
+                                                        geo_tag: item.geo_select,
+                                                        geo_tag_url: item.geotag_url,
+                                                        device_tag: item.device_select,
+                                                        device_tag_url: item.devicetag_url
+                                                    },
+                                                    seo: {
+                                                        seo_title: item.seo_title,
+                                                        seo_description: item.seo_description
+                                                    },
+                                                    created: item.timestamp
+                                                });
                                             });
-                                        });
 
-                                        if (err) {
-                                            res.status(500).json({
-                                                'Error': 'Internal server error.'
-                                            });
-                                        } else {
-                                            // Register the application event async
-                                            db.ApplicationEvent({
-                                                user_id: user_id,
-                                                application_id: application_id,
-                                                event_description: 'Retrieve all short links objs.',
-                                                event_method: 'GET',
-                                                event_request: `/${config.api.version}/link/all`,
-                                                event_response: '200 OK',
-                                                request_origin: origin
-                                            }).save((err, doc) => {});
-                                            // Link retrieved so find webhooks events if isset
-                                            db.Webhook.find({
-                                                application_id: application_id,
-                                                user_id: user_id
-                                            }, (err, webhook) => {
-                                                if (webhook.length > 0) {
-                                                    // Isset webhook so check if the event is registered
-                                                    const events = webhook[0].events;
-                                                    if (events.indexOf('link_list') !== -1) {
-                                                        // Send webhook async mode
-                                                        const uri = webhook[0].endpoint;
-                                                        rp({
-                                                            method: 'POST',
-                                                            uri: uri,
-                                                            body: {
-                                                                data: {
-                                                                    user_id: user_id,
-                                                                    application_id: application_id,
-                                                                    api_version: config.api.version,
-                                                                    event: 'link_list',
-                                                                    status: 'success',
-                                                                    created: Math.round(Date.now() / 1000)
+                                            if (err) {
+                                                res.status(500).json({
+                                                    'Error': 'Internal server error.'
+                                                });
+                                            } else {
+                                                // Register the application event async
+                                                db.ApplicationEvent({
+                                                    user_id: user_id,
+                                                    application_id: application_id,
+                                                    event_description: 'Retrieve all short links objs.',
+                                                    event_method: 'GET',
+                                                    event_request: `/${config.api.version}/link/all`,
+                                                    event_response: '200 OK',
+                                                    request_origin: origin
+                                                }).save((err, doc) => {});
+                                                // Link retrieved so find webhooks events if isset
+                                                db.Webhook.find({
+                                                    application_id: application_id,
+                                                    user_id: user_id
+                                                }, (err, webhook) => {
+                                                    if (webhook.length > 0) {
+                                                        // Isset webhook so check if the event is registered
+                                                        const events = webhook[0].events;
+                                                        if (events.indexOf('link_list') !== -1) {
+                                                            // Send webhook async mode
+                                                            const uri = webhook[0].endpoint;
+                                                            rp({
+                                                                method: 'POST',
+                                                                uri: uri,
+                                                                body: {
+                                                                    data: {
+                                                                        user_id: user_id,
+                                                                        application_id: application_id,
+                                                                        api_version: config.api.version,
+                                                                        event: 'link_list',
+                                                                        status: 'success',
+                                                                        created: Math.round(Date.now() / 1000)
+                                                                    },
+                                                                    signature: webhook[0].webhook_self_signature
                                                                 },
-                                                                signature: webhook[0].webhook_self_signature
-                                                            },
-                                                            json: true
-                                                        }).then((parsedBody) => {
-                                                            // POST succeeded so register the event
-                                                            db.WebhookEvent({
-                                                                user_id: user_id,
-                                                                webhook_id: webhook[0]._id,
-                                                                application_id: application_id,
-                                                                endpoint: `/${config.api.version}/link/all`,
-                                                                request_response: '200 OK',
-                                                                request_method: 'GET',
-                                                                api_version: config.api.version,
-                                                                event_type: 'link_list',
-                                                                creation_time: Math.round(Date.now() / 1000)
-                                                            }).save(err => {
-                                                                if (err) console.log(err);
+                                                                json: true
+                                                            }).then((parsedBody) => {
+                                                                // POST succeeded so register the event
+                                                                db.WebhookEvent({
+                                                                    user_id: user_id,
+                                                                    webhook_id: webhook[0]._id,
+                                                                    application_id: application_id,
+                                                                    endpoint: `/${config.api.version}/link/all`,
+                                                                    request_response: '200 OK',
+                                                                    request_method: 'GET',
+                                                                    api_version: config.api.version,
+                                                                    event_type: 'link_list',
+                                                                    creation_time: Math.round(Date.now() / 1000)
+                                                                }).save(err => {
+                                                                    if (err) console.log(err);
+                                                                });
+                                                            }).catch((err) => {
+                                                                // POST failed...
+                                                                console.log('Failed webhook request')
+                                                                console.log(err);
                                                             });
-                                                        }).catch((err) => {
-                                                            // POST failed...
-                                                            console.log('Failed webhook request')
-                                                            console.log(err);
-                                                        });
 
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
 
-                                            // Send response
-                                            // Send webhook event async
-                                            // Registering events async
-                                            res.status(200).json({
-                                                'urls': url
+                                                // Send response
+                                                // Send webhook event async
+                                                // Registering events async
+                                                res.status(200).json({
+                                                    'urls': url
+                                                });
+                                            }
+                                        } else {
+                                            res.status(404).json({
+                                                'Error': 'No links founded.',
+                                                'Query': {
+                                                    user_id: user_id
+                                                }
                                             });
                                         }
                                     });
@@ -1625,7 +1652,8 @@ router.get(['/link/paginate', `/${config.api.version}/link/paginate`], (req, res
                 'Error': 'Authorization required.'
             });
         } else {
-            const page = req.body.page != '' && req.body.page != null && req.body.page != undefined ? req.body.page : 1;
+            const page = req.query.page != '' && req.query.page != null && req.query.page != undefined ? req.query.page : 1;
+            const limit = req.query.limit != '' && req.query.limit != null && req.query.limit != undefined ? req.query.limit : 18;
             const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
             const application_id = authData.user.app;
 
@@ -1645,126 +1673,146 @@ router.get(['/link/paginate', `/${config.api.version}/link/paginate`], (req, res
                                 const allowed_origins = application[0].allowed_origins;
                                 if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
                                     db.Url.paginate({
-                                        user_id: user_id,
-                                        application_id: application_id
+                                        user_id: user_id
                                     }, {
-                                        page: page,
-                                        limit: limit,
+                                        page: Number(page),
+                                        limit: Number(limit),
                                         sort: {
                                             creation_time: 'desc'
                                         }
-                                    }, (err, urls) => {
-                                        let url = [];
-                                        urls.docs.forEach(item => {
-                                            url.push({
-                                                id: item._id,
-                                                user_id: item.user_id,
-                                                application_id: item.application_id,
-                                                long_url: item.long_url,
-                                                domain_name: item.domain_name,
-                                                short_url: `${config.short_host}/${item.alias}`,
-                                                alias: item.alias,
-                                                favicon: item.favicon,
-                                                properties: {
-                                                    description: item.description,
-                                                    password: item.password != null,
-                                                    expires: item.expiration_time,
-                                                },
-                                                rules: {
-                                                    geo_tag: item.geo_select,
-                                                    geo_tag_url: item.geotag_url,
-                                                    device_tag: item.device_select,
-                                                    device_tag_url: item.devicetag_url
-                                                },
-                                                seo: {
-                                                    seo_title: item.seo_title,
-                                                    seo_description: item.seo_description
-                                                },
-                                                created: item.timestamp
+                                        }, (err, urls) => {
+                                            console.log(err, urls);
+                                        if (urls.docs.length > 0) {
+                                            let url = [];
+                                            
+                                            urls.docs.forEach(item => {
+                                                url.push({
+                                                    id: item._id,
+                                                    user_id: item.user_id,
+                                                    application_id: item.application_id,
+                                                    long_url: item.long_url,
+                                                    domain_name: item.domain_name,
+                                                    short_url: `${config.short_host}/${item.alias}`,
+                                                    alias: item.alias,
+                                                    favicon: item.favicon,
+                                                    properties: {
+                                                        description: item.description,
+                                                        password: item.password != null,
+                                                        expires: item.expiration_time,
+                                                    },
+                                                    rules: {
+                                                        geo_tag: item.geo_select,
+                                                        geo_tag_url: item.geotag_url,
+                                                        device_tag: item.device_select,
+                                                        device_tag_url: item.devicetag_url
+                                                    },
+                                                    seo: {
+                                                        seo_title: item.seo_title,
+                                                        seo_description: item.seo_description
+                                                    },
+                                                    created: item.timestamp
+                                                });
                                             });
-                                        });
 
-                                        url.totalDocs = urls.totalDocs;
-                                        url.limit = urls.limit;
-                                        url.hasPrevPage = urls.hasPrevPage;
-                                        url.hasNextPage = urls.hasNextPage;
-                                        url.page = urls.page;
-                                        url.totalPages = urls.totalPages;
-                                        url.pagingCounter = urls.pagingCounter;
-                                        url.prevPage = urls.prevPage;
-                                        url.nextPage = urls.nextPage;
+                                            let responseData = {
+                                                urls: url,
+                                                totalUrls: urls.totalDocs,
+                                                limit: urls.limit,
+                                                hasPrevPage: urls.hasPrevPage,
+                                                hasNextPage: urls.hasNextPage,
+                                                page: urls.page,
+                                                totalPages: urls.totalPages,
+                                                prevPage: urls.prevPage,
+                                                nextPage: urls.nextPage
+                                            }
 
-                                        if (err) {
-                                            res.status(500).json({
-                                                'Error': 'Internal server error.'
-                                            });
-                                        } else {
-                                            // Register the application event async
-                                            db.ApplicationEvent({
-                                                user_id: user_id,
-                                                application_id: application_id,
-                                                event_description: 'Retrieve all short links objs.',
-                                                event_method: 'GET',
-                                                event_request: `/${config.api.version}/link/paginate`,
-                                                event_response: '200 OK',
-                                                request_origin: origin
-                                            }).save((err, doc) => {});
-                                            // Link retrieved so find webhooks events if isset
-                                            db.Webhook.find({
-                                                application_id: application_id,
-                                                user_id: user_id
-                                            }, (err, webhook) => {
-                                                if (webhook.length > 0) {
-                                                    // Isset webhook so check if the event is registered
-                                                    const events = webhook[0].events;
-                                                    if (events.indexOf('link_paginate') !== -1) {
-                                                        // Send webhook async mode
-                                                        const uri = webhook[0].endpoint;
-                                                        rp({
-                                                            method: 'POST',
-                                                            uri: uri,
-                                                            body: {
-                                                                data: {
-                                                                    user_id: user_id,
-                                                                    application_id: application_id,
-                                                                    api_version: config.api.version,
-                                                                    event: 'link_paginate',
-                                                                    status: 'success',
-                                                                    created: Math.round(Date.now() / 1000)
+                                            // url.totalDocs = urls.docs.totalDocs;
+                                            // url.limit = urls.docs.limit;
+                                            // url.hasPrevPage = urls.docs.hasPrevPage;
+                                            // url.hasNextPage = urls.docs.hasNextPage;
+                                            // url.page = urls.docs.page;
+                                            // url.totalPages = urls.docs.totalPages;
+                                            // url.pagingCounter = urls.docs.pagingCounter;
+                                            // url.prevPage = urls.docs.prevPage;
+                                            // url.nextPage = urls.docs.nextPage;
+
+                                            if (err) {
+                                                res.status(500).json({
+                                                    'Error': 'Internal server error.'
+                                                });
+                                            } else {
+                                                // Register the application event async
+                                                db.ApplicationEvent({
+                                                    user_id: user_id,
+                                                    application_id: application_id,
+                                                    event_description: 'Retrieve all short links objs.',
+                                                    event_method: 'GET',
+                                                    event_request: `/${config.api.version}/link/paginate`,
+                                                    event_response: '200 OK',
+                                                    request_origin: origin
+                                                }).save((err, doc) => {});
+                                                // Link retrieved so find webhooks events if isset
+                                                db.Webhook.find({
+                                                    application_id: application_id,
+                                                    user_id: user_id
+                                                }, (err, webhook) => {
+                                                    if (webhook.length > 0) {
+                                                        // Isset webhook so check if the event is registered
+                                                        const events = webhook[0].events;
+                                                        if (events.indexOf('link_paginate') !== -1) {
+                                                            // Send webhook async mode
+                                                            const uri = webhook[0].endpoint;
+                                                            rp({
+                                                                method: 'POST',
+                                                                uri: uri,
+                                                                body: {
+                                                                    data: {
+                                                                        user_id: user_id,
+                                                                        application_id: application_id,
+                                                                        api_version: config.api.version,
+                                                                        event: 'link_paginate',
+                                                                        status: 'success',
+                                                                        created: Math.round(Date.now() / 1000)
+                                                                    },
+                                                                    signature: webhook[0].webhook_self_signature
                                                                 },
-                                                                signature: webhook[0].webhook_self_signature
-                                                            },
-                                                            json: true
-                                                        }).then((parsedBody) => {
-                                                            // POST succeeded so register the event
-                                                            db.WebhookEvent({
-                                                                user_id: user_id,
-                                                                webhook_id: webhook[0]._id,
-                                                                application_id: application_id,
-                                                                endpoint: `/${config.api.version}/link/paginate`,
-                                                                request_response: '200 OK',
-                                                                request_method: 'GET',
-                                                                api_version: config.api.version,
-                                                                event_type: 'link_paginate',
-                                                                creation_time: Math.round(Date.now() / 1000)
-                                                            }).save(err => {
-                                                                if (err) console.log(err);
+                                                                json: true
+                                                            }).then((parsedBody) => {
+                                                                // POST succeeded so register the event
+                                                                db.WebhookEvent({
+                                                                    user_id: user_id,
+                                                                    webhook_id: webhook[0]._id,
+                                                                    application_id: application_id,
+                                                                    endpoint: `/${config.api.version}/link/paginate`,
+                                                                    request_response: '200 OK',
+                                                                    request_method: 'GET',
+                                                                    api_version: config.api.version,
+                                                                    event_type: 'link_paginate',
+                                                                    creation_time: Math.round(Date.now() / 1000)
+                                                                }).save(err => {
+                                                                    if (err) console.log(err);
+                                                                });
+                                                            }).catch((err) => {
+                                                                // POST failed...
+                                                                console.log('Failed webhook request')
+                                                                console.log(err);
                                                             });
-                                                        }).catch((err) => {
-                                                            // POST failed...
-                                                            console.log('Failed webhook request')
-                                                            console.log(err);
-                                                        });
 
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
 
-                                            // Send response
-                                            // Send webhook event async
-                                            // Registering events async
-                                            res.status(200).json({
-                                                'urls': url
+                                                // Send response
+                                                // Send webhook event async
+                                                // Registering events async
+                                                res.status(200).json(responseData);
+                                            }
+                                        } else {
+                                            res.status(404).json({
+                                                'Error': 'No links founded.',
+                                                'Query': {
+                                                    user_id: user_id
+                                                }
                                             });
                                         }
                                     });

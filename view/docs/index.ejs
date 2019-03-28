@@ -13,6 +13,7 @@
         <link rel="stylesheet" type="text/css" href="/css/layout.css" />
         <link rel="stylesheet" type="text/css" href="/css/docs.css" />
         <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/prism.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
 
         <!-- <script type="text/javascript" src="/js/ads.js?v=1.0.2"></script> -->
@@ -22,18 +23,18 @@
 
         <?- include('./blocks/header.ejs') -?>
 
-        <div class="flex-row" style="padding: 20px 0 150px 0">
+        <div class="flex-row">
             <div class="flex-container">
-                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-2 docs-menu">
-                    <?- include(`./menu/${menu}.ejs`) ?>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                    <?- include(`./pages/${page}.ejs`) -?>
+                <div class="main-wrapper">
+                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-xs-12 docs-menu">
+                        <?- include(`./menu/${menu}.ejs`) ?>
+                    </div>
+                    <div class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-3 docs-content">
+                        <?- include(`./pages/${page}.ejs`) -?>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <?- include('./blocks/footer.ejs') -?>
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
@@ -41,6 +42,7 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
         <script type="text/javascript" src="/js/iziModal.min.js"></script>
         <script type="text/javascript" src="/js/index.js?v=1.0.2"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
         <!-- <script type="text/javascript" src="/js/ads.js"></script>
         <script>
             if (document.getElementById('hWFlqznbUrgu')) {

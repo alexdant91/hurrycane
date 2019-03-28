@@ -1,3 +1,7 @@
+.main-wrapper {
+
+}
+
 .docs-title {
     width: 100%;
     height: auto;
@@ -47,7 +51,18 @@
     -webkit-font-smoothing: antialiased;
 }
 
+.docs-menu {
+    height: 100vh;
+    background: #f9fafb;
+    border-right: 1px solid #eef1f3;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
 .docs-menu ol {
+    float: left;
     padding: 0 0 0 45px;
     list-style: none;
     font-size: 14px;
@@ -58,13 +73,13 @@
     width: 100%;
 }
 
-.docs-menu ol li > a {
+.docs-menu ol li>a {
     cursor: pointer;
     float: left;
     padding: 10px 0;
 }
 
-.docs-menu ol li > ol li > a {
+.docs-menu ol li>ol li>a {
     cursor: pointer;
     float: left;
     padding: 3px 0;
@@ -76,6 +91,6 @@
     color: rgb(108, 197, 108) !important;
 }
 
-.docs-menu ol li > ol {
+.docs-menu ol li>ol {
     padding: 0 0 0 25px;
 }

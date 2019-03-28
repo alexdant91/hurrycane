@@ -7,4 +7,34 @@
     <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nec imperdiet turpis. Curabitur aliquet pulvinar ultrices. Etiam at posuere leo. Proin ultrices ex et dapibus feugiat link example aenean purus leo, faucibus at elit vel, aliquet scelerisque dui. Etiam quis elit euismod, imperdiet augue sit amet, imperdiet odio. Aenean sem erat, hendrerit eu gravida id, dignissim ut ante. Nam consequat porttitor libero euismod congue.
     </p>
+    <pre>
+        <code class="language-javascript">
+            const rp = require('request-promise');
+            const uri = "https://api.hurrycane.it/v1/token";
+            rp({
+                method: 'POST',
+                uri: uri,
+                body: {
+                    data: {
+                        user_id: user_id,
+                        application_id: application_id,
+                        long_url: long_url,
+                        short_url: `${config.short_host}/${alias}`,
+                        api_version: config.api.version,
+                        event: 'link_created',
+                        status: 'success',
+                        created: Math.round(Date.now() / 1000)
+                    },
+                    signature: webhook[0].webhook_self_signature
+                },
+                json: true
+            }).then((response) => {
+                // POST succeeded so register the event
+            }).catch((err) => {
+                // POST failed...
+                console.log('Failed webhook request')
+                console.log(err);
+            });
+        </code>
+    </pre>
 </section>
