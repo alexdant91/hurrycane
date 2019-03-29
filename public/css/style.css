@@ -1375,6 +1375,14 @@ h1.url-title {
     margin-top: 5px;
 }
 
+.menu-top-mobile-dashboard .ellips-button {
+    border: none;
+    font-size: 30px;
+    outline: 0;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
 .menu-top-mobile-dashboard a.butt {
     line-height: 22px;
 }

@@ -20,7 +20,11 @@ router.use(localLanguage({
 
 router.get('/', (req, res) => {
     res.render('../view/docs/index', {
+        session: req.isAuthenticated(),
         translation: req.translation,
+        user: req.session.user,
+        premium: config.premium,
+        pageActive: 'docs',
         page: 'index',
         menu: 'index'
     });

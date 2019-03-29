@@ -98,7 +98,13 @@ $(document).on('click touchend', '.bars-button', function () {
     $('.menu-overflow').fadeToggle();
 });
 
+$(document).on('click touchend', '.ellips-button', function () {
+    $('.docs-menu').toggleClass('open');
+    $('.menu-overflow').fadeToggle();
+});
+
 $(document).on('click touchend', '.menu-overflow', function () {
-    $('.menu-top').toggleClass('open');
+    $('.docs-menu').hasClass('open') ? $('.docs-menu').toggleClass('open') : false;
+    $('.menu-top').hasClass('open') ? $('.menu-top').toggleClass('open') : false;
     $('.menu-overflow').fadeToggle();
 });

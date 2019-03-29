@@ -1,0 +1,46 @@
+<div class="menu-top">
+    <div class="row">
+        <div class="container">
+            <div class="left-side">
+                <div class="logo-container"><a href="/" class="white-text"><i class="fal fa-hurricane white-text"></i> Hurrycane.it</a></div>
+            </div>
+            <div class="right-side">
+                <div class="menu-container">
+                    <ol>
+                        <li class="<? if(pageActive == 'index') { ?>active<? } ?>"><a href="/"><?= translation.Home ?></a></li>
+                        <li class="<? if(pageActive == 'works') { ?>active<? } ?>"><a href="/how-it-works"><?= translation.How_it_works ?>?</a></li>
+                        <!-- <li class="<? if(page == 'products') { ?>active<? } ?>"><a href="/services"><?= translation.Services ?></a></li> -->
+                        <li class="<? if(pageActive == 'docs') { ?>active<? } ?>"><a href="/docs"><?= translation.Docs ?></a></li>
+                        <? if(!session) { ?>
+                        <!-- <li class="<? if(page == 'pricing') { ?>active<? } ?>"><a href="/pricing">Pricing</a></li>
+                            <li class="<? if(page == 'advertiser') { ?>active<? } ?>"><a href="/advertiser">Advertiser</a></li> -->
+                        <li class="<? if(pageActive == 'login') { ?>active<? } ?>"><a href="/login"><i class="fal fa-sign-in white-text"></i> <?= translation.Login ?></a></li>
+                        <li class="<? if(pageActive == 'register') { ?>active<? } ?>"><a href="/register" class="butt main-button white-button"><?= translation.Get_started ?></a></li>
+                        <? } else { ?>
+                        <!-- <li><a href="/dashboard"><i class="fal fa-user white-text"></i> Hi <?= user.name ?>!</a></li> -->
+                        <li><a href="/dashboard"> <?= translation.Dashboard ?></a></li>
+                        <? if(premium == 'true') { ?>
+                        <? if(user.subscription == 'PREMIUM') { ?>
+                        <li class="<? if(pageActive == 'upgrade') { ?>active<? } ?>"><a href="/dashboard/subscription" class="butt main-button white-button"><i class="fal fa-star"></i> <?= translation.My_premium ?></a></li>
+                        <? } else { ?>
+                        <li class="<? if(pageActive == 'upgrade') { ?>active<? } ?>"><a href="/upgrade" class="butt main-button white-button"><i class="fal fa-star"></i> <?= translation.Upgrade ?></a></li>
+                        <? } ?>
+                        <? } ?>
+                        <li><a href="/logout"><i class="fal fa-sign-out white-text"></i> <?= translation.Logout ?></a></li>
+                        <? } ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="menu-overflow"></div>
+<div class="menu-top-mobile-dashboard">
+    <div class="row">
+        <div class="container">
+            <button class="bars-button left"><i class="fal fa-bars"></i></button>
+            <button class="ellips-button right"><i class="fal fa-ellipsis-h"></i></button>
+        </div>
+    </div>
+</div>

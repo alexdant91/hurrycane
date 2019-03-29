@@ -31,6 +31,15 @@
                     </div>
                     <div class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-xs-12 offset-xl-2 offset-lg-3 docs-content">
                         <?- include(`./pages/${page}.ejs`) -?>
+
+                        <div class="footer text-center">
+                            <a href="http://localhost/dashboard" target="_blank">Dashboard</a>
+                            <a href="http://localhost/docs">Docs</a>
+                            <a href="" target="_blank">Terms</a>
+                            <a href="" target="_blank">Privacy</a>
+                            <a href="http://localhost/docs/api">API Docs</a>
+                            <a href="mailto:hurrycane.services@gmail.com">Support</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,6 +52,9 @@
         <script type="text/javascript" src="/js/iziModal.min.js"></script>
         <script type="text/javascript" src="/js/index.js?v=1.0.2"></script>
         <script type="text/javascript" src="/js/prism.js"></script>
+        <script>
+        $('.main-wrapper').css('height', $('.docs-content').css('height'))
+        </script>
         <!-- <script type="text/javascript" src="/js/ads.js"></script>
         <script>
             if (document.getElementById('hWFlqznbUrgu')) {
