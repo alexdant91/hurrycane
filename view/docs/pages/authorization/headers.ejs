@@ -1,0 +1,89 @@
+<section class="docs-title" id="section-0">
+    <h1>Authorization</h1>
+    <sub>Last updated: April 1th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>All the headers</h1>
+    <p>
+        In tutte le chiamate alle APIs sarà necessario specificare correttamente i valori <code>header</code> da inviare al server per far si che la 
+        chiamata sia accettata e correttamente processata. Di seguito una tabella che illustra tutti i valori possibili, accettati dal server:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Attributo</td>
+                    <td>Descrizione</td>
+                    <td>Valori</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="15%" valign="top" class="code">Authorization</td>
+                    <td width="55%" valign="top">Corrisponde alla stringa <b>username:password</b> codificata in formato <b>base64</b>.</td>
+                    <td width="30%" valign="top">
+                        <code>base64(username:password)</code> [String]
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Secretkey</td>
+                    <td width="55%" valign="top">Corrisponde alla chiave segreta dell'applicazione per la quale si richiede l'autorizzazione.</td>
+                    <td width="30%" valign="top">
+                        <code>the-application-secret-key</code> [String]
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Token</td>
+                    <td width="55%" valign="top">Corrisponde al token che viene generato dal sistema durante la fase di richiesta di autorizzazione.</td>
+                    <td width="30%" valign="top">
+                        <code>valid.application.token</code> [String]
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Content-Type</td>
+                    <td width="55%" valign="top">Descrive la formattazione del contenuto della richiesta inviata al server.</td>
+                    <td width="30%" valign="top">
+                        <code>application/json</code>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        È fondamentale che tutti i parametri siano compilati correttamente, altrimenti la richiesta verrà respinta dal server.
+    </p>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – I paramentri sopra indicati non vanno specificati in tutte le 
+        richieste da inviare al server. Per ogni endpoint sarà necessario impostare, in maniera specifica, solo alcune di queste <code>headers</code>.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <a href="/docs/authorization/auth-flow" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Processo di autorizzazione</a>
+    <a href="/docs/authorization/signature" class="butt main-button blue-button right">Firma digitale <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>
+<!-- <section class="docs-section" id="section-1">
+    <h1>APIs</h1>
+    <table class="table bordered">
+        <thead>
+            <tr>
+                <td>Attributo</td>
+                <td>Descrizione</td>
+                <td>Valori</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="15%" valign="top" class="code">link_created</td>
+                <td width="60%" valign="top">Ogni volta che si crea uno short link tramite le APIs si genera un'evento di creazione che viene inviato agli endpoint di webhook se ne sono stati registrati.</td>
+                <td width="25%" valign="top">
+                    <ol>
+                        <li>200 OK</li>
+                        <li>403 FORBIDDEN</li>
+                        <li>404 NOT FOUND</li>
+                        <li>500 SERVER ERROR</li>
+                    </ol>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section> -->

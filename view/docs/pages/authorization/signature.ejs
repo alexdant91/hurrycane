@@ -1,0 +1,53 @@
+<section class="docs-title" id="section-0">
+    <h1>Authorization</h1>
+    <sub>Last updated: April 1th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Signature system</h1>
+    <p>
+        Se vengono impostati gli endpoint di <b>webhooks</b>, per ogni evento selezionato, maggiori informazioni sugli eventi disponibili
+        <a href="/docs/webhooks/events">qui</a>, sarà inviata una richiesta <code>POST</code> contenente tutte le specifiche dell'evento che si è appena 
+        verificato, in formato <code>JSON</code>.
+    </p>
+    <p>
+        In ognuta di queste richieste sarà incluso un'ulteriore parametro denominato <code>"signature"</code>. Questo corrisponde ad un <b>codice univoco</b> che
+        identifica esclusivamente quell'endpoint. È possibile conservare e confrontare la <b>firma digitale</b> di quello specifico endpoint in modo da avere 
+        la certezza che la chiamata sia stata effettuata dal nostro server e non da terzi esterni. Infatti, sarà sufficiente confrontare la <b>signature</b> 
+        ricevuta dalla chiamata <code>POST</code> con quella dell'endpoint specifico, conservata, ad esempio, nel database del vostro server.
+    </p>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Non condividere con nessuno la "<b>signature</b>" dell'endpoint se non 
+        con i tuoi collaboratori o con chi dovrà accedere alle funzionalità APIs. Non è al momento possibile rigenerare in autonomia la "<b>signature</b>", 
+        funzionalità che verrà inserita nel corso di aggiornamenti futuri.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <a href="/docs/authorization/headers" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Tutte le headers</a>
+    <a href="/docs/api/token" class="butt main-button blue-button right">API token endpoint <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>
+<!-- <section class="docs-section" id="section-1">
+    <h1>APIs</h1>
+    <table class="table bordered">
+        <thead>
+            <tr>
+                <td>Attributo</td>
+                <td>Descrizione</td>
+                <td>Valori</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="15%" valign="top" class="code">link_created</td>
+                <td width="60%" valign="top">Ogni volta che si crea uno short link tramite le APIs si genera un'evento di creazione che viene inviato agli endpoint di webhook se ne sono stati registrati.</td>
+                <td width="25%" valign="top">
+                    <ol>
+                        <li>200 OK</li>
+                        <li>403 FORBIDDEN</li>
+                        <li>404 NOT FOUND</li>
+                        <li>500 SERVER ERROR</li>
+                    </ol>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section> -->

@@ -1,0 +1,206 @@
+<section class="docs-title" id="section-0">
+    <h1>Applications</h1>
+    <sub>Last updated: April 1th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>See your application</h1>
+    <p>
+        Dopo aver creato la tua applicazione, accedendo sempre dalla pagina "<b>My Application</b>", ti troverai di fronte a questa schermata:
+    </p>
+    <p>
+        <img src="/img/docs/my_app_box.png" alt="See your application" />
+    </p>
+    <p>
+        Come puoi notare, sarà presente un nuovo box che rappresenta l'applicazione che hai appena creato. Già da qui sono presenti i box funzione "<b>Events</b>", 
+        che ti permetterà di monitorare gli eventi associati alla tua applicazione, e "<b>Delete</b>" uno <u>shortcut</u> che ti darà la possibilità di eliminare definitivamente la tua applicazione
+        e tutti gli elementi ad essa associati, direttamente dalla pagina di gestione primaria.
+    </p>
+    <p>
+        Come puoi notare sarà anche presente un indicatore di stato che sarà <b>verde</b> nel caso in cui l'applicazione sia impostata come attiva, viceversa 
+        sarà di colore <b>rosso</b>. Per accedere alla <b>gestione</b> della tua applicazione ti basterà fare <u>click</u> sul nome.
+    </p>
+</section>
+<section class="docs-section" id="section-2">
+    <h1>Manage your application</h1>
+    <p>
+        Accedendo alla pagina di gestione dell'applicazione avendo fatto <u>click</u> sul suo nome, potremo gestire tutte le impostazioni da diversi box 
+        divisi per area tematica. Perciò, a questo punto ci troveremo di fronte a questa schermata:
+    </p>
+    <p>
+        <img src="/img/docs/manage_application.png" alt="Manage your application" />
+    </p>
+    <p>
+        Da ognuno dei diversi <b>box</b> che vediamo qui sopra sarà possibile gestire tutte le funzionalità e le impostazioni della tua applicazione. 
+        Analizziamo adesso ogni singolo box in tutte le sue componenti:
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>First box</h1>
+    <p>
+        <img src="/img/docs/first_box.png" alt="Manage your application: First box" />
+    </p>
+    <p>
+        Il primo box è dedicato alla gestione delle impostazioni principali dell'applicazione, in particolare possiamo notare:
+        <ol>
+            <li>Il <b>nome</b> dell'applicazione;</li>
+            <li>L'<b>id</b> dell'applicazione;</li>
+            <li>Uno <b>switch</b> in alto a destra;</li>
+            <li>Un box contenente la "<b>Secret key</b>";</li>
+        </ol>
+    </p>
+    <p>
+        Il <b>nome</b> dell'applicazione potrà solo essere visualizzato da questo box è comunque possibile modificarlo in uno dei box successivi. Continua a
+        leggere per scoprire come fare.
+    </p>
+    <p>
+        L'<b>id</b> dell'applicazione è il suo identificativo univoco che ti permetterà di identificare la tua applicazione durante le chiamate API che 
+        ti permetteranno di accedere a tutte le funzioni. Questo parametro viene generato automaticamente dal nostro server e non può in alcun modo essere 
+        modificato.
+    </p>
+    <p>
+        Lo <b>switch</b> in alto a destra indica lo stato dell'applicazione. Gli unici valori possibili sono "<b>Active</b>" e "<b>Disabled</b>". Puoi modificare
+        questa impostazione semplicemente facendo <u>click</u> direttamente sullo <b>switch</b>. Quando l'applicazione sarà in modalità "<b>Active</b>" tutte 
+        le chiamate APIs effettuate saranno processate e le funzionalità saranno disponibili. Quando l'applicazione sarà in modalità "<b>Disabled</b>" allora 
+        tutte le chiamate APIs verranno sempre respinte e tutte le funzionalità risulteranno disabilitate.
+    </p>
+    <p>
+        Il box contenente la "<b>Secret key</b>" è di fondamentale importanza in quando contiene un codice univoco che ti permetterà di autorizzare le chiamate APIs
+        verso l'applicazione. Si tratta di un livello di <b>sicurezza</b> che ti permette di bloccare tutte le chiamate APIs da parte di utenti non autorizzati, anche se questi
+        sono in possesso dell'id dell'applicazione e se sono riusciti ad autorizzare la loro origine delle chiamate. Per poter visualizzare la "<b>Secret key</b>" non 
+        dovrai fare altro che fare <u>click</u> sul tasto "<b>Show</b>". A questo punto nell'input di fianco verrà visualizzata la "<b>Secret key</b>". Nota, anche 
+        provando ad accedere alla key ispezionando la pagina non sarà possibile visualizzarla, inoltre, una volta resa visibile, partirà un timer di 60s al termine del quale 
+        la key verrà nuovamente oscurata. 
+    </p>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Non condividere con nessuno la "<b>Secret key</b>" dell'applicazione se 
+        non con i tuoi collaboratori o con chi dovrà accedere alle funzionalità APIs. Non è al momento possibile rigenerare in autonomia la "<b>Secret key</b>", 
+        funzionalità che verrà inserita nel corso di aggiornamenti futuri.
+    </p>
+</section>
+<section class="docs-section" id="section-4">
+    <h1>Live or testing mode</h1>
+    <p>
+        <img src="/img/docs/live_testing_mode.png" alt="Manage your application: Live or testing mode" />
+    </p>
+    <p>
+        Il box "<b>Live or testing mode</b>" è dedicato alla gestione delle impostazioni degli endpoint delle nostre APIs, in particolare possiamo notare:
+        <ol>
+            <li>Uno <b>switch</b> in alto a destra;</li>
+            <li>Un endpoint di <b>test</b>;</li>
+            <li>Un endpoint di <b>produzione</b>.</li>
+        </ol>
+    </p>
+    <p>
+        Lo <b>switch</b> in alto a destra indica lo stato dell'<b>endpoint</b> dell'applicazione. Gli unici valori possibili sono "<b>Test</b>" e "<b>Live</b>". Puoi modificare
+        questa impostazione semplicemente facendo <u>click</u> direttamente sullo <b>switch</b>. Quando l'applicazione sarà in modalità "<b>Test</b>" tutte
+        le chiamate APIs effettuate verso l'endpoint di <b>test</b> saranno processate e le funzionalità saranno disponibili, saranno disabilitate tutte le chiamate verso 
+        l'endpoint di <b>produzione</b>. Quando l'applicazione sarà in modalità "<b>Live</b>" allora tutte le chiamate APIs effettuate verso l'endpoint di 
+        <b>produzione</b> saranno processate e le funzionalità saranno disponibili, saranno disabilitate tutte le chiamate verso l'endpoint di <b>test</b>.
+        Questo serve ad evitare che in fase di test vengano generati link, che consumerebbero inutilmente risorse, e errori.
+    </p>
+    <p>
+        L'endpoint di <b>test</b> è un filed input che contiene il corrispettivo endpoint da utilizzare in fase di test, attivo solo se l'applicazione è impostata 
+        correttamente su "<b>Test</b>". È possibile copiare direttamente l'endpoin semplicemente facendo <u>click</u> sul tasto "<b>Copy</b>".
+    </p>
+    <p>
+        L'endpoint di <b>produzione</b> è un filed input che contiene il corrispettivo endpoint da utilizzare in fase di produzione, attivo solo se l'applicazione è impostata 
+        correttamente su "<b>Live</b>". È possibile copiare direttamente l'endpoin semplicemente facendo <u>click</u> sul tasto "<b>Copy</b>".
+    </p>
+</section>
+<section class="docs-section" id="section-5">
+    <h1>Set Webhook's endpoints</h1>
+    <p>
+        <img src="/img/docs/webhooks_application.png" alt="Manage your application: Set Webhook's endpoints" />
+    </p>
+    <p>
+        Il box "<b>Set Webhook's endpoints</b>" è dedicato alla gestione degli endpoint di webhooks, in particolare possiamo notare:
+        <ol>
+            <li>Una <b>tabella</b>;</li>
+            <li>Un tasto <b>New endpoint</b>.</li>
+        </ol>
+    </p>
+    <p>
+        La <b>tabella</b> contiene la lista di tutti gli endpoint di webhooks che sono stati creati. Se presenti sarà possibile gestire tutte le funzionalità 
+        dell'endpoint e visualizzare il log delle richieste inviate. Queste funzionalità sono descritte in dettagli nella sezione <b>Webhooks</b>, da 
+        <a href="/docs/webhooks/intro">qui</a> puoi trovare la guida completa alla creazione di un endpoint di webhooks, agli eventi disponibili,
+        alla sua gestione ed eliminazione. Al momento è possibile creare un solo endopoint di webhook per applicazione, la funzionalità di creazione di endpoint 
+        multipli verrà resa disponibile nel corso di aggiornamenti futuri.
+    </p>
+    <p>
+        Il tasto <b>New endpoint</b> ci darà accesso alla procedura di creazione di un nuovo endpoint di webhook. La guida e tutte le informazioni a riguardo sono 
+        disponibili <a href="/docs/webhooks/new-endpoint">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-6">
+    <h1>Application details & settings</h1>
+    <p>
+        <img src="/img/docs/app_details_settings.png" alt="Manage your application: Set Webhook's endpoints" />
+    </p>
+    <p>
+        Il box "<b>Application details & settings</b>" è dedicato alla gestione del nome identificativo dell'applicazione e alle origini di richiesta delle APIs 
+        che stiamo autorizzando. In particolare possiamo notare:
+        <ol>
+            <li>Un input contenente il <b>nome</b> dell'applicazione;</li>
+            <li>Un input contenente gli <b>url di origine</b> per le richiesta alle APIs dell'applicazione.</li>
+        </ol>
+    </p>
+    <p>
+        L'input contenente il <b>nome</b> dell'applicazione ci permetterà di visualizzare e modificare il nome che identifica la nostra applicazione. Sarà possibile 
+        modificarlo un numero illimitato di volte.
+    </p>
+    <p>
+        L'input contenente gli <b>url di origine</b> per le richiesta alle APIs dell'applicazione ci presenterà gli url che abbiamo impostato in fase di creazione o 
+        successivamente. Possiamo aggiungere o rimuove gli url autorizzati in qualsiasi momento seguendo gli stessi parametri descritti 
+        <a href="/docs/applications/create#section-2">qui</a>. Tutte le modifiche avranno effetto <b>immediato</b>.
+    </p>
+</section>
+<section class="docs-section" id="section-7">
+    <h1>Delete your application</h1>
+    <p>
+        <img src="/img/docs/delete_app.png" alt="Manage your application: Delete your application" />
+    </p>
+    <p>
+        Il box "<b>Danger zone</b>" è dedicato all'eliminazione definitiva dell'applicazione e di tutti gli elementi ad essa associati. 
+        In particolare possiamo notare:
+        <ol>
+            <li>Un bottone "<b>Delete this application</b>".</li>
+        </ol>
+    </p>
+    <p>
+        Facendo <u>click</u> sul bottone "<b>Delete this application</b>" un messaggio di conferma ci avvertirà che stiamo per eliminare definitiva 
+        l'applicazione e tutti gli elementi ad essa associati. Se intendiamo procedere daremo conferma positiva e in un attimo avremo <b>eliminato</b>
+        definitivamente l'applicazione, le thumbnails. i link generati, i log, gli endpoint di webhook con i rispettivi log evento e tutte le statistiche 
+        correlate ai link dell'applicazione. Non è al momento possibile <b>archiviare</b> l'applicazione e gli elementi ad essa collegati, funzione che 
+        sarà introdotta nel corso di prossimi a ggiornamenti.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/applications/create" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Crea un'applicazione</a>
+    <a href="/docs/applications/delete" class="butt main-button blue-button right">Elimina un'applicazione <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>
+<!-- <section class="docs-section" id="section-1">
+    <h1>APIs</h1>
+    <table class="table bordered">
+        <thead>
+            <tr>
+                <td>Attributo</td>
+                <td>Descrizione</td>
+                <td>Valori</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="15%" valign="top" class="code">link_created</td>
+                <td width="60%" valign="top">Ogni volta che si crea uno short link tramite le APIs si genera un'evento di creazione che viene inviato agli endpoint di webhook se ne sono stati registrati.</td>
+                <td width="25%" valign="top">
+                    <ol>
+                        <li>200 OK</li>
+                        <li>403 FORBIDDEN</li>
+                        <li>404 NOT FOUND</li>
+                        <li>500 SERVER ERROR</li>
+                    </ol>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section> -->

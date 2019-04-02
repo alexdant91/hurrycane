@@ -1,0 +1,218 @@
+<section class="docs-title" id="section-0">
+    <h1>API</h1>
+    <sub>Last updated: March 29th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Get new token</h1>
+    <p>
+        Per utilizzare le APIs, oltre alla creazione di una nuova applicazione e al setting di tutte le impostazioni previste, è necessario seguire il
+        la giusta procedura per poter ottenere un <b>token</b> di autorizzazione valido.
+    </p>
+    <p>
+        Il <b>token</b> di autorizzazione è un codice univoco che permette l'autorizzazione della chiamata alle APIs da parte di un'applicazione, per poterlo
+        ottenere sarà necessario autenticare la propria applicazione. Subito dopo si avra libero accesso a tutte le funzionalità APIs messe a disposizione, fino
+        a quando il <b>token</b> corrente non sarà scaduto.
+    </p>
+    <p>
+        Schematizziamo e analizziamo tutti gli step necessari per ottenere un <b>token</b> di autorizzazione valido:
+    </p>
+    <p>
+        <ol>
+            <li>Creazione di un'applicazione, come illustrato <a href="/docs/applications/create">qui</a>;</li>
+            <li>Gestione dei permessi e autorizzazione degli url di origine, come illustrato <a href="/docs/applications/edit">qui</a>;</li>
+            <li>Chiamata all'endpoint di autorizzazione che, se correttamente formulata, restituirà un token valido.</li>
+        </ol>
+    </p>
+    <p>
+        Abbiamo già visto come creare un'applicazione e come gestirne i permessi. Parliamo adesso di come inviare una richiesta all'endpoint di autorizzazione
+        per ottenere un <b>token</b> valido:
+    </p>
+</section>
+<section class="docs-section" id="section-2">
+    <h1>Request Headers</h1>
+    <p>
+        Per effettuare una corretta chiamata al server sarà necessario impostare le seguenti headers:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Attributo</td>
+                    <td>Descrizione</td>
+                    <td>Valori</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="15%" valign="top" class="code">Authorization</td>
+                    <td width="55%" valign="top">Corrisponde alla stringa <b>username:password</b> codificata in formato <b>base64</b>.</td>
+                    <td width="30%" valign="top">
+                        <code>base64(username:password)</code> [String]
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Secretkey</td>
+                    <td width="55%" valign="top">Corrisponde alla chiave segreta dell'applicazione per la quale si richiede l'autorizzazione.</td>
+                    <td width="30%" valign="top">
+                        <code>the-application-secret-key</code> [String]
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Content-Type</td>
+                    <td width="55%" valign="top">Descrive la formattazione del contenuto della richiesta inviata al server.</td>
+                    <td width="30%" valign="top">
+                        <code>application/json</code>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Request Body</h1>
+    <p>
+        Si dovrà effettuare una chiamata di tipo <code>GET</code> con le seguenti caratteristiche:
+    </p>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <td>Metodo</td>
+                    <td>Variabile</td>
+                    <td>Valore</td>
+                    <td>Endpoint</td>
+                    <td>Esempio</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="5%" valign="top" class="code">GET</td>
+                    <td width="5%" valign="top"><code>id</code></td>
+                    <td width="10%" valign="top"><code>application_id</code></td>
+                    <td width="30%" valign="top"><code>https://api.hurrycane.it/v1/token</code></td>
+                    <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/token?id=application_id</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-4">
+    <h1>A Node.js request example</h1>
+    <p>
+        Nel nostro caso useremo una libreria di <code>Node.js</code> che si chiama <code>request-promise</code> per effettuare la corretta chiamata al server.
+        Dobbiamo semplicemente inviare una richesta <code>GET</code> all'endpoint <code>https://api.hurrycane.it/v1/toke</code> rispettando i parametri seguenti:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Include the request-promise library
+    // If you don't have it installed simply run: 
+    // `npm i request-promise@latest --s`
+    // In your terminal window
+
+    const rp = require('request-promise'); 
+
+    rp({
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer YOUR_BEARER_BASE64_STRING', // Base64 string encoded of `your_username:your_password`
+            'Secretkey': 'SECRET_KEY_OF_YOUR_APPLICATION'
+        },
+        uri: 'http://api.hurrycane.it/v1/token?id=YOUR_APPLICATION_ID', // The endpoint and the application id
+        json: true
+    }).then(token => {
+        // Your token is in `token` object
+        // Do something with it
+    }).catch(err => {
+        // Some error occur
+        // Let's log the `err` object for debugging
+    });
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-5">
+    <h1>A PHP request example</h1>
+    <p>
+        Possiamo utilizzare diverse librerie per effettuare la chiamata <code>GET</code> all'endpoint di autorizzazione, questo, se correttamente formulata,
+        ci restituirà sempre un token di autorizzazione valido e utilizzabile per accedere alle APIs. Di seguito un esempio utilizzando <code>PHP</code>:
+    </p>
+    <pre class="language-php">
+        <code>
+    // Initialize cURL.
+    $ch = curl_init();
+
+    // Set the URL that you want to GET by using the CURLOPT_URL option.
+    curl_setopt($ch, CURLOPT_URL, 'https://api.hurrycane.it/v1/token?id=YOUR_APPLICATION_ID');
+
+    // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+    // Set the correct headers by using the CURLOPT_HTTPHEADER option.
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer YOUR_BEARER_BASE64_STRING',
+        'Secretkey: SECRET_KEY_OF_YOUR_APPLICATION'
+    ));
+
+    // Execute the request.
+    $data = curl_exec($ch);
+
+    // Close the cURL handle.
+    curl_close($ch);
+
+    // Print the data out onto the page.
+    print_r($data);
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-6">
+    <h1>Response</h1>
+    <p>
+        In risponsta alla chiamara, se tutto è stato compilato correttamente, il server restituira un oggeto in formato <code>JSON</code> contenente il
+        token validato e appena generato.
+    </p>
+    <p>
+        Nel body della risponsta troveremo i seguenti parametri:
+    </p>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <td>Variabile</td>
+                    <td>Descrizione</td>
+                    <td>Valore</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">token</td>
+                    <td width="50%" valign="top">Il token di autorizzazione generato dal server, valido per tutte le future operazioni.</td>
+                    <td width="25%" valign="top"><code>token_id_value</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        Il <code>token</code> generato e restituito dal server è il formato <b>JWT</b> (JSON Web Token). La chiave di cifratura che permette di validarlo 
+        corrisponde alla <code>Secretkey</code> dell'applicazione per la quale si richiede l'autorizzazione. Per questo, il parametro <code>Secrekey</code> 
+        è sempre obbligatorio e permette di validare con assoluta certezza l'identità della richiesta. Per maggiori informazioni riguardo <b>JWT</b> si faccia 
+        riferimento alla documentazione ufficiale, disponibile <a href="https://jwt.io/" target="_blank">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-7">
+    <h1>Next step</h1>
+    <p>
+        A questo punto abbiamo ottenuto un <b>token</b> valido che ci permetterà di autorizzare tutte le future richieste alle APIs. Adesso possiamo procedere
+        con la descrizione e l'analisi delle funzioni APIs.
+    </p>
+    <p>
+        Vediamo adesso come procedere per la creazione di un nuovo <code>short_url</code>.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/authorization/signature" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Firma digitale</a>
+    <a href="/docs/api/new-link" class="butt main-button blue-button right">Nuovo link <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

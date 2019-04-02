@@ -11,6 +11,7 @@ body {
 }
 
 .main-wrapper {
+    min-height: 100vh;
     background: #ffffff;
     height: 100%;
     width: 100vw;
@@ -67,13 +68,47 @@ body {
     float: left;
     width: 100%;
     height: auto;
-    line-height: 1.5;
-    margin-top: 5px;
-    margin-bottom: 1rem;
+    line-height: 2;
+    margin-top: 10px;
+    margin-bottom: 1.5rem;
     font-family: 'Open Sans', arial, sans-serif;
     color: #494d55;
-    font-size: 14px;
+    font-size: 16px;
     -webkit-font-smoothing: antialiased;
+}
+
+.docs-section p a {
+    color: rgb(108, 197, 108) !important;
+}
+
+.docs-section p a:hover {
+    text-decoration: underline;
+}
+
+.docs-section ol li {
+    line-height: 2;
+    font-size: 16px;
+}
+
+.docs-section p.important-box {
+    border: 1px solid #88c2f9;
+    background: #fff;
+    border-radius: 3px;
+    padding: 10px 15px;
+}
+
+.docs-section p.important-box b.important-title {
+    color: #1073c1;
+}
+
+.docs-section p.important-box i {
+    color: #1073c1;
+}
+
+.docs-section .table-wrapper {
+    float: left;
+    width: 100%;
+    overflow: scroll;
 }
 
 .docs-menu {
@@ -89,7 +124,7 @@ body {
 
 .docs-menu ol {
     float: left;
-    padding: 0 0 0 45px;
+    padding: 0 0 0 30px;
     list-style: none;
     font-size: 14px;
 }
@@ -121,6 +156,16 @@ body {
     padding: 0 0 0 25px;
 }
 
+.docs-menu ol.sub-cap {
+    margin: 10px 0;
+    padding: 0 0 0 15px;
+    border-left: 3px solid #41a8fc !important;
+}
+
+.docs-menu ol.sub-cap li a {
+    padding: 5px 0;
+}
+
 code {
     background-color: rgba(27, 31, 35, .05);
     border-radius: 3px;
@@ -135,6 +180,8 @@ code {
 
 .docs-content {
     padding-top: 62px;
+    min-height: 100vh;
+    padding-bottom: 65px;
 }
 
 .docs-content table {
@@ -147,6 +194,10 @@ code {
 }
 
 .footer {
+    background: #ffffff;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     float: left;
     width: 100%;
     padding: 20px;
@@ -171,6 +222,10 @@ code {
 
 .ellips-button {
     display: none;
+}
+
+.bold {
+    font-weight: 600 !important;
 }
 
 @media screen and (max-width: 991px) {

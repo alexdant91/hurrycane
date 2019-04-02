@@ -25,7 +25,21 @@ router.get('/', (req, res) => {
         user: req.session.user,
         premium: config.premium,
         pageActive: 'docs',
+        dir: '',
         page: 'index',
+        menu: 'index'
+    });
+});
+
+router.get('/:dir/:page', (req, res) => {
+    res.render(`../view/docs/index`, {
+        session: req.isAuthenticated(),
+        translation: req.translation,
+        user: req.session.user,
+        premium: config.premium,
+        pageActive: 'docs',
+        dir: req.params.dir,
+        page: req.params.page,
         menu: 'index'
     });
 });

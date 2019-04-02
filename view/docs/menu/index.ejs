@@ -1,38 +1,92 @@
 <ol>
     <li><a href="/docs" class="<? if(page == 'index') {?>active<?} ?>">Overview</a></li>
-    <li><a>Get started</a></li>
+    <li><a class="<? if(dir == 'get-started') {?>bold<?} ?>">Get started</a></li>
     <li>
         <ol>
-            <li><a href="/docs/get-started/requirements">Requirements</a></li>
-            <li><a href="/docs/get-started/account">Account</a></li>
+            <li><a class="<? if(page == 'requirements' && dir == 'get-started') {?>active<?} ?>" href="/docs/get-started/requirements">Requirements</a></li>
+            <li><a class="<? if(page == 'account' && dir == 'get-started') {?>active<?} ?>" href="/docs/get-started/account">Account</a></li>
         </ol>
     </li>
-    <li><a>Applications</a></li>
+    <li><a class="<? if(dir == 'applications') {?>bold<?} ?>">Applications</a></li>
     <li>
         <ol>
-            <li><a href="/docs/applications/create">Create</a></li>
-            <li><a href="/docs/applications/edit">Edit</a></li>
-            <li><a href="/docs/applications/delete">Delete</a></li>
+            <li><a class="<? if(page == 'create' && dir == 'applications') {?>active<?} ?>" href="/docs/applications/create">Create</a></li>
+            <? if(page == 'create' && dir == 'applications') { ?> 
+                <li>
+                    <ol class="sub-cap">
+                        <li><a class="active" href="#section-1">Create a new application</a></li>
+                        <li><a href="#section-2">Creation form and settings</a></li>
+                    </ol>
+                </li>
+            <? } ?>
+            <li><a class="<? if(page == 'edit' && dir == 'applications') {?>active<?} ?>" href="/docs/applications/edit">Edit</a></li>
+            <? if(page == 'edit' && dir == 'applications') { ?> 
+                <li>
+                    <ol class="sub-cap">
+                        <li><a class="active" href="#section-1">See your application</a></li>
+                        <li><a href="#section-2">Manage your application</a></li>
+                        <li><a href="#section-3">First box</a></li>
+                        <li><a href="#section-4">Live or testing mode</a></li>
+                        <li><a href="#section-5">Set Webhook's endpoints</a></li>
+                        <li><a href="#section-6">Application details & settings</a></li>
+                        <li><a href="#section-7">Delete your application</a></li>
+                    </ol>
+                </li>
+            <? } ?>
+            <li><a class="<? if(page == 'delete' && dir == 'applications') {?>active<?} ?>" href="/docs/applications/delete">Delete</a></li>
         </ol>
     </li>
-    <li><a>Authorization</a></li>
+    <li><a class="<? if(dir == 'authorization') {?>bold<?} ?>">Authorization</a></li>
     <li>
         <ol>
-            <li><a href="/docs/authorization/auth-flow">Auth flow</a></li>
-            <li><a href="/docs/authorization/headers">Headers</a></li>
-            <li><a href="/docs/authorization/Signature">Signature</a></li>
+            <li><a class="<? if(page == 'auth-flow' && dir == 'authorization') {?>active<?} ?>" href="/docs/authorization/auth-flow">Auth flow</a></li>
+            <? if(page == 'auth-flow' && dir == 'authorization') { ?>
+                <li>
+                    <ol class="sub-cap">
+                        <li><a href="#section-2">Node.js</a></li>
+                        <li><a href="#section-3">PHP</a></li>
+                    </ol>
+                </li>
+            <? } ?>
+            <li><a class="<? if(page == 'headers' && dir == 'authorization') {?>active<?} ?>" href="/docs/authorization/headers">Headers</a></li>
+            <li><a class="<? if(page == 'signature' && dir == 'authorization') {?>active<?} ?>" href="/docs/authorization/signature">Signature</a></li>
         </ol>
     </li>
-    <li><a>API</a></li>
+    <li><a class="<? if(dir == 'api') {?>bold<?} ?>">API</a></li>
     <li>
         <ol>
-            <li><a href="/docs/api/token">Token</a></li>
-            <li><a href="/docs/api/new-link">New Link</a></li>
-            <li><a href="/docs/api/update-link">Update Link</a></li>
-            <li><a href="/docs/api/delete-link">Delete Link</a></li>
-            <li><a href="/docs/api/get-link">Get Link</a></li>
-            <li><a href="/docs/api/all-links">All Links</a></li>
-            <li><a href="/docs/api/paginate-links">Paginate Links</a></li>
+            <li><a class="<? if(page == 'token' && dir == 'api') {?>active<?} ?>" href="/docs/api/token">Token</a></li>
+            <? if(page == 'token' && dir == 'api') { ?>
+                <li>
+                    <ol class="sub-cap">
+                        <li><a class="active" href="#section-1">Get new token</a></li>
+                        <li><a href="#section-2">Request Headers</a></li>
+                        <li><a href="#section-3">Request Body</a></li>
+                        <li><a href="#section-4">Node.js request example</a></li>
+                        <li><a href="#section-5">PHP request example</a></li>
+                        <li><a href="#section-6">Response</a></li>
+                    </ol>
+                </li>
+            <? } ?>
+            <li><a class="<? if(page == 'new-link' && dir == 'api') {?>active<?} ?>" href="/docs/api/new-link">New Link</a></li>
+            <? if(page == 'new-link' && dir == 'api') { ?>
+            <li>
+                <ol class="sub-cap">
+                    <li><a class="active" href="#section-1">Request Type</a></li>
+                    <li><a href="#section-2">Request Headers</a></li>
+                    <li><a href="#section-3">Request Body</a></li>
+                    <li><a href="#section-4">Node.js request example</a></li>
+                    <li><a href="#section-5">PHP request example</a></li>
+                    <li><a href="#section-6">Response</a></li>
+                </ol>
+            </li>
+            <? } ?>
+            <li><a class="<? if(page == 'direct' && dir == 'api') {?>active<?} ?>" href="/docs/api/direct">Direct</a></li>
+            <li><a class="<? if(page == 'update-link' && dir == 'api') {?>active<?} ?>" href="/docs/api/update-link">Update Link</a></li>
+            <li><a class="<? if(page == 'delete-link' && dir == 'api') {?>active<?} ?>" href="/docs/api/delete-link">Delete Link</a></li>
+            <li><a class="<? if(page == 'get-link' && dir == 'api') {?>active<?} ?>" href="/docs/api/get-link">Get Link</a></li>
+            <li><a class="<? if(page == 'all-links' && dir == 'api') {?>active<?} ?>" href="/docs/api/all-links">All Links</a></li>
+            <li><a class="<? if(page == 'paginate-links' && dir == 'api') {?>active<?} ?>" href="/docs/api/paginate-links">Paginate Links</a></li>
         </ol>
     </li>
     <li><a>SDK</a></li>

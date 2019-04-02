@@ -1,0 +1,241 @@
+<section class="docs-title" id="section-0">
+    <h1>API</h1>
+    <sub>Last updated: March 29th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Request type</h1>
+    <p>
+        Le caratteristiche della richiesta devono seguire le seguenti specifiche:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Metodo</td>
+                    <td>API</td>
+                    <td>Endpoint</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">POST</td>
+                    <td width="25%" valign="top"><code>v1</code></td>
+                    <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/shorten</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-2">
+    <h1>Request Headers</h1>
+    <p>
+        Per effettuare una corretta chiamata al server sarà necessario impostare le seguenti headers:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Attributo</td>
+                    <td>Descrizione</td>
+                    <td>Valori</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="15%" valign="top" class="code">Token</td>
+                    <td width="55%" valign="top">Corrisponde alla stringa generata dal server. Per sapere come ottenerlo vai <a href="/docs/api/token">qui</href>.</td>
+                    <td width="30%" valign="top"><code>token_id_value</code></td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Secretkey</td>
+                    <td width="55%" valign="top">Corrisponde alla chiave segreta dell'applicazione per la quale si richiede l'autorizzazione.</td>
+                    <td width="30%" valign="top"><code>the-application-secret-key</code></td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Content-Type</td>
+                    <td width="55%" valign="top">Descrive la formattazione del contenuto della richiesta inviata al server.</td>
+                    <td width="30%" valign="top"><code>application/json</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Request Body</h1>
+    <p>
+        Si dovrà effettuare una chiamata di tipo <code>POST</code>. Il body della richiesta deve essere impostato come di seguito:
+    </p>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <td>Variabile</td>
+                    <td>Descrizione</td>
+                    <td>Valore</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">long_url</td>
+                    <td width="50%" valign="top">Il link che si intende accorciare compreso di protocollo <b>http</b> o <b>https</b>.</td>
+                    <td width="25%" valign="top"><code>https://www.example.com/my/long/url</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-4">
+    <h1>A Node.js request example</h1>
+    <p>
+        Nel nostro caso useremo una libreria di <code>Node.js</code> che si chiama <code>request-promise</code> per effettuare la corretta chiamata al server.
+        Dobbiamo semplicemente inviare una richesta <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code> rispettando i parametri seguenti:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Include the request-promise library
+    // If you don't have it installed simply run: 
+    // `npm i request-promise@latest --s`
+    // In your terminal window
+
+    const rp = require('request-promise'); 
+
+    rp({
+        method: 'POST',
+        uri: 'http://api.hurrycane.it/v1/shorten', // The endpoint
+        headers: {
+            'Token': 'TOKEN_ID_VALUE', // The value of the athorization token
+            'Secretkey': 'SECRET_KEY_OF_YOUR_APPLICATION' // The secret key of the application
+            'Content-Type': 'application/json' // The body type
+        },
+        body: {
+            'long_url': 'https://www.example.com/my/long/url'
+        },
+        json: true
+    }).then(response => {
+        // Your response JSON object
+    }).catch(err => {
+        // Some error occur
+        // Let's log the `err` object for debugging
+    });
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-5">
+    <h1>A PHP request example</h1>
+    <p>
+        Possiamo utilizzare diverse librerie per effettuare la chiamata <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code>, 
+        Di seguito un esempio utilizzando <code>PHP</code>:
+    </p>
+    <pre class="language-php">
+        <code>
+    // The JSON object
+    $request = json_encode(array(
+        'long_url' => 'https://www.example.com/my/long/url'
+    ));
+
+    // Initialize cURL.
+    $ch = curl_init();
+
+    // Set the URL that you want to GET by using the CURLOPT_URL option.
+    curl_setopt($ch, CURLOPT_URL, 'https://api.hurrycane.it/v1/token?id=YOUR_APPLICATION_ID');
+
+    // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    
+    // Set CURLOPT_POST to true.
+    curl_setopt($ch, CURLOPT_POST, true);
+    
+    // Set CURLOPT_POSTFIELDS with the request body value.
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+
+    // Set the correct headers by using the CURLOPT_HTTPHEADER option.
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Token: YOUR_TOKEN_VALUE',
+        'Secretkey: SECRET_KEY_OF_YOUR_APPLICATION'
+        'Content-Type: application/json'
+    ));
+
+    // Execute the request.
+    $data = curl_exec($ch);
+
+    // Close the cURL handle.
+    curl_close($ch);
+
+    // Print the data out onto the page.
+    print_r($data);
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-6">
+    <h1>Response</h1>
+    <p>
+        In risponsta alla chiamara, se tutto è stato compilato correttamente, il server restituira un oggeto in formato <code>JSON</code> contenente le 
+        informazioni del nuovo link generato.
+    </p>
+    <p>
+        Nel body della risponsta troveremo i seguenti parametri:
+    </p>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <td>Variabile</td>
+                    <td>Descrizione</td>
+                    <td>Valore</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">Status</td>
+                    <td width="50%" valign="top">Descrive lo stato della richiesta.</td>
+                    <td width="25%" valign="top">
+                        <ol>
+                            <li>success</li>
+                            <li>error</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">url.id</td>
+                    <td width="50%" valign="top"><b>id</b> identificativo del nuovo link appena generato.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">url.short_url</td>
+                    <td width="50%" valign="top">Link accorciato appena generato.</td>
+                    <td width="25%" valign="top"><code>URL</code></td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">url.alias</td>
+                    <td width="50%" valign="top"><b>aliasi</b> alfanumerico identificativo del nuovo link appena generato.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Questa modalità di creazione permette la generazione di alcune componenti, 
+        quali la <b>thumbnail</b>, la <b>favicon</b>, l'ottimizzazione automatica della <b>SEO</b>. Ciò comporta un maggior impiego di tempo per la generazione 
+        dello <b>short_link</b>. Per usufruire della creazione del link in modalità diretta, basterà comporre la stessa richiesta modificando l'endpoint, da:
+        <code>https://api.hurrycane.it/v1/shorten</code> a <code>https://api.hurrycane.it/v1/direct</code>. Come illustrato <a herf="/docs/api/direct">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-7">
+    <h1>Next step</h1>
+    <p>
+        A questo punto abbiamo ottenuto un <b>token</b> valido che ci permetterà di autorizzare tutte le future richieste alle APIs. Adesso possiamo procedere
+        con la descrizione e l'analisi delle funzioni APIs.
+    </p>
+    <p>
+        Vediamo adesso come procedere per la creazione di un nuovo <code>short_url</code>.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/authorization/signature" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Firma digitale</a>
+    <a href="/docs/api/new-link" class="butt main-button blue-button right">Nuovo link <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>
