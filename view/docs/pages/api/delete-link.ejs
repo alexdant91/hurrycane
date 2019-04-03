@@ -18,7 +18,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td width="25%" valign="top" class="code">POST</td>
+                    <td width="25%" valign="top" class="code">DELETE</td>
                     <td width="25%" valign="top"><code>v1</code></td>
                     <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/shorten</code></td>
                 </tr>
@@ -76,9 +76,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <td width="25%" valign="top" class="code">long_url</td>
-                    <td width="50%" valign="top">Il link che si intende accorciare compreso di protocollo <b>http</b> o <b>https</b>.</td>
-                    <td width="25%" valign="top"><code>https://www.example.com/my/long/url</code></td>
+                    <td width="25%" valign="top" class="code">url_id</td>
+                    <td width="50%" valign="top">L'id del link che si intende eliminare, ottenuto in fase di creazione.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
                 </tr>
             </tbody>
         </table>
@@ -88,7 +88,7 @@
     <h1>A Node.js request example</h1>
     <p>
         Nel nostro caso useremo una libreria di <code>Node.js</code> che si chiama <code>request-promise</code> per effettuare la corretta chiamata al server.
-        Dobbiamo semplicemente inviare una richesta <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code> rispettando i parametri seguenti:
+        Dobbiamo semplicemente inviare una richesta <code>DELETE</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code> rispettando i parametri seguenti:
     </p>
     <pre class="language-javascript">
         <code>
@@ -100,15 +100,15 @@
     const rp = require('request-promise'); 
 
     rp({
-        method: 'POST',
-        uri: 'http://api.hurrycane.it/v1/shorten', // The endpoint
+        method: "DELETE",
+        uri: "http://api.hurrycane.it/v1/shorten", // The endpoint
         headers: {
-            'Token': 'TOKEN_ID_VALUE', // The value of the athorization token
-            'Secretkey': 'SECRET_KEY_OF_YOUR_APPLICATION' // The secret key of the application
-            'Content-Type': 'application/json' // The body type
+            "Token": "TOKEN_ID_VALUE", // The value of the athorization token
+            "Secretkey": "SECRET_KEY_OF_YOUR_APPLICATION" // The secret key of the application
+            "Content-Type": "application/json" // The body type
         },
         body: {
-            'long_url': 'https://www.example.com/my/long/url'
+            "url_id": "YOUR_URL_ID"
         },
         json: true
     }).then(response => {
@@ -131,14 +131,14 @@
         <code>
     // The array that become JSON object
     $request = json_encode(array(
-        'long_url' => 'https://www.example.com/my/long/url'
+        "url_id" => "YOUR_URL_ID"
     ));
 
     // Initialize cURL.
     $ch = curl_init();
 
     // Set the URL that you want to GET by using the CURLOPT_URL option.
-    curl_setopt($ch, CURLOPT_URL, 'https://api.hurrycane.it/v1/shorten');
+    curl_setopt($ch, CURLOPT_URL, "https://api.hurrycane.it/v1/shorten");
 
     // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -147,16 +147,16 @@
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     
     // Set CURLOPT_POST to true.
-    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_DELETE, true);
     
     // Set CURLOPT_POSTFIELDS with the request body value.
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
 
     // Set the correct headers by using the CURLOPT_HTTPHEADER option.
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Token: YOUR_TOKEN_VALUE',
-        'Secretkey: SECRET_KEY_OF_YOUR_APPLICATION'
-        'Content-Type: application/json'
+        "Token: YOUR_TOKEN_VALUE",
+        "Secretkey: SECRET_KEY_OF_YOUR_APPLICATION"
+        "Content-Type: application/json"
     ));
 
     // Execute the request.
@@ -175,7 +175,7 @@
     <h1>Response</h1>
     <p>
         In risponsta alla chiamara, se tutto è stato compilato correttamente, il server restituira un oggeto in formato <code>JSON</code> contenente le 
-        informazioni del nuovo link generato.
+        informazioni del link eliminato.
     </p>
     <p>
         Nel body della risponsta troveremo i seguenti parametri:
@@ -196,46 +196,31 @@
                     <td width="25%" valign="top"><code>String</code></td>
                 </tr>
                 <tr>
-                    <td width="25%" valign="top" class="code">url.id</td>
-                    <td width="50%" valign="top"><b>id</b> identificativo del nuovo link appena generato.</td>
-                    <td width="25%" valign="top"><code>String</code></td>
-                </tr>
-                <tr>
-                    <td width="25%" valign="top" class="code">url.short_url</td>
-                    <td width="50%" valign="top">Link accorciato appena generato.</td>
-                    <td width="25%" valign="top"><code>URL</code></td>
-                </tr>
-                <tr>
-                    <td width="25%" valign="top" class="code">url.alias</td>
-                    <td width="50%" valign="top"><b>aliasi</b> alfanumerico identificativo del nuovo link appena generato.</td>
-                    <td width="25%" valign="top"><code>String</code></td>
-                </tr>
-                <tr>
                     <td width="25%" valign="top" class="code">Error</td>
                     <td width="50%" valign="top">Descrive lo stato dell'errore, se presente.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">Message</td>
+                    <td width="50%" valign="top">Stringa che descrive lo stato della richiesta, utile per far visualizzare un alert all'utente.</td>
                     <td width="25%" valign="top"><code>String</code></td>
                 </tr>
             </tbody>
         </table>
     </div>
     <p class="important-box">
-        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Questa modalità di creazione permette la generazione di alcune componenti, 
-        quali la <b>thumbnail</b>, la <b>favicon</b>, l'ottimizzazione automatica della <b>SEO</b>. Ciò comporta un maggior impiego di tempo per la generazione 
-        dello <b>short_link</b>. Per usufruire della creazione del link in modalità diretta, basterà comporre la stessa richiesta modificando l'endpoint, da:
-        <code>https://api.hurrycane.it/v1/shorten</code> a <code>https://api.hurrycane.it/v1/direct</code>. Come descritto <a href="/docs/api/direct">qui</a>.
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Eliminare un link vuol dire cancellare definitivamente tutti gli elementi 
+        ad esso associati, come le thumbnails, le icone, i log evento corrispondenti dell'applicazione e dell'endpoint di webhook, i dati del track [etc.].
     </p>
 </section>
 <section class="docs-section" id="section-7">
     <h1>Next step</h1>
     <p>
-        A questo punto abbiamo ottenuto un nuovo <b>short_url</b> valido che ci permetterà di reindirizzare i nostri utenti, di tracciare il traffico e di 
-        guadagnare dalle visualizzazioni.
-    </p>
-    <p>
-        Vediamo adesso come procedere per la creazione di un nuovo <code>short_url</code> in modalità <b>direct</b>.
+        A questo punto abbiamo visto come eliminare uno <b>short_url</b>. Vediamo adesso come procedere per ottenere tutte le informazioni di uno 
+        <code>short_url</code> che abbiamo precedentemente creato.
     </p>
 </section>
 <section class="docs-section" id="section-8">
-    <a href="/docs/api/token" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> API Token Endpoint</a>
-    <a href="/docs/api/direct" class="butt main-button blue-button right">Nuovo Direct link <i class="fal fa-long-arrow-right white-text"></i></a>
+    <a href="/docs/api/update-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Modifica link</a>
+    <a href="/docs/api/get-link" class="butt main-button blue-button right">Richiama link <i class="fal fa-long-arrow-right white-text"></i></a>
 </section>

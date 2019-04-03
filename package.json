@@ -2,7 +2,8 @@
     "name": "hurrycane",
     "version": "3.0.1",
     "repository": {
-        "type": "https://github.com/alexdant91/hurrycane"
+        "type": "git",
+        "url": "https://github.com/alexdant91/hurrycane"
     },
     "description": "Service for shortner url",
     "main": "server.js",

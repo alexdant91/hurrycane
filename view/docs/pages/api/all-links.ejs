@@ -1,0 +1,330 @@
+<section class="docs-title" id="section-0">
+    <h1>API</h1>
+    <sub>Last updated: March 29th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Request type</h1>
+    <p>
+        Le caratteristiche della richiesta devono seguire le seguenti specifiche:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Metodo</td>
+                    <td>API</td>
+                    <td>Endpoint</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">GET</td>
+                    <td width="25%" valign="top"><code>v1</code></td>
+                    <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/link/all</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-2">
+    <h1>Request Headers</h1>
+    <p>
+        Per effettuare una corretta chiamata al server sarà necessario impostare le seguenti headers:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Attributo</td>
+                    <td>Descrizione</td>
+                    <td>Valori</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="15%" valign="top" class="code">Token</td>
+                    <td width="55%" valign="top">Corrisponde alla stringa generata dal server. Per sapere come ottenerlo vai <a href="/docs/api/token">qui</href>.</td>
+                    <td width="30%" valign="top"><code>token_id_value</code></td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Secretkey</td>
+                    <td width="55%" valign="top">Corrisponde alla chiave segreta dell'applicazione per la quale si richiede l'autorizzazione.</td>
+                    <td width="30%" valign="top"><code>the-application-secret-key</code></td>
+                </tr>
+                <tr>
+                    <td width="15%" valign="top" class="code">Content-Type</td>
+                    <td width="55%" valign="top">Descrive la formattazione del contenuto della richiesta inviata al server.</td>
+                    <td width="30%" valign="top"><code>application/json</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Request Body</h1>
+    <p>
+        Si dovrà effettuare una chiamata di tipo <code>GET</code>. La query della richiesta non deve contenere alcun valore.
+    </p>
+</section>
+<section class="docs-section" id="section-4">
+    <h1>A Node.js request example</h1>
+    <p>
+        Nel nostro caso useremo una libreria di <code>Node.js</code> che si chiama <code>request-promise</code> per effettuare la corretta chiamata al server.
+        Dobbiamo semplicemente inviare una richesta <code>GET</code> all'endpoint <code>https://api.hurrycane.it/v1/link/all</code> rispettando i
+        parametri seguenti:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Include the request-promise library
+    // If you don't have it installed simply run: 
+    // `npm i request-promise@latest --s`
+    // In your terminal window
+
+    const rp = require('request-promise'); 
+
+    rp({
+        method: "GET",
+        uri: "http://api.hurrycane.it/v1/link/all", // The endpoint
+        headers: {
+            "Token": "TOKEN_ID_VALUE", // The value of the athorization token
+            "Secretkey": "SECRET_KEY_OF_YOUR_APPLICATION" // The secret key of the application
+            "Content-Type": "application/json" // The body type
+        },
+        json: true
+    }).then(response => {
+        // Your response JSON object
+    }).catch(err => {
+        // Some error occur
+        // Let's log the `err` object for debugging
+    });
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-5">
+    <h1>A PHP request example</h1>
+    <p>
+        Possiamo utilizzare diverse librerie per effettuare la chiamata <code>GET</code> all'endpoint <code>https://api.hurrycane.it/v1/link/all</code>,
+        Di seguito un esempio utilizzando <code>PHP</code>:
+    </p>
+    <pre class="language-php">
+        <code>
+    // Initialize cURL.
+    $ch = curl_init();
+
+    // Set the URL that you want to GET by using the CURLOPT_URL option.
+    curl_setopt($ch, CURLOPT_URL, "https://api.hurrycane.it/v1/link/all");
+
+    // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+    // Set the correct headers by using the CURLOPT_HTTPHEADER option.
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        "Token: YOUR_TOKEN_VALUE",
+        "Secretkey: SECRET_KEY_OF_YOUR_APPLICATION"
+        "Content-Type: application/json"
+    ));
+
+    // Execute the request.
+    $data = curl_exec($ch);
+
+    // Close the cURL handle.
+    curl_close($ch);
+
+    // Print the data out onto the page.
+    print_r($data);
+        </code>
+    </pre>
+    <p></p>
+</section>
+<section class="docs-section" id="section-6">
+    <h1>Response</h1>
+    <p>
+        In risponsta alla chiamara, se tutto è stato compilato correttamente, il server restituira un oggeto complesso in formato <code>JSON</code> contenente le 
+        informazioni di tutti i link dell'utente.
+    </p>
+    <p>
+        Nel body della risponsta troveremo una chave denominata <code>urls</code> contenente un <code>Array</code> di oggetti, ognuno con i seguenti parametri:
+    </p>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <td>Variabile</td>
+                    <td>Descrizione</td>
+                    <td>Valore</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="30%" valign="top" class="code">id</td>
+                    <td width="55%" valign="top">Id del link che si sta richiamando.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">user_id</td>
+                    <td width="55%" valign="top">Id utente del proprietario del link.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">application_id</td>
+                    <td width="55%" valign="top">Id dell'applicazione che ha generato il link, <code>null</code> se generato direttamente dalla dashboard.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">long_url</td>
+                    <td width="55%" valign="top">L'URL completo che è stato accorciato.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">domain_name</td>
+                    <td width="55%" valign="top">Il nome a dominio dell'URL completo che è stato accorciato.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">short_url</td>
+                    <td width="55%" valign="top">Lo <code>short_url</code> completo che è stato generato.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">alias</td>
+                    <td width="55%" valign="top">Stringa identificativa dello <code>short_url</code>.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">favicon</td>
+                    <td width="55%" valign="top">Favicon dell'URL che è stato accorciato.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">properties</td>
+                    <td width="55%" valign="top">L'insime delle proprietà del link che si intende modificare.</td>
+                    <td width="15%" valign="top"><code>Object</code>/<code>Array</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">properties.description</td>
+                    <td width="55%" valign="top">La descrizione del link.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">properties.password</td>
+                    <td width="55%" valign="top">Se impostata l'accesso al link verrà protetto da password.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">properties.expires</td>
+                    <td width="55%" valign="top">Data in formato <b>timestamp</b> in secondi oltre la quale il link non sarà più valido.</td>
+                    <td width="15%" valign="top"><code>Timestamp</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">rules</td>
+                    <td width="55%" valign="top">L'insime delle regole del link che si intende modificare.</td>
+                    <td width="15%" valign="top"><code>Object</code>/<code>Array</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">rules.geo_tag</td>
+                    <td width="55%" valign="top">Array delle regioni che si possono impostare come filtro per reindirizzamento personalizzato.</td>
+                    <td width="15%" valign="top"><code>Array</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">rules.geo_tag_url</td>
+                    <td width="55%" valign="top">Url di reindirizzamento personalizzato se uno dei filtri impostato in <code>rules.geo_tag</code> si verifica.</td>
+                    <td width="15%" valign="top"><code>URL</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">rules.device_tag</td>
+                    <td width="55%" valign="top">Array dei device che si possono impostare come filtro per reindirizzamento personalizzato.</td>
+                    <td width="15%" valign="top"><code>Array</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">rules.device_tag_url</td>
+                    <td width="55%" valign="top">Url di reindirizzamento personalizzato se uno dei filtri impostato in <code>rules.device_tag</code> si verifica.</td>
+                    <td width="15%" valign="top"><code>URL</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">seo</td>
+                    <td width="55%" valign="top">L'insime delle impostazioni SEO del link che si intende modificare.</td>
+                    <td width="15%" valign="top"><code>Object</code>/<code>Array</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">seo.seo_title</td>
+                    <td width="55%" valign="top">Impostare un meta titolo alla pagina di reindirizzamento, utile in caso di <a href="/docs/api/direct">direct</a>.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">seo.seo_description</td>
+                    <td width="55%" valign="top">Impostare una meta descrizione alla pagina di reindirizzamento, utile in caso di <a href="/docs/api/direct">direct</a>.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">created</td>
+                    <td width="55%" valign="top">Timestamp in secondi del momento in cui lo <code>short_url</code> è stato generato.</td>
+                    <td width="15%" valign="top"><code>Timestamp</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        Considerata la maggiore complessità dell'oggetto ottenuto nel body di questa risposta, riportiamo di seguito un esempio di come si presenterà.
+    </p>
+    <p>
+        <pre class="language-json">
+            <code>
+    {
+        "urls": [
+            "url": {
+                "id": "URL_ID",
+                "user_id": "USER_ID",
+                "application_id": "APPLICATION_ID",
+                "long_url": "THE_LONG_URL",
+                "domain_name": "THE_LONG_URL_DOMAIN_NAME",
+                "short_url": "THE_SHORT_URL",
+                "alias": "THE_SHORT_URL_ALIAS",
+                "favicon": "THE_LONG_URL_FAVICON_URL",
+                "properties": {
+                    "description": "Url description",
+                    "password": true, // Or false
+                    "expires": "1551095793" // Expiration timestamp in seconds
+                },
+                "rules": {
+                    "geo_tag": [
+                        "Italy",
+                        "France"
+                    ],
+                    "geo_tag_url": "https://www.google.it",
+                    "device_tag": [
+                        "smartphone",
+                        "tablet"
+                    ],
+                    "device_tag_url": "https://www.google.it"
+                },
+                "seo": {
+                    "seo_title": "Custom SEO title",
+                    "seo_description": "Custom SEO description"
+                },
+                "created": "1554205078" // Creation timestamp in seconds
+            },
+            {
+                // Same parameters as below
+            }
+        ]
+    }
+            </code>
+        </pre>
+    </p>
+</section>
+<section class="docs-section" id="section-7">
+    <h1>Next step</h1>
+    <p>
+        A questo punto abbiamo visto come richiamare le informazioni di tutti gli <b>short_url</b> di un utente. Vediamo adesso come procedere per ottenere 
+        le informazioni di tutti gli <b>short_url</b> che sono stati creati dall'untente ma <b>impaginati</b>, in modo da semplificare considerevolmente lo 
+        sviluppo di interfacce che mostrano i link generati.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/api/get-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Ottieni link</a>
+    <a href="/docs/api/paginate-links" class="butt main-button blue-button right">Impagina i link <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

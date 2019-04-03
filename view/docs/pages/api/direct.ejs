@@ -20,7 +20,7 @@
                 <tr>
                     <td width="25%" valign="top" class="code">POST</td>
                     <td width="25%" valign="top"><code>v1</code></td>
-                    <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/shorten</code></td>
+                    <td width="50%" valign="top"><code>https://api.hurrycane.it/v1/direct</code></td>
                 </tr>
             </tbody>
         </table>
@@ -88,7 +88,7 @@
     <h1>A Node.js request example</h1>
     <p>
         Nel nostro caso useremo una libreria di <code>Node.js</code> che si chiama <code>request-promise</code> per effettuare la corretta chiamata al server.
-        Dobbiamo semplicemente inviare una richesta <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code> rispettando i parametri seguenti:
+        Dobbiamo semplicemente inviare una richesta <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/direct</code> rispettando i parametri seguenti:
     </p>
     <pre class="language-javascript">
         <code>
@@ -101,7 +101,7 @@
 
     rp({
         method: 'POST',
-        uri: 'http://api.hurrycane.it/v1/shorten', // The endpoint
+        uri: 'http://api.hurrycane.it/v1/direct', // The endpoint
         headers: {
             'Token': 'TOKEN_ID_VALUE', // The value of the athorization token
             'Secretkey': 'SECRET_KEY_OF_YOUR_APPLICATION' // The secret key of the application
@@ -124,7 +124,7 @@
 <section class="docs-section" id="section-5">
     <h1>A PHP request example</h1>
     <p>
-        Possiamo utilizzare diverse librerie per effettuare la chiamata <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/shorten</code>, 
+        Possiamo utilizzare diverse librerie per effettuare la chiamata <code>POST</code> all'endpoint <code>https://api.hurrycane.it/v1/direct</code>,
         Di seguito un esempio utilizzando <code>PHP</code>:
     </p>
     <pre class="language-php">
@@ -138,7 +138,7 @@
     $ch = curl_init();
 
     // Set the URL that you want to GET by using the CURLOPT_URL option.
-    curl_setopt($ch, CURLOPT_URL, 'https://api.hurrycane.it/v1/shorten');
+    curl_setopt($ch, CURLOPT_URL, 'https://api.hurrycane.it/v1/direct');
 
     // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -219,10 +219,10 @@
         </table>
     </div>
     <p class="important-box">
-        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Questa modalità di creazione permette la generazione di alcune componenti, 
-        quali la <b>thumbnail</b>, la <b>favicon</b>, l'ottimizzazione automatica della <b>SEO</b>. Ciò comporta un maggior impiego di tempo per la generazione 
-        dello <b>short_link</b>. Per usufruire della creazione del link in modalità diretta, basterà comporre la stessa richiesta modificando l'endpoint, da:
-        <code>https://api.hurrycane.it/v1/shorten</code> a <code>https://api.hurrycane.it/v1/direct</code>. Come descritto <a href="/docs/api/direct">qui</a>.
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Questa modalità di creazione <b>non</b> permette la generazione di alcune componenti,
+        quali la <b>thumbnail</b>, la <b>favicon</b>, l'ottimizzazione automatica della <b>SEO</b>. Ciò comporta un considerevole abbassamento del tempo di risposta per la generazione
+        dello <b>short_link</b>. Per usufruire della creazione del link in modalità avanzata, basterà comporre la stessa richiesta modificando l'endpoint, da:
+        <code>https://api.hurrycane.it/v1/direct</code> a <code>https://api.hurrycane.it/v1/shorten</code>. Come descritto <a href="/docs/api/new-link">qui</a>.
     </p>
 </section>
 <section class="docs-section" id="section-7">
@@ -236,6 +236,6 @@
     </p>
 </section>
 <section class="docs-section" id="section-8">
-    <a href="/docs/api/token" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> API Token Endpoint</a>
-    <a href="/docs/api/direct" class="butt main-button blue-button right">Nuovo Direct link <i class="fal fa-long-arrow-right white-text"></i></a>
+    <a href="/docs/api/new-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Nuovo link</a>
+    <a href="/docs/api/update-link" class="butt main-button blue-button right">Modifica link <i class="fal fa-long-arrow-right white-text"></i></a>
 </section>
