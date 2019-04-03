@@ -1,0 +1,45 @@
+<section class="docs-title" id="section-0">
+    <h1>SDK</h1>
+    <sub>Last updated: April 3th, 2019</sub>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Get a new token</h1>
+    <p>
+        Dobbiamo adesso richiedere il <b>token</b> di autorizzazione per poter autenticare tutte le richieste future. per fare questo, facendo riferimento 
+        al settaggio descritto <a href="/docs/sdk/intro">qui</a>, procediamo come di seguito:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Require the library
+    const Hycn = require("./hycn/lib/index");
+
+    // Init the class with application id and secret
+    const hycn = new Hycn(YOUR_APPLICATION_ID, APPLICATION_SECRET_KEY);
+
+    // Request a new auth token
+    hycn.token("USER_EMAIL", "USER_PASSWORD", (err, token) => {
+        if(err) throw err;
+        const token = token.token;
+        /* Doing stuff with your brand new token */
+    });
+        </code>
+    </pre>
+    <p>
+        Potremmo adesso, ad esempio, salvare il <b>token</b> in una variabile di sessione o nel <code>localStorage</code> fino a scadenza, quando provvederemo 
+        a sostituirlo ripetendo la procedura appena descritta.
+    </p>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Per tutte le specifiche riguardo la corretta compilazione e l'oggetto 
+        che riceveremo in risposta si faccia riferimento alla documentazione <b>API</b> reperibile <a href="/docs/api/token">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Next step</h1>
+    <p>
+        Abbiamo visto come richiedere e ottenere un <b>token</b> di autorizzazione, andiamo adesso ad analizzare tutte le altre funzioni messe a disposizione.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/sdk/intro" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> SDK intro</a>
+    <a href="/docs/sdk/new-link" class="butt main-button blue-button right">SDK Nuovo link <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

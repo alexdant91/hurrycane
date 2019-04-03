@@ -256,6 +256,10 @@ module.exports = Hycn;
 //     console.log(token);
 // });
 
+// hycn.link.shorten('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXIiOiI1YzczMTMyMDZhZTI4YjcwNzZiOTBjZDgiLCJwbGFuIjoiUFJFTUlVTSIsImFwcCI6IjVjNzRlNjhjMTk4Njg5MTcwMzA1YTMzNCIsIm9yaWdpbiI6Imh0dHA6Ly9hcGkubG9jYWxob3N0In0sImlhdCI6MTU1Mzc2MzM0NiwiZXhwIjoxNTUzNzY2OTQ2fQ.aTqXWb6clQAE2rOhfLtc-pjLA9ad6WjkEyupRY0J51o', 'https://www.uplabs.com/posts/software-testing-illustration', (err, response) => {
+//     console.log(err, response);
+// });
+
 // hycn.link.direct('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXIiOiI1YzczMTMyMDZhZTI4YjcwNzZiOTBjZDgiLCJwbGFuIjoiUFJFTUlVTSIsImFwcCI6IjVjNzRlNjhjMTk4Njg5MTcwMzA1YTMzNCIsIm9yaWdpbiI6Imh0dHA6Ly9hcGkubG9jYWxob3N0In0sImlhdCI6MTU1Mzc2MzM0NiwiZXhwIjoxNTUzNzY2OTQ2fQ.aTqXWb6clQAE2rOhfLtc-pjLA9ad6WjkEyupRY0J51o', 'https://www.uplabs.com/posts/software-testing-illustration', (err, response) => {
 //     console.log(err, response);
 // });

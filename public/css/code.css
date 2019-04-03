@@ -1,5 +1,38 @@
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #2a3440;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important;
+    font-size: 1.05em;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre)>code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F8F9;
+}
+
 pre .highlighted-line {
-    background: rgba(99, 115, 131, .08)
+    background: #ECEFF1;
 }
 
 code .token {

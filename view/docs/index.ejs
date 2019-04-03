@@ -13,7 +13,8 @@
         <link rel="stylesheet" type="text/css" href="/css/layout.css" />
         <link rel="stylesheet" type="text/css" href="/css/docs.css" />
         <link rel="stylesheet" type="text/css" href="/css/fa-pro.min.css" />
-        <link rel="stylesheet" type="text/css" href="/css/prism.css" />
+        <!-- <link rel="stylesheet" type="text/css" href="/css/prism.css" /> -->
+        <link rel="stylesheet" type="text/css" href="/css/code.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
 
         <!-- <script type="text/javascript" src="/js/ads.js?v=1.0.2"></script> -->
@@ -53,32 +54,34 @@
         <script type="text/javascript" src="/js/index.js?v=1.0.2"></script>
         <script type="text/javascript" src="/js/prism.js"></script>
         <script>
-            $('.main-wrapper').css('height', $('.docs-content').outerHeight() + 52);
-            $(document).on('click', 'a[href^="#"]', function (event) {
-                event.preventDefault();
-                $('html, body').animate({
-                    scrollTop: $($.attr(this, 'href')).offset().top - 55
-                }, 500);
-            });
-
-            followScroll();
-
-            function followScroll() {
-                $('.docs-section').each((i, elem) => {
-                let anchor_offset_top = $(elem).offset().top - 60;
-                let anchor_offset_bottom = anchor_offset_top + $(elem).outerHeight();
-                if ($(window).scrollTop() > anchor_offset_top && $(window).scrollTop() < anchor_offset_bottom) { $('ol.sub-cap li a').removeClass('active'); $(`ol.sub-cap li a[href="#${$(elem).attr('id')}" ]`).addClass('active'); console.log($(elem).attr('id')); } });
-                $(window).on('scroll', function () {
-                    $('.docs-section').each((i, elem) => {
-                        let anchor_offset_top = $(elem).offset().top - 60;
-                        let anchor_offset_bottom = anchor_offset_top + $(elem).outerHeight();
-                        if ($(window).scrollTop() >= anchor_offset_top && $(window).scrollTop() < anchor_offset_bottom) {
-                            $('ol.sub-cap li a').removeClass('active');
-                            $(`ol.sub-cap li a[href="#${$(elem).attr('id')}"]`).addClass('active');
-                        }
-                    });
+            $(document).ready(function() {
+                $('.main-wrapper').css('height', $('.docs-content').outerHeight());
+                $(document).on('click', 'a[href^="#"]', function (event) {
+                    event.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: $($.attr(this, 'href')).offset().top - 55
+                    }, 500);
                 });
-            }
+
+                followScroll();
+
+                function followScroll() {
+                    $('.docs-section').each((i, elem) => {
+                    let anchor_offset_top = $(elem).offset().top - 60;
+                    let anchor_offset_bottom = anchor_offset_top + $(elem).outerHeight();
+                    if ($(window).scrollTop() > anchor_offset_top && $(window).scrollTop() < anchor_offset_bottom) { $('ol.sub-cap li a').removeClass('active'); $(`ol.sub-cap li a[href="#${$(elem).attr('id')}" ]`).addClass('active'); console.log($(elem).attr('id')); } });
+                    $(window).on('scroll', function () {
+                        $('.docs-section').each((i, elem) => {
+                            let anchor_offset_top = $(elem).offset().top - 60;
+                            let anchor_offset_bottom = anchor_offset_top + $(elem).outerHeight();
+                            if ($(window).scrollTop() >= anchor_offset_top && $(window).scrollTop() < anchor_offset_bottom) {
+                                $('ol.sub-cap li a').removeClass('active');
+                                $(`ol.sub-cap li a[href="#${$(elem).attr('id')}"]`).addClass('active');
+                            }
+                        });
+                    });
+                }
+            });
         </script>
         <!-- <script type="text/javascript" src="/js/ads.js"></script>
         <script>

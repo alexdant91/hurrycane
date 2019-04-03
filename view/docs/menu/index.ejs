@@ -161,27 +161,28 @@
             <? } ?>
         </ol>
     </li>
-    <li><a>SDK</a></li>
+    <li><a class="<? if(dir == 'sdk') {?>bold<?} ?>">SDK</a></li>
     <li>
         <ol>
-            <li><a href="/docs/sdk/intro">Get started</a></li>
-            <li><a href="/docs/sdk/token">Token</a></li>
-            <li><a href="/docs/sdk/new-link">New Link</a></li>
-            <li><a href="/docs/sdk/update-link">Update Link</a></li>
-            <li><a href="/docs/sdk/delete-link">Delete Link</a></li>
-            <li><a href="/docs/sdk/get-link">Get Link</a></li>
-            <li><a href="/docs/sdk/all-links">All Links</a></li>
-            <li><a href="/docs/sdk/paginate-links">Paginate Links</a></li>
+            <li><a class="<? if(page == 'intro' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/intro">Get started</a></li>
+            <li><a class="<? if(page == 'token' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/token">Token</a></li>
+            <li><a class="<? if(page == 'new-link' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/new-link">New Link</a></li>
+            <li><a class="<? if(page == 'direct' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/direct">Direct</a></li>
+            <li><a class="<? if(page == 'update-link' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/update-link">Update Link</a></li>
+            <li><a class="<? if(page == 'delete-link' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/delete-link">Delete Link</a></li>
+            <li><a class="<? if(page == 'get-link' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/get-link">Get Link</a></li>
+            <li><a class="<? if(page == 'all-links' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/all-links">All Links</a></li>
+            <li><a class="<? if(page == 'paginate-links' && dir == 'sdk') {?>active<?} ?>" href="/docs/sdk/paginate-links">Paginate Links</a></li>
         </ol>
     </li>
-    <li><a>Webhooks</a></li>
+    <li><a class="<? if(dir == 'webhooks') {?>bold<?} ?>">Webhooks</a></li>
     <li>
         <ol>
-            <li><a href="/docs/webhooks/intro">Get started</a></li>
-            <li><a href="/docs/webhooks/events">Events</a></li>
-            <li><a href="/docs/webhooks/new-endpoint">New endpoint</a></li>
-            <li><a href="/docs/webhooks/update-endpoint">Update endpoint</a></li>
-            <li><a href="/docs/webhooks/delete-endpoint">Delete endpoint</a></li>
+            <li><a class="<? if(page == 'intro' && dir == 'webhooks') {?>active<?} ?>" href="/docs/webhooks/intro">Get started</a></li>
+            <li><a class="<? if(page == 'events' && dir == 'webhooks') {?>active<?} ?>" href="/docs/webhooks/events">Events</a></li>
+            <li><a class="<? if(page == 'new-endpoint' && dir == 'webhooks') {?>active<?} ?>" href="/docs/webhooks/new-endpoint">New endpoint</a></li>
+            <li><a class="<? if(page == 'update-endpoint' && dir == 'webhooks') {?>active<?} ?>" href="/docs/webhooks/update-endpoint">Update endpoint</a></li>
+            <li><a class="<? if(page == 'delete-endpoint' && dir == 'webhooks') {?>active<?} ?>" href="/docs/webhooks/delete-endpoint">Delete endpoint</a></li>
         </ol>
     </li>
 </ol>

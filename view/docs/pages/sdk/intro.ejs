@@ -1,0 +1,64 @@
+<section class="docs-title" id="section-0">
+    <h1>SDK</h1>
+    <sub>Last updated: April 3th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Introduction</h1>
+    <p>
+        Per semplificare l'accesso alle nostre APIs abbiamo deciso di sviluppare le nostre <b>SDK</b>, al momento disponibili solo per Node.js. Si tratta di
+        una serie di funzioni di facile utilizzo che permettono di velocizzare il processo di integrazione e di essere sempre aggiornati.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Get started</h1>
+    <p>
+        Prima di tutto dobbiamo scaricare la libreria <b>SDK</b> e lo faremo direttamente dalla sua repositiry di GitHub:<br>
+    </p>
+    <p class="text-center">
+        <a class="butt main-button blue-button" href="https://github.com/alexdant91/hycn/releases/latest" target="_blank"><i class="fal fa-download white-text"></i> Download SDK</a>
+    </p>
+    <p>
+        Una volta fatto possiamo scompattare il file <b>.zip</b> possiamo copiare la cartella <b>hycn</b> dove preferiamo, all'interno del nostro progetto. 
+        Supponendo di avere una struttura di questo tipo:
+    </p>
+    <pre class="language-html">
+        <code>
+    my-project
+    |-- hycn
+    |   |-- lib
+    |   |   `-- index.js
+    |   |-- .gitignore
+    |   |-- .npmignore
+    |   |-- package.json
+    |   `-- README.md
+    |-- node_modules
+    |-- models
+    |-- package.json
+    `-- app.js
+        </code>
+    </pre>
+    <p>
+        Nel nostro file <b>app.js</b> andremo ad inportare la nostra libreria <b>SDK</b> per poterla utilizzare. Procediamo in questo modo:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Require the library
+    const Hycn = require("./hycn/lib/index");
+
+    // Init the class with application id and secret
+    const hycn = new Hycn(YOUR_APPLICATION_ID, APPLICATION_SECRET_KEY);
+
+    /* Use hycn for doing stuff... */
+        </code>
+    </pre>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Next step</h1>
+    <p>
+        Abbiamo visto come installare e inportare la libreria <b>SDK</b>, andiamo adesso ad analizzare tutte le funzioni messe a disposizione.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/api/paginate-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> API Impaginazione link</a>
+    <a href="/docs/sdk/token" class="butt main-button blue-button right">SDK Richiedi token <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

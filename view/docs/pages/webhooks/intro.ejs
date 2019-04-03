@@ -1,0 +1,37 @@
+<section class="docs-title" id="section-0">
+    <h1>Webhooks</h1>
+    <sub>Last updated: April 3th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Introduction</h1>
+    <p>
+        Mettiamo a disposizione di tutti gli sviluppatori un sistema di <b>webhooks</b> completo che invia ad ogni <b>endpoint</b> registrato nell'applicazione 
+        un body contenente un oggetto <b>JSON</b> con tutte le informazioni riguardanti un particolare evento che si è appena verificato.
+    </p>
+</section>
+<section class="docs-section" id="section-2">
+    <h1>Webhooks system</h1>
+    <p>
+        Ogni volta che un particolare evento si verifca, il sistema invia in automatico un oggetto <b>JSON</b>, in una richesta <code>POST</code> con tutte 
+        le informazioni inerenti quell'evento. Ciò permette di tenere traccia degli avvenimenti e di verificare l'effettivo completamento di un'operazione.
+    </p>
+    <p>
+        La richiesta <code>POST</code> viene inviata ad un particolare <b>endpoint</b>, registrato direttamente dal pannello di controllo dell'applicazione, 
+        dove, di norma, sarà presente un codice in grado processare e registrare l'oggetto <b>JSON</b> appena ricevuto. Vai <a href="/docs/webhooks/new-endpoint">qui</a> 
+        per scoprire come registrare un nuovo <b>endpoint</b>.
+    </p>
+    <p>
+        È ovviamente possibile decidere quale evento registrare. La lista completa, compresa di descrizione, di tutti gli eventi al momento disponibili la 
+        trovi <a href="/docs/webhooks/events">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Next step</h1>
+    <p>
+        Vediamo adesso la lista completa di tutti gli eventi disponibili al momento.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/sdk/paginate-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> SDK Impaginazione link</a>
+    <a href="/docs/webhooks/events" class="butt main-button blue-button right">Tutti gli eventi <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

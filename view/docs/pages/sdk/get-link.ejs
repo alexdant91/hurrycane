@@ -1,0 +1,40 @@
+<section class="docs-title" id="section-0">
+    <h1>SDK</h1>
+    <sub>Last updated: April 3th, 2019</sub>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Retrieve a short url</h1>
+    <p>
+        Vediamo come richiamare uno <b>short_url</b>. Per fare questo, facendo riferimento al settaggio descritto
+        <a href="/docs/sdk/intro">qui</a>, procediamo come di seguito:
+    </p>
+    <pre class="language-javascript">
+        <code>
+    // Require the library
+    const Hycn = require("./hycn/lib/index");
+
+    // Init the class with application id and secret
+    const hycn = new Hycn(YOUR_APPLICATION_ID, APPLICATION_SECRET_KEY);
+
+    // Delete your url
+    hycn.link.retrieve("AUTH_TOKEN_ID", "YOUR_URL_ID", (err, response) => {
+        if(err) throw err;
+        /* Doing stuff with your response */
+    });
+        </code>
+    </pre>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – Per tutte le specifiche riguardo la corretta compilazione e l'oggetto
+        che riceveremo in risposta si faccia riferimento alla documentazione <b>API</b> reperibile <a href="/docs/api/get-link">qui</a>.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Next step</h1>
+    <p>
+        Abbiamo visto come richiamare uno <b>short_url</b>, procediamo nell'analizzare tutte le altre funzioni messe a disposizione.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/sdk/delete-link" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> SDK Elimina link</a>
+    <a href="/docs/sdk/all-links" class="butt main-button blue-button right">SDK Tutti i link <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

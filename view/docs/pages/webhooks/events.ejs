@@ -1,0 +1,67 @@
+<section class="docs-title" id="section-0">
+    <h1>Webhooks</h1>
+    <sub>Last updated: April 3th, 2019</sub>
+</section>
+<section class="docs-section" id="section-1">
+    <h1>Events</h1>
+    <p>
+        Tutti gli eventi al momento disponibili per le webhooks sono elencati di seguito:
+    </p>
+    <div class="table-wrapper">
+        <table class="table bordered">
+            <thead>
+                <tr>
+                    <td>Evento</td>
+                    <td>Descrizione</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td width="25%" valign="top" class="code">auth_token</td>
+                    <td width="75%" valign="top">
+                        Si verifica ogni volta che il sistema riceve una richiesta per un nuovo token di autorizzazione. Per ragioni legate alla sicurezza, 
+                        registra sia gli eventi andati a buon fine che gli errori.
+                    </td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_created</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di creazione di un nuovo <b>short_url</b> va a buon fine</td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_updated</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di modifica di uno <b>short_url</b> va a buon fine</td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_deleted</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di eliminazione di uno <b>short_url</b> va a buon fine</td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_retrieve</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di ottenimento di uno <b>short_url</b> va a buon fine</td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_list</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di ottenimento di tutti gli <b>short_url</b> dell'utente va a buon fine</td>
+                </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">link_paginate</td>
+                    <td width="75%" valign="top">Si verifica ogni volta che una richiesta di ottenimento e impaginazione di tutti gli <b>short_url</b> dell'utente va a buon fine</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="important-box">
+        <i class="fal fa-lightbulb-on"></i> <b class="important-title">Importante</b> – È possibile selezionare o escludere a piacimento ogni singolo evento disponibile, direttamente dal pannello di controllo, nella sezione
+        <b>My Application</b>, box <b>Set Webhook's endpoints</b> selezionando un endpoint esistente o creandone uno.
+    </p>
+</section>
+<section class="docs-section" id="section-3">
+    <h1>Next step</h1>
+    <p>
+        Vediamo adesso come creare un nuovo <b>endpoint</b> di webhooks direttamente dal pannello di controllo della nostra applicazione.
+    </p>
+</section>
+<section class="docs-section" id="section-8">
+    <a href="/docs/webhooks/intro" class="butt main-button blue-button left"><i class="fal fa-long-arrow-left white-text"></i> Webhooks intro</a>
+    <a href="/docs/webhooks/new-endpoint" class="butt main-button blue-button right">Nuovo endpoint <i class="fal fa-long-arrow-right white-text"></i></a>
+</section>

@@ -18,6 +18,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    margin-top: 62px;
 }
 
 .docs-title {
@@ -81,7 +82,7 @@ body {
     color: rgb(108, 197, 108) !important;
 }
 
-.docs-section p a:hover {
+.docs-section p a:not(.butt):hover {
     text-decoration: underline;
 }
 
@@ -179,9 +180,11 @@ code {
 }
 
 .docs-content {
-    padding-top: 62px;
+    height: auto;
     min-height: 100vh;
-    padding-bottom: 65px;
+    /* padding-top: 62px; */
+    padding-top: 20px;
+    padding-bottom: 74px;
 }
 
 .docs-content table {
