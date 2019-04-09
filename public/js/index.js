@@ -108,3 +108,27 @@ $(document).on('click touchend', '.menu-overflow', function () {
     $('.menu-top').hasClass('open') ? $('.menu-top').toggleClass('open') : false;
     $('.menu-overflow').fadeToggle();
 });
+
+$(document).find('img.lazy-load').each(function (i, elem) {
+    let lazy = $(this);
+    let src = lazy.attr('data-src');
+    let name = ('lazy-' + Math.random()).toString().replace(".", "");
+    let $name = '#' + name;
+    $('body').append('<img id="' + name + '" src="' + src + '" />');
+    $('body').find($name).on('load', function () {
+        lazy.attr('src', src);
+        $(this).remove();
+    });
+});
+
+$(document).find('div.lazy-load').each(function (i, elem) {
+    let lazy = $(this);
+    let src = lazy.attr('data-src');
+    let name = ('lazy-' + Math.random()).toString().replace(".", "");
+    let $name = '#' + name;
+    $('body').append('<img id="' + name + '" src="' + src + '" />');
+    $('body').find($name).on('load', function () {
+        lazy.css('background-image', 'url("' + src + '")');
+        $(this).remove();
+    });
+});

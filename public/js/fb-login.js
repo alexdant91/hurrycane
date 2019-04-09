@@ -1,5 +1,5 @@
 const loaderHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
-const loaderHTMLTop = `<div class="lds-ellipsis" style="top: -20px !important;"><div></div><div></div><div></div><div></div></div>`;
+const loaderHTMLTop = `<div class="lds-ellipsis" style="top: -18px !important;"><div></div><div></div><div></div><div></div></div>`;
 window.fbAsyncInit = function () {
     FB.init({
         appId: '2207619446232939',
@@ -23,9 +23,9 @@ window.fbAsyncInit = function () {
 // successful.  See statusChangeCallback() for when this call is made.
 function GetFbUserObject() {
     FB.login(function (response) {
-        const $button = $(this).find('button[type="submit"]');
+        const $button = $('body').find('.fb-share-button');
         const actualHTML = $button.html();
-        $button.html(loaderHTML);
+        $button.html(loaderHTMLTop);
         if (response.authResponse) {
             FB.api('/me?fields=id,name,first_name,last_name,email,picture.height(960)', function (response) {
                 $.ajax({
