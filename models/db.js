@@ -55,6 +55,10 @@ const urlSchema = Schema({
         required: false,
         default: null
     },
+    sub_user_id: {
+        type: String,
+        default: null
+    },
     alias: {
         type: String,
         required: true
@@ -102,6 +106,10 @@ const walletSchema = Schema({
         type: String,
         default: null
     },
+    sub_user_id: {
+        type: String,
+        default: null
+    },
     description: String,
     url_id: String,
     amount: Number,
@@ -117,6 +125,10 @@ const payoutSchema = Schema({
         required: true
     },
     application_id: {
+        type: String,
+        default: null
+    },
+    sub_user_id: {
         type: String,
         default: null
     },

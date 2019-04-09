@@ -35,6 +35,9 @@ router.use(localLanguage({
 
 // Shorten link alias retrive logic
 router.get('/:alias', (req, res) => {
+    // If the path is on the main host, redirect the user on the main host
+    if (['/', '/how-it-works', '/docs', '/login', '/register'].indexOf(req.path) !== -1) res.redirect(`${config.host}${req.path}`);
+    // Alias logic
     const alias = req.params.alias != undefined && req.params.alias != null && req.params.alias != '' ? req.params.alias : false;
     const referer = req.headers.referer != '' && req.headers.referer != null && req.headers.referer != undefined ? req.headers.referer.split('/')[2] : 'unknown';
     const accepted = req.headers['accept-language'] != null && req.headers['accept-language'] != undefined ? req.headers['accept-language'].split(';')[0] : undefined;
@@ -137,6 +140,7 @@ router.get('/s/auth/verify/:alias', (req, res) => {
                         if (password != null) {
                             res.render('alias', {
                                 translation: req.translation,
+                                session: false,
                                 page: 'alias',
                                 env: process.env.NODE_ENV,
                                 alias: alias,

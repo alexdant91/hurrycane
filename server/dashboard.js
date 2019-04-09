@@ -876,7 +876,7 @@ router.get('/wallet/payout', (req, res) => {
                 db.User.find({
                     _id: user_id
                 }, (err, user) => {
-                    console.log(user);
+                    // console.log(user);
                     res.render('./dashboard/payout-new.ejs', {
                         theme: {
                             inverse: config.dashboard.theme.inverse
@@ -1329,7 +1329,6 @@ router.get('/api/details/:id', (req, res) => {
             _id: application_id
         }).then(response => {
             if (response.length > 0) {
-                // res.json(response);
                 db.Plan.find({
                     name: req.session.user.subscription
                 }, (err, docs) => {

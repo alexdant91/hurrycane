@@ -80,9 +80,18 @@
                     <td width="50%" valign="top">Il link che si intende accorciare compreso di protocollo <b>http</b> o <b>https</b>.</td>
                     <td width="25%" valign="top"><code>https://www.example.com/my/long/url</code></td>
                 </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">sub_user_id</td>
+                    <td width="50%" valign="top">Id univoco corrispondente all'utente registrato sul vostro <b>db</b> al quale assegnare l'URL che si sta creando.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
+                </tr>
             </tbody>
         </table>
     </div>
+    <p>
+        L'assegnazione di un <code>sub_user_id</code> univoco permette di creare un programma di partnership. Sarà possibile richiamare i link in base al
+        <code>sub_user_id</code> per permettere ai vostri utenti di gestire i propri URLs.
+    </p>
 </section>
 <section class="docs-section" id="section-4">
     <h1>A Node.js request example</h1>

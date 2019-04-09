@@ -497,9 +497,9 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
         } else {
             // Now the auth it's ok, let's create the short link
             // Here the basic features
-            console.log(req.body);
             const long_url = req.body.long_url != '' && req.body.long_url != undefined ? req.body.long_url : false && isUrl(req.body.long_url); // Required
-            const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, 9);
+            const sub_user_id = req.body.sub_user_id != '' && req.body.sub_user_id != undefined ? req.body.sub_user_id : null;
+            const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, config.alias.defaultLength);
             const description = req.body.description != '' && req.body.description != undefined && req.body.description != null ? req.body.description : null;
             const password = req.body.password != '' && req.body.password != undefined && req.body.password != null ? bcrypt.hashSync(req.body.password) : null;
             const expiration_time = req.body.expiration_time != '' && req.body.expiration_time != undefined && req.body.expiration_time != null ? Math.round((new Date(req.body.expiration_time).getTime()) / 1000) : null;
@@ -551,9 +551,10 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                             if (err) throw err;
                                             if (count < url_limit || url_limit == 0) {
                                                 if (long_url) {
-                                                    db.Url.find({
-                                                        alias: alias
-                                                    }, (err, docs) => {
+                                                    let filters = {};
+                                                    if (alias != null) filters.alias = alias;
+                                                    if (sub_user_id != null) filters.sub_user_id = sub_user_id;
+                                                    db.Url.find(filters, (err, docs) => {
                                                         if (err) {
                                                             res.status(500).json({
                                                                 'Error': 'Internal server error.'
@@ -582,6 +583,7 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                                                     }
                                                                                     db.Url({
                                                                                         long_url,
+                                                                                        sub_user_id,
                                                                                         domain_name,
                                                                                         user_id,
                                                                                         application_id,
@@ -690,6 +692,7 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                                                                     'id': urls._id,
                                                                                                     'short_url': `${config.short_host}/${alias}`,
                                                                                                     'alias': urls.alias,
+                                                                                                    'sub_user_id': sub_user_id
                                                                                                 }
                                                                                             });
                                                                                         }
@@ -701,7 +704,7 @@ router.post(['/shorten', `/${config.api.version}/shorten`], (req, res) => {
                                                                 });
                                                             } else {
                                                                 res.status(500).json({
-                                                                    'Error': 'Alias not avaiable.'
+                                                                    'Error': 'Alias or sub_user_id not avaiable.'
                                                                 });
                                                             }
                                                         }
@@ -769,7 +772,8 @@ router.post(['/shorten/direct', `/${config.api.version}/shorten/direct`], (req, 
         } else {
             // Here the basic features
             const long_url = req.body.long_url != '' && req.body.long_url != undefined ? req.body.long_url : false; // Required
-            const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, 9);
+            const sub_user_id = req.body.sub_user_id != '' && req.body.sub_user_id != undefined ? req.body.sub_user_id : null;
+            const alias = req.body.alias != '' && req.body.alias != undefined && req.body.alias != null ? req.body.alias.replace(/\s/g, '-') : uuid().replace("-", "").substring(0, config.alias.defaultLength);
             const description = req.body.description != '' && req.body.description != undefined && req.body.description != null ? req.body.description : null;
             const password = req.body.password != '' && req.body.password != undefined && req.body.password != null ? bcrypt.hashSync(req.body.password) : null;
             const expiration_time = req.body.expiration_time != '' && req.body.expiration_time != undefined && req.body.expiration_time != null ? Math.round((new Date(req.body.expiration_time).getTime()) / 1000) : null;
@@ -797,109 +801,125 @@ router.post(['/shorten/direct', `/${config.api.version}/shorten/direct`], (req, 
             const application_id = authData.user.app != '' && authData.user.app != null && authData.user.app != undefined ? authData.user.app : false;
 
             if (user_id && long_url && application_id) {
+                let filters = {};
+                if (alias != null) filters.alias = alias;
+                if (sub_user_id != null) filters.sub_user_id = sub_user_id;
+                db.Url.find(filters).then(docs => {
+                    if (docs.length == 0) {
+                        db.Url({
+                            long_url,
+                            sub_user_id,
+                            domain_name,
+                            application_id,
+                            user_id,
+                            alias,
+                            description,
+                            password,
+                            expiration_time,
+                            timestamp,
+                            device_select,
+                            devicetag_url,
+                            page_screenshot,
+                            page_seotags,
+                            geo_select,
+                            geotag_url,
+                            seo_title,
+                            seo_description
+                        }).save((err, urls) => {
+                            if (err) {
+                                res.status(500).json({
+                                    'Error': 'Error while data saving.'
+                                });
+                            } else {
+                                db.ApplicationEvent({
+                                    user_id: user_id,
+                                    application_id: application_id,
+                                    param: {
+                                        url_id: urls._id,
+                                    },
+                                    event_description: 'Create a new short link.',
+                                    event_method: 'POST',
+                                    event_request: `/${config.api.version}/shorten/direct`,
+                                    event_response: '200 OK',
+                                    request_origin: origin
+                                }).save((err, doc) => { });
+                                // Link created so find webhooks events if isset
+                                db.Webhook.find({
+                                    application_id: application_id,
+                                    user_id: user_id
+                                }, (err, webhook) => {
+                                    if (webhook.length > 0) {
+                                        // Isset webhook so check if the event is registered
+                                        const events = webhook[0].events;
+                                        if (events.indexOf('link_created') !== -1) {
+                                            // Send webhook async mode
+                                            const uri = webhook[0].endpoint;
+                                            rp({
+                                                method: 'POST',
+                                                uri: uri,
+                                                body: {
+                                                    data: {
+                                                        user_id: user_id,
+                                                        application_id: application_id,
+                                                        long_url: long_url,
+                                                        short_url: `${config.short_host}/${alias}`,
+                                                        api_version: config.api.version,
+                                                        event: 'link_created',
+                                                        status: 'success',
+                                                        created: Math.round(Date.now() / 1000)
+                                                    },
+                                                    signature: webhook[0].webhook_self_signature
+                                                },
+                                                json: true
+                                            }).then((parsedBody) => {
+                                                // POST succeeded so register the event
+                                                db.WebhookEvent({
+                                                    url_id: urls._id,
+                                                    user_id: user_id,
+                                                    webhook_id: webhook[0]._id,
+                                                    application_id: application_id,
+                                                    endpoint: `/${config.api.version}/shorten`,
+                                                    request_response: '200 OK',
+                                                    request_method: 'POST',
+                                                    api_version: config.api.version,
+                                                    event_type: 'link_created',
+                                                    creation_time: Math.round(Date.now() / 1000)
+                                                }).save(err => {
+                                                    if (err) console.log(err);
+                                                });
+                                            }).catch((err) => {
+                                                // POST failed...
+                                                console.log('Failed webhook request')
+                                                console.log(err);
+                                            });
 
-                db.Url({
-                    long_url,
-                    domain_name,
-                    application_id,
-                    user_id,
-                    alias,
-                    description,
-                    password,
-                    expiration_time,
-                    timestamp,
-                    device_select,
-                    devicetag_url,
-                    page_screenshot,
-                    page_seotags,
-                    geo_select,
-                    geotag_url,
-                    seo_title,
-                    seo_description
-                }).save((err, urls) => {
-                    if (err) {
-                        res.status(500).json({
-                            'Error': 'Error while data saving.'
+                                        }
+                                    }
+                                });
+
+                                // Send response
+                                // Send webhook event async
+                                // Registering events async
+                                res.status(200).json({
+                                    'Status': 'success',
+                                    'url': {
+                                        'id': urls._id,
+                                        'short_url': `${config.short_host}/${alias}`,
+                                        'alias': urls.alias,
+                                        'sub_user_id': sub_user_id
+                                    }
+                                });
+                            }
                         });
                     } else {
-                        db.ApplicationEvent({
-                            user_id: user_id,
-                            application_id: application_id,
-                            param: {
-                                url_id: urls._id,
-                            },
-                            event_description: 'Create a new short link.',
-                            event_method: 'POST',
-                            event_request: `/${config.api.version}/shorten/direct`,
-                            event_response: '200 OK',
-                            request_origin: origin
-                        }).save((err, doc) => {});
-                        // Link created so find webhooks events if isset
-                        db.Webhook.find({
-                            application_id: application_id,
-                            user_id: user_id
-                        }, (err, webhook) => {
-                            if (webhook.length > 0) {
-                                // Isset webhook so check if the event is registered
-                                const events = webhook[0].events;
-                                if (events.indexOf('link_created') !== -1) {
-                                    // Send webhook async mode
-                                    const uri = webhook[0].endpoint;
-                                    rp({
-                                        method: 'POST',
-                                        uri: uri,
-                                        body: {
-                                            data: {
-                                                user_id: user_id,
-                                                application_id: application_id,
-                                                long_url: long_url,
-                                                short_url: `${config.short_host}/${alias}`,
-                                                api_version: config.api.version,
-                                                event: 'link_created',
-                                                status: 'success',
-                                                created: Math.round(Date.now() / 1000)
-                                            },
-                                            signature: webhook[0].webhook_self_signature
-                                        },
-                                        json: true
-                                    }).then((parsedBody) => {
-                                        // POST succeeded so register the event
-                                        db.WebhookEvent({
-                                            url_id: urls._id,
-                                            user_id: user_id,
-                                            webhook_id: webhook[0]._id,
-                                            application_id: application_id,
-                                            endpoint: `/${config.api.version}/shorten`,
-                                            request_response: '200 OK',
-                                            request_method: 'POST',
-                                            api_version: config.api.version,
-                                            event_type: 'link_created',
-                                            creation_time: Math.round(Date.now() / 1000)
-                                        }).save(err => {
-                                            if (err) console.log(err);
-                                        });
-                                    }).catch((err) => {
-                                        // POST failed...
-                                        console.log('Failed webhook request')
-                                        console.log(err);
-                                    });
-
-                                }
-                            }
-                        });
-
-                        // Send response
-                        // Send webhook event async
-                        // Registering events async
-                        res.status(200).json({
-                            'Status': 'success',
-                            'url': {
-                                'id': urls._id,
-                                'short_url': `${config.short_host}/${alias}`,
-                                'alias': urls.alias,
-                            }
+                        res.status(500).json({
+                            'Error': 'Alias or sub_user_id not avaiable.'
                         });
                     }
+                }).catch(err => {
+                    res.status(500).json({
+                        'Error': 'Internal server error.'
+                    });
                 });
             } else {
                 res.status(500).json({
@@ -1654,6 +1674,7 @@ router.get(['/link/paginate', `/${config.api.version}/link/paginate`], (req, res
         } else {
             const page = req.query.page != '' && req.query.page != null && req.query.page != undefined ? req.query.page : 1;
             const limit = req.query.limit != '' && req.query.limit != null && req.query.limit != undefined ? req.query.limit : 18;
+            const sub_user_id = req.query.sub_user_id != '' && req.query.sub_user_id != null && req.query.sub_user_id != undefined ? req.query.sub_user_id : null;
             const user_id = authData.user.user != undefined && authData.user.user != null ? authData.user.user : null;
             const application_id = authData.user.app;
 
@@ -1672,9 +1693,10 @@ router.get(['/link/paginate', `/${config.api.version}/link/paginate`], (req, res
                             if (application[0].production) {
                                 const allowed_origins = application[0].allowed_origins;
                                 if (allowed_origins.indexOf(origin) !== -1 || origin == config.host) {
-                                    db.Url.paginate({
-                                        user_id: user_id
-                                    }, {
+                                    let filter = {};
+                                    if (user_id != null) filter.user_id = user_id;
+                                    if (sub_user_id != null) filter.sub_user_id = sub_user_id;
+                                    db.Url.paginate(filter, {
                                         page: Number(page),
                                         limit: Number(limit),
                                         sort: {
@@ -1689,6 +1711,7 @@ router.get(['/link/paginate', `/${config.api.version}/link/paginate`], (req, res
                                                 url.push({
                                                     id: item._id,
                                                     user_id: item.user_id,
+                                                    sub_user_id: item.sub_user_id,
                                                     application_id: item.application_id,
                                                     long_url: item.long_url,
                                                     domain_name: item.domain_name,

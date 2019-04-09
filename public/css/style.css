@@ -1220,7 +1220,7 @@ h1.url-title {
 }
 
 .inputGroup label {
-    padding: 25px 30px;
+    padding: 25px 75px 25px 30px;
     width: 100%;
     display: block;
     text-align: left;

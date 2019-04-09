@@ -19,7 +19,8 @@
     // Delete your url
     hycn.link.paginate("AUTH_TOKEN_ID", {
         page: 1, // Not required, default set to 1
-        limit: 18 // Not required, default set to 18
+        limit: 18, // Not required, default set to 18
+        sub_user_id: "YOUR_SUB_USER_ID" // If isset, specify your sub_user_id assigned during URL creation process
     }, (err, response) => {
         if(err) throw err;
         /* Doing stuff with your response */

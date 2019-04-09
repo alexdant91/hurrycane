@@ -85,6 +85,11 @@
                     <td width="50%" valign="top">Numero di <code>short_url</code> per pagina che si vogliono visualizzare.</td>
                     <td width="25%" valign="top"><code>Number</code></td>
                 </tr>
+                <tr>
+                    <td width="25%" valign="top" class="code">sub_user_id</td>
+                    <td width="50%" valign="top">Id univoco corrispondente all'utente registrato sul vostro <b>db</b> al quale assegnare l'URL che si sta creando.</td>
+                    <td width="25%" valign="top"><code>String</code></td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -111,7 +116,7 @@
 
     rp({
         method: "GET",
-        uri: "http://api.hurrycane.it/v1/link/paginate?page=PAGE_NUMBER&limit=LIMIT_PER_PAGE", // The endpoint
+        uri: "http://api.hurrycane.it/v1/link/paginate?page=PAGE_NUMBER&limit=LIMIT_PER_PAGE&sub_user_id=YOUR_SUB_USER_ID", // The endpoint
         headers: {
             "Token": "TOKEN_ID_VALUE", // The value of the athorization token
             "Secretkey": "SECRET_KEY_OF_YOUR_APPLICATION" // The secret key of the application
@@ -140,7 +145,7 @@
     $ch = curl_init();
 
     // Set the URL that you want to GET by using the CURLOPT_URL option.
-    curl_setopt($ch, CURLOPT_URL, "https://api.hurrycane.it/v1/link/paginate?page=PAGE_NUMBER&limit=LIMIT_PER_PAGE");
+    curl_setopt($ch, CURLOPT_URL, "https://api.hurrycane.it/v1/link/paginate?page=PAGE_NUMBER&limit=LIMIT_PER_PAGE&sub_user_id=YOUR_SUB_USER_ID");
 
     // Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -196,6 +201,11 @@
                 <tr>
                     <td width="30%" valign="top" class="code">urls[0].user_id</td>
                     <td width="55%" valign="top">Id utente del proprietario del link.</td>
+                    <td width="15%" valign="top"><code>String</code></td>
+                </tr>
+                <tr>
+                    <td width="30%" valign="top" class="code">urls[0].sub_user_id</td>
+                    <td width="55%" valign="top">Id sub utente del link, se presente.</td>
                     <td width="15%" valign="top"><code>String</code></td>
                 </tr>
                 <tr>
@@ -347,6 +357,7 @@
             "url": {
                 "id": "URL_ID",
                 "user_id": "USER_ID",
+                "sub_user_id": "SUB_USER_ID",
                 "application_id": "APPLICATION_ID",
                 "long_url": "THE_LONG_URL",
                 "domain_name": "THE_LONG_URL_DOMAIN_NAME",

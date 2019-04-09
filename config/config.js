@@ -5,8 +5,8 @@ class Config {
             active: false
         }
         this.NODE_ENV = process.env.NODE_ENV || 'staging';
-        this.port = 80;
-        this.host = process.env.NODE_ENV == 'staging' ? 'http://localhost' : 'https://hurrycane.it';
+        this.port = process.env.NGINX_ENV === 'true' ? 8010 : 80;
+        this.host = process.env.NODE_ENV === 'staging' ? 'http://localhost' : 'https://hurrycane.it';
         this.short_host = process.env.NODE_ENV == 'staging' ? 'http://hycn.localhost' : 'https://hycn.it';
         this.cluster = process.env.CLUSTER_ENV || false;
         this.sessionSecretKey = 'sessionsecretkey';
@@ -34,6 +34,9 @@ class Config {
             theme: {
                 inverse: 'inverse'
             }
+        }
+        this.alias = {
+            defaultLength: 9
         }
     }
 

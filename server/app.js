@@ -112,6 +112,8 @@ module.exports.init = function init() {
     app.use(vhost('hycn', hycn));
     // End api subdomain
 
+    // app.set('trust proxy', true);
+
     // Get device informations
     app.use(device.capture());
 
@@ -170,17 +172,22 @@ module.exports.init = function init() {
         genid: (req) => {
             return uuid() // use UUIDs for session IDs
         },
-        // Store il localhost
+        // Store in localhost
         // store: new MongoStore({
         //     url: 'mongodb://localhost:27017/url_shortner'
         // }),
-        // Store il MongoDB Atlas
+        // Store in MongoDB Atlas
         store: new MongoStore({
             mongooseConnection: mongoose.connection
         }),
         secret: process.env.SESSION_SECRET || config.sessionSecretKey, // SESSION_SECRET=sessionsecretkey npm start
-        resave: false,
-        saveUninitialized: true
+        resave: true,
+        saveUninitialized: true,
+        proxy: true,
+        rolling: true,
+        cookie: {
+            secure: false
+        }
     }));
     app.use(minifyHTML({
         override: true,
@@ -253,6 +260,7 @@ module.exports.init = function init() {
     // The public logic
     app.get('/', (req, res) => {
         // console.log(req.translation, req.clang, req.languages);
+        // console.log('NOW: ', req.isAuthenticated());
         res.render('index', {
             translation: req.translation,
             premium: config.premium.active,
@@ -369,6 +377,7 @@ module.exports.init = function init() {
                             });;
                             req.session.user = user[0];
                             req.session.user.avatar = req.session.user.avatar != null ? (isUrl(req.session.user.avatar) == false ? `/img/avatars/${req.session.user._id}/${req.session.user.avatar}` : req.session.user.avatar) : null;
+                            // console.log('NOW: ', req.isAuthenticated());
                             return res.json({
                                 'Status': 'done',
                                 'ref': ref
@@ -1400,36 +1409,34 @@ module.exports.init = function init() {
     // });
 
     // Get the https required modules
-    if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
-        const sslOptions = {
-            cert: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/fullchain.pem', 'utf8'),
-            key: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/privkey.pem', 'utf8'),
-            ca: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/chain.pem', 'utf8')
-        };
-        const servers = https.createServer(sslOptions, app).listen(443, () => {
-            console.log(colors.bold.green(`[SERVER] Started server on => https://${config.host}:${servers.address().port} for Process Id ${process.pid}`));
-            console.log(colors.bold.green(`[SERVER] Started server on => https://${config.short_host}:${servers.address().port} for Process Id ${process.pid}`));
-        });
+    if (process.env.NGINX_ENV == 'false') {
+        if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
+            const sslOptions = {
+                cert: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/fullchain.pem', 'utf8'),
+                key: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/privkey.pem', 'utf8'),
+                ca: fs.readFileSync('/etc/letsencrypt/live/hurrycane.it/chain.pem', 'utf8')
+            };
+            const servers = https.createServer(sslOptions, app).listen(443, () => {
+                console.log(colors.bold.green(`[SERVER] Started server on => ${config.host}:${servers.address().port} for Process Id ${process.pid}`));
+                console.log(colors.bold.green(`[SERVER] Started server on => ${config.short_host}:${servers.address().port} for Process Id ${process.pid}`));
+            });
+        } else {
+            const sslOptions = {
+                cert: fs.readFileSync(__dirname + '/../ssl/cert.pem', 'utf8'),
+                key: fs.readFileSync(__dirname + '/../ssl/key.pem', 'utf8')
+            };
+            const servers = https.createServer(sslOptions, app).listen(443, () => {
+                console.log(colors.bold.green(`[SERVER] Started server on => ${config.host}:${servers.address().port} for Process Id ${process.pid}`));
+                console.log(colors.bold.green(`[SERVER] Started server on => ${config.short_host}:${servers.address().port} for Process Id ${process.pid}`));
+            });
+        }
     }
-    // End get the https required modules
-
-    // Get the https required modules
-    // if (process.env.SSL_ENV != 'false' || process.env.SSL_ENV == undefined) {
-    //     const sslOptions = {
-    //         cert: fs.readFileSync('/etc/letsencrypt/live/hycn.it/fullchain.pem', 'utf8'),
-    //         key: fs.readFileSync('/etc/letsencrypt/live/hycn.it/privkey.pem', 'utf8'),
-    //         ca: fs.readFileSync('/etc/letsencrypt/live/hycn.it/chain.pem', 'utf8')
-    //     };
-    //     const servers = https.createServer(sslOptions, app).listen(444, () => {
-    //         console.log(colors.bold.green(`[SERVER] Started server on => https://localhost:${servers.address().port} for Process Id ${process.pid}`));
-    //     });
-    // }
     // End get the https required modules
 
     const server = app.listen(process.env.PORT || config.port, () => {
         // console.log(`Server http is listening on port ${config.port}...`);
-        console.log(colors.bold.green(`[SERVER] Started server on => http://${config.host}:${server.address().port} for Process Id ${process.pid}`));
-        console.log(colors.bold.green(`[SERVER] Started server on => http://${config.short_host}:${server.address().port} for Process Id ${process.pid}`));
+        console.log(colors.bold.green(`[SERVER] Started server on => ${config.host}:${server.address().port} for Process Id ${process.pid}`));
+        console.log(colors.bold.green(`[SERVER] Started server on => ${config.short_host}:${server.address().port} for Process Id ${process.pid}`));
     });
 
     /*

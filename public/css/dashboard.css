@@ -1,7 +1,7 @@
 body {
     background: #F3F3F3;
     height: 100vh !important;
-    overflow-y: hidden !important;
+    overflow-y: auto;
 }
 
 * {
@@ -114,7 +114,7 @@ body {
     width: 249px;
     height: calc(100vh - 55px);
     float: left;
-    position: relative;
+    position: fixed;
     left: 0;
     top: 0;
     border-right: 1px solid #f1f1f1;
@@ -125,9 +125,9 @@ body {
 
 .right-side-wrapper {
     width: calc(100vw - 251px);
-    height: 100%;
+    height: auto;
     float: left;
-    position: relative;
+    position: absolute;
     right: 0;
     top: 0;
     background: #f3f3f3;
@@ -141,6 +141,7 @@ body {
 }
 
 .verbal-input-wrapper .verbal-title {
+    line-height: 24px;
     font-size: 17px;
     font-weight: 600;
     margin: 15px 0 20px 0;
@@ -367,7 +368,7 @@ span.relative .verbal-select {
 }
 
 .menu-side-wrapper-bottom {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     padding: 10px 20px 10px 20px;
     width: 250px !important;
@@ -440,6 +441,10 @@ span.relative .verbal-select {
 
 .share-box-title {
     font-weight: 400;
+}
+
+.active-urls-container {
+    min-height: calc(100vh - 66px);
 }
 
 .active-urls-wrapper {
@@ -972,6 +977,7 @@ h4.application-main-title {
 
 .right-side-wrapper.inverse {
     background: white;
+    min-height: 100vh;
 }
 
 .right-side-wrapper.inverse form {

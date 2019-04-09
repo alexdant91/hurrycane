@@ -17,7 +17,7 @@
     const hycn = new Hycn(YOUR_APPLICATION_ID, APPLICATION_SECRET_KEY);
 
     // Request a new short url
-    hycn.link.shorten("AUTH_TOKEN_ID", "YOUR_LONG_URL", (err, response) => {
+    hycn.link.shorten("AUTH_TOKEN_ID", "YOUR_LONG_URL", { sub_user_id: "YOUR_SUB_USER_ID" }, (err, response) => {
         if(err) throw err;
         /* Doing stuff with your response */
     });
