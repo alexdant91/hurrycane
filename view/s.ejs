@@ -22,7 +22,7 @@
 
     <body>
         <? if(env != 'staging') { ?>
-        <iframe src="<?= iframe ?>" style="display:none;"></iframe>
+            <iframe src="<?= iframe ?>" style="display:none;"></iframe>
         <? } ?> 
 
         <?- include(`./blocks/landing/${url.landing_page}.ejs`) -?>

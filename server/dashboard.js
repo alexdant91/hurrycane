@@ -67,49 +67,49 @@ router.get('/urls', (req, res) => {
     db.Url.paginate({
         user_id: req.session.user._id
     }, {
-        page: page,
-        limit: 18,
-        sort: {
-            timestamp: 'desc'
-        }
-    }).then(response => {
-        // res.json(response);
-        db.Plan.find({
-            name: req.session.user.subscription
-        }, (err, docs) => {
-            if (err) throw err;
-            // If the avatar is an url (facebook, twitter) remove the directory from path
-            let user = req.session.user;
+            page: page,
+            limit: 18,
+            sort: {
+                timestamp: 'desc'
+            }
+        }).then(response => {
+            // res.json(response);
+            db.Plan.find({
+                name: req.session.user.subscription
+            }, (err, docs) => {
+                if (err) throw err;
+                // If the avatar is an url (facebook, twitter) remove the directory from path
+                let user = req.session.user;
 
-            res.render('./dashboard/urls', {
-                theme: {
-                    inverse: config.dashboard.theme.inverse
-                },
-                premium: config.premium.active,
-                short_host: config.short_host,
-                session: req.isAuthenticated(),
-                user: user,
-                datas: {
-                    plan: {
-                        name: docs.name,
-                        url_limit: docs[0].url_limit
+                res.render('./dashboard/urls', {
+                    theme: {
+                        inverse: config.dashboard.theme.inverse
                     },
-                    urls: {
-                        data: response,
-                        count: response.docs.length
+                    premium: config.premium.active,
+                    short_host: config.short_host,
+                    session: req.isAuthenticated(),
+                    user: user,
+                    datas: {
+                        plan: {
+                            name: docs.name,
+                            url_limit: docs[0].url_limit
+                        },
+                        urls: {
+                            data: response,
+                            count: response.docs.length
+                        }
+                    },
+                    page: 'urls',
+                    messages: {
+                        type: null,
+                        title: null,
+                        text: null
                     }
-                },
-                page: 'urls',
-                messages: {
-                    type: null,
-                    title: null,
-                    text: null
-                }
+                });
             });
+        }).catch(err => {
+            res.json(err);
         });
-    }).catch(err => {
-        res.json(err);
-    });
 });
 
 // GET /dashboard/urls/details/:id
@@ -393,34 +393,34 @@ router.post('/settings/update', (req, res) => {
                                 db.User.updateOne({
                                     _id: user_id
                                 }, {
-                                    name: name,
-                                    last_name: last_name,
-                                    email: email
-                                }, (err, confirm) => {
-                                    if (err) {
-                                        res.json({
-                                            'Error': 'Internal server error.',
-                                            'title': 'Oops!',
-                                            'text': 'Internal server error.'
-                                        });
-                                    } else {
-                                        if (confirm) {
-                                            res.json({
-                                                'Status': 'done',
-                                                'messages': {
-                                                    'title': 'Well!',
-                                                    'text': 'User information updated.'
-                                                }
-                                            });
-                                        } else {
+                                        name: name,
+                                        last_name: last_name,
+                                        email: email
+                                    }, (err, confirm) => {
+                                        if (err) {
                                             res.json({
                                                 'Error': 'Internal server error.',
                                                 'title': 'Oops!',
                                                 'text': 'Internal server error.'
                                             });
+                                        } else {
+                                            if (confirm) {
+                                                res.json({
+                                                    'Status': 'done',
+                                                    'messages': {
+                                                        'title': 'Well!',
+                                                        'text': 'User information updated.'
+                                                    }
+                                                });
+                                            } else {
+                                                res.json({
+                                                    'Error': 'Internal server error.',
+                                                    'title': 'Oops!',
+                                                    'text': 'Internal server error.'
+                                                });
+                                            }
                                         }
-                                    }
-                                });
+                                    });
                             }
                         }
                     });
@@ -441,32 +441,32 @@ router.post('/settings/update', (req, res) => {
                         db.User.updateOne({
                             _id: user_id
                         }, {
-                            password: password
-                        }, (err, confirm) => {
-                            if (err) {
-                                res.json({
-                                    'Error': 'Internal server error.',
-                                    'title': 'Oops!',
-                                    'text': 'Internal server error.'
-                                });
-                            } else {
-                                if (confirm) {
-                                    res.json({
-                                        'Status': 'done',
-                                        'messages': {
-                                            'title': 'Well!',
-                                            'text': 'Your password updated.'
-                                        }
-                                    });
-                                } else {
+                                password: password
+                            }, (err, confirm) => {
+                                if (err) {
                                     res.json({
                                         'Error': 'Internal server error.',
                                         'title': 'Oops!',
                                         'text': 'Internal server error.'
                                     });
+                                } else {
+                                    if (confirm) {
+                                        res.json({
+                                            'Status': 'done',
+                                            'messages': {
+                                                'title': 'Well!',
+                                                'text': 'Your password updated.'
+                                            }
+                                        });
+                                    } else {
+                                        res.json({
+                                            'Error': 'Internal server error.',
+                                            'title': 'Oops!',
+                                            'text': 'Internal server error.'
+                                        });
+                                    }
                                 }
-                            }
-                        });
+                            });
                     } else {
                         res.json({
                             'Error': 'Bad request.',
@@ -570,11 +570,40 @@ router.get('/urls/analytics/:id', (req, res) => {
                 }, (err, analytics) => {
                     if (err) throw err;
                     let totalClicks = 0;
-                    let totalViews = 0;
+                        let totalViews = 0;
+                        let arrayDates = [];
                     analytics.forEach(e => {
                         totalClicks += e.clicks;
                         totalViews += e.uniq_views.length;
+                        arrayDates.push(e.timestamp);
                     });
+                    
+                    // const isDays = EndTime - StartTime > 86400;
+                    // Date.prototype.addDays = function (days) {
+                    //     var dat = new Date(this.valueOf())
+                    //     dat.setDate(dat.getDate() + days);
+                    //     return new Date(dat);
+                    // }
+                    // function getDates(startDate, stopDate) {
+                    //     var dateArray = new Array();
+                    //     var currentDate = startDate;
+                    //     while (currentDate <= stopDate) {
+                    //         dateArray.push(Math.round(new Date(currentDate).getTime() / 1000));
+                    //         currentDate = currentDate.addDays(1);
+                    //     }
+                    //     return dateArray;
+                    // }
+                    // function mergeSortedArray(a, b) {
+                    //     var arr = a.concat(b).sort(function (a, b) {
+                    //         return a - b;
+                    //     });
+                    //     return arr;
+                    // }
+                    // let totalDays = EndTime - StartTime;
+                    // let dateArray = getDates(new Date(StartTime * 1000), (new Date(EndTime * 1000)).addDays(2));
+                    // let finalArray = mergeSortedArray(dateArray, arrayDates);
+                    // console.log(EndTime, StartTime);
+
                     res.render('./dashboard/urls-analytics', {
                         theme: {
                             inverse: config.dashboard.theme.inverse
@@ -628,6 +657,43 @@ router.post('/urls/analytics', (req, res) => {
                 $lte: EndTime
             }
         }, (err, analytics) => {
+                
+            // let totalClicks = 0;
+            // let totalViews = 0;
+            // let arrayDates = [];
+            // analytics.forEach(e => {
+            //     totalClicks += e.clicks;
+            //     totalViews += e.uniq_views.length;
+            //     arrayDates.push(e.timestamp);
+            // });
+
+
+            // const isDays = EndTime - StartTime > 86400;
+            // Date.prototype.addDays = function (days) {
+            //     var dat = new Date(this.valueOf())
+            //     dat.setDate(dat.getDate() + days);
+            //     return new Date(dat);
+            // }
+            // function getDates(startDate, stopDate, flag) {
+            //     var dateArray = new Array();
+            //     var currentDate = startDate;
+            //     while (currentDate <= stopDate) {
+            //         flag == 'N' ? dateArray.push(Math.round(new Date(currentDate).getTime() / 1000)) : dateArray.push(new Date(currentDate));
+            //         currentDate = currentDate.addDays(1);
+            //     }
+            //     return dateArray;
+            // }
+            // function mergeSortedArray(a, b) {
+            //     var arr = a.concat(b).sort(function (a, b) {
+            //         return a - b;
+            //     });
+            //     return arr;
+            // }
+            // let totalDays = Math.round((EndTime - StartTime) / 86400);
+            // let dateArray = getDates(new Date(StartTime * 1000), (new Date(EndTime * 1000)).addDays(totalDays));
+            // let finalArray = mergeSortedArray(dateArray, arrayDates);
+            // console.log(finalArray);
+                
             let views = {
                 labels: [],
                 data: []
@@ -654,7 +720,7 @@ router.post('/urls/analytics', (req, res) => {
                 // Views
                 let uniq_view = array.uniq_views != null && array.uniq_views != undefined ? array.uniq_views.length : 0;
                 let time = new Date(array.timestamp * 1000);
-                let timedate = `${time.getFullYear()}-${(parseInt(time.getMonth()) + 1) > 9 ? parseInt(time.getMonth()) + 1 : 0+''+(parseInt(time.getMonth()) + 1)}-${time.getDate() > 9 ? time.getDate() : 0+''+time.getDate()}`;
+                let timedate = `${time.getFullYear()}-${(parseInt(time.getMonth()) + 1) > 9 ? parseInt(time.getMonth()) + 1 : 0 + '' + (parseInt(time.getMonth()) + 1)}-${time.getDate() > 9 ? time.getDate() : 0 + '' + time.getDate()}`;
 
                 if (views.labels.indexOf(timedate) !== -1) {
                     let index = views.labels.indexOf(timedate);
@@ -780,48 +846,48 @@ router.get('/wallet', (req, res) => {
             db.Wallet.paginate({
                 user_id: user_id
             }, {
-                page: page,
-                limit: 18,
-                sort: {
-                    timestamp: 'desc'
-                }
-            }).then(wallet => {
-                db.Url.find({
-                    user_id: req.session.user._id
-                }, (err, urls) => {
-                    if (err) throw err;
-                    res.render('./dashboard/wallet.ejs', {
-                        theme: {
-                            inverse: config.dashboard.theme.inverse
-                        },
-                        premium: config.premium.active,
-                        session: req.isAuthenticated(),
-                        user: user,
-                        localhost: config.host,
-                        datas: {
-                            urls: {
-                                data: urls,
-                                count: urls.length
+                    page: page,
+                    limit: 18,
+                    sort: {
+                        timestamp: 'desc'
+                    }
+                }).then(wallet => {
+                    db.Url.find({
+                        user_id: req.session.user._id
+                    }, (err, urls) => {
+                        if (err) throw err;
+                        res.render('./dashboard/wallet.ejs', {
+                            theme: {
+                                inverse: config.dashboard.theme.inverse
                             },
-                            plan: {
-                                name: docs.name,
-                                url_limit: docs[0].url_limit
+                            premium: config.premium.active,
+                            session: req.isAuthenticated(),
+                            user: user,
+                            localhost: config.host,
+                            datas: {
+                                urls: {
+                                    data: urls,
+                                    count: urls.length
+                                },
+                                plan: {
+                                    name: docs.name,
+                                    url_limit: docs[0].url_limit
+                                },
+                                wallet: {
+                                    data: wallet
+                                }
                             },
-                            wallet: {
-                                data: wallet
+                            page: 'wallet',
+                            messages: {
+                                type: null,
+                                title: null,
+                                text: null
                             }
-                        },
-                        page: 'wallet',
-                        messages: {
-                            type: null,
-                            title: null,
-                            text: null
-                        }
+                        });
                     });
+                }).catch(err => {
+                    if (err) throw err;
                 });
-            }).catch(err => {
-                if (err) throw err;
-            });
         });
     } else {
         res.status(403).json({
@@ -959,46 +1025,46 @@ router.post('/wallet/payout/new', (req, res) => {
                                             db.User.updateOne({
                                                 _id: req.session.user._id
                                             }, {
-                                                wallet_amount: newWallet
-                                            }, (err, confirm) => {
-                                                if (err) {
-                                                    res.json({
-                                                        'Error': 'Internal server error.',
-                                                        'title': 'Oops!',
-                                                        'text': 'Internal server error.'
-                                                    });
-                                                } else {
-                                                    if (confirm) {
-                                                        db.Wallet({
-                                                            user_id: req.session.user._id,
-                                                            description: 'Payout request.',
-                                                            amount: -amount,
-                                                        }).save(err => {
-                                                            if (err) {
-                                                                res.json({
-                                                                    'Error': 'Internal server error.',
-                                                                    'title': 'Oops!',
-                                                                    'text': 'Internal server error.'
-                                                                });
-                                                            } else {
-                                                                res.json({
-                                                                    'Status': 'done',
-                                                                    'messages': {
-                                                                        'title': 'Well!',
-                                                                        'text': 'Payout requested.'
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    } else {
+                                                    wallet_amount: newWallet
+                                                }, (err, confirm) => {
+                                                    if (err) {
                                                         res.json({
                                                             'Error': 'Internal server error.',
                                                             'title': 'Oops!',
                                                             'text': 'Internal server error.'
                                                         });
+                                                    } else {
+                                                        if (confirm) {
+                                                            db.Wallet({
+                                                                user_id: req.session.user._id,
+                                                                description: 'Payout request.',
+                                                                amount: -amount,
+                                                            }).save(err => {
+                                                                if (err) {
+                                                                    res.json({
+                                                                        'Error': 'Internal server error.',
+                                                                        'title': 'Oops!',
+                                                                        'text': 'Internal server error.'
+                                                                    });
+                                                                } else {
+                                                                    res.json({
+                                                                        'Status': 'done',
+                                                                        'messages': {
+                                                                            'title': 'Well!',
+                                                                            'text': 'Payout requested.'
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                        } else {
+                                                            res.json({
+                                                                'Error': 'Internal server error.',
+                                                                'title': 'Oops!',
+                                                                'text': 'Internal server error.'
+                                                            });
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
                                         }
                                     });
                                 } else {
@@ -1086,57 +1152,57 @@ router.get('/api', (req, res) => {
     db.Application.paginate({
         user_id: req.session.user._id
     }, {
-        page: page,
-        limit: 18,
-        sort: {
-            creation_time: 'desc'
-        }
-    }).then(response => {
-        // res.json(response);
-        db.Plan.find({
-            name: req.session.user.subscription
-        }, (err, docs) => {
-            if (err) throw err;
-            // If the avatar is an url (facebook, twitter) remove the directory from path
-            let user = req.session.user;
-
-            db.Url.countDocuments({
-                user_id: req.session.user._id
-            }, (err, count) => {
+            page: page,
+            limit: 18,
+            sort: {
+                creation_time: 'desc'
+            }
+        }).then(response => {
+            // res.json(response);
+            db.Plan.find({
+                name: req.session.user.subscription
+            }, (err, docs) => {
                 if (err) throw err;
-                res.render('./dashboard/api', {
-                    theme: {
-                        inverse: config.dashboard.theme.inverse
-                    },
-                    premium: config.premium.active,
-                    session: req.isAuthenticated(),
-                    user: user,
-                    datas: {
-                        plan: {
-                            name: docs.name,
-                            url_limit: docs[0].url_limit
+                // If the avatar is an url (facebook, twitter) remove the directory from path
+                let user = req.session.user;
+
+                db.Url.countDocuments({
+                    user_id: req.session.user._id
+                }, (err, count) => {
+                    if (err) throw err;
+                    res.render('./dashboard/api', {
+                        theme: {
+                            inverse: config.dashboard.theme.inverse
                         },
-                        applications: {
-                            data: response,
-                            count: response.docs.length
+                        premium: config.premium.active,
+                        session: req.isAuthenticated(),
+                        user: user,
+                        datas: {
+                            plan: {
+                                name: docs.name,
+                                url_limit: docs[0].url_limit
+                            },
+                            applications: {
+                                data: response,
+                                count: response.docs.length
+                            },
+                            urls: {
+                                data: {},
+                                count: count
+                            }
                         },
-                        urls: {
-                            data: {},
-                            count: count
+                        page: 'api',
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
                         }
-                    },
-                    page: 'api',
-                    messages: {
-                        type: null,
-                        title: null,
-                        text: null
-                    }
+                    });
                 });
             });
+        }).catch(err => {
+            res.json(err);
         });
-    }).catch(err => {
-        res.json(err);
-    });
 
 });
 
@@ -1191,7 +1257,7 @@ router.post('/api/new', (req, res) => {
 
     if (user_id && secret_key && allowed_origins && name) {
         let isUrlControl = true;
-        for (let i = 0; i < allowed_origins.length; i++) {
+        for (let i = 0;i < allowed_origins.length;i++) {
             if (!isUrl(allowed_origins[i])) {
                 isUrlControl = false;
                 break;
@@ -1483,24 +1549,24 @@ router.post('/api/update', (req, res) => {
                     _id: application_id,
                     user_id: user_id
                 }, {
-                    active: active == 'on' ? true : false
-                }).then(confirm => {
-                    if (confirm) {
+                        active: active == 'on' ? true : false
+                    }).then(confirm => {
+                        if (confirm) {
+                            res.json({
+                                'Status': 'done',
+                                'messages': {
+                                    'title': 'Well!',
+                                    'text': `Application ${active == 'on' ? 'activated' : 'disabled'}.`
+                                }
+                            });
+                        }
+                    }).catch(err => {
                         res.json({
-                            'Status': 'done',
-                            'messages': {
-                                'title': 'Well!',
-                                'text': `Application ${active == 'on' ? 'activated' : 'disabled'}.`
-                            }
+                            'Error': err,
+                            'title': 'Oops!',
+                            'text': 'We can not update this application.'
                         });
-                    }
-                }).catch(err => {
-                    res.json({
-                        'Error': err,
-                        'title': 'Oops!',
-                        'text': 'We can not update this application.'
                     });
-                });
             } else {
                 res.json({
                     'Error': 'You are not authorized.',
@@ -1515,25 +1581,25 @@ router.post('/api/update', (req, res) => {
                     _id: application_id,
                     user_id: user_id
                 }, {
-                    name: name,
-                    allowed_origins: allowed_origins
-                }).then(confirm => {
-                    if (confirm) {
+                        name: name,
+                        allowed_origins: allowed_origins
+                    }).then(confirm => {
+                        if (confirm) {
+                            res.json({
+                                'Status': 'done',
+                                'messages': {
+                                    'title': 'Well!',
+                                    'text': `Application info updated.`
+                                }
+                            });
+                        }
+                    }).catch(err => {
                         res.json({
-                            'Status': 'done',
-                            'messages': {
-                                'title': 'Well!',
-                                'text': `Application info updated.`
-                            }
+                            'Error': err,
+                            'title': 'Oops!',
+                            'text': 'We can not update this application.'
                         });
-                    }
-                }).catch(err => {
-                    res.json({
-                        'Error': err,
-                        'title': 'Oops!',
-                        'text': 'We can not update this application.'
                     });
-                });
             } else {
                 res.json({
                     'Error': true,
@@ -1547,24 +1613,24 @@ router.post('/api/update', (req, res) => {
                     _id: application_id,
                     user_id: user_id
                 }, {
-                    production: production == 'on' ? true : false
-                }).then(confirm => {
-                    if (confirm) {
+                        production: production == 'on' ? true : false
+                    }).then(confirm => {
+                        if (confirm) {
+                            res.json({
+                                'Status': 'done',
+                                'messages': {
+                                    'title': 'Well!',
+                                    'text': `Application in ${production == 'on' ? 'live' : 'test'} mode.`
+                                }
+                            });
+                        }
+                    }).catch(err => {
                         res.json({
-                            'Status': 'done',
-                            'messages': {
-                                'title': 'Well!',
-                                'text': `Application in ${production == 'on' ? 'live' : 'test'} mode.`
-                            }
+                            'Error': err,
+                            'title': 'Oops!',
+                            'text': 'We can not update this application.'
                         });
-                    }
-                }).catch(err => {
-                    res.json({
-                        'Error': err,
-                        'title': 'Oops!',
-                        'text': 'We can not update this application.'
                     });
-                });
             } else {
                 res.json({
                     'Error': err,
@@ -1731,48 +1797,48 @@ router.get('/api/webhooks/:application_id/details', (req, res) => {
                                 user_id: user_id,
                                 application_id: application_id
                             }, {
-                                page: page,
-                                limit: 18,
-                                sort: {
-                                    creation_time: 'desc'
-                                }
-                            }).then(response_w => {
-                                res.render('./dashboard/webhooks-details', {
-                                    theme: {
-                                        inverse: config.dashboard.theme.inverse
-                                    },
-                                    premium: config.premium.active,
-                                    session: req.isAuthenticated(),
-                                    user: user,
-                                    datas: {
-                                        plan: {
-                                            name: docs.name,
-                                            url_limit: docs[0].url_limit
-                                        },
-                                        applications: {
-                                            data: response[0]
-                                        },
-                                        urls: {
-                                            data: {},
-                                            count: count
-                                        },
-                                        webhooks: {
-                                            data: webhooks[0]
-                                        },
-                                        webhookEvents: {
-                                            data: response_w,
-                                            count: response_w.docs.length
-                                        },
-                                        localLanguage: res.locals.localLanguage
-                                    },
-                                    page: 'api',
-                                    messages: {
-                                        type: null,
-                                        title: null,
-                                        text: null
+                                    page: page,
+                                    limit: 18,
+                                    sort: {
+                                        creation_time: 'desc'
                                     }
+                                }).then(response_w => {
+                                    res.render('./dashboard/webhooks-details', {
+                                        theme: {
+                                            inverse: config.dashboard.theme.inverse
+                                        },
+                                        premium: config.premium.active,
+                                        session: req.isAuthenticated(),
+                                        user: user,
+                                        datas: {
+                                            plan: {
+                                                name: docs.name,
+                                                url_limit: docs[0].url_limit
+                                            },
+                                            applications: {
+                                                data: response[0]
+                                            },
+                                            urls: {
+                                                data: {},
+                                                count: count
+                                            },
+                                            webhooks: {
+                                                data: webhooks[0]
+                                            },
+                                            webhookEvents: {
+                                                data: response_w,
+                                                count: response_w.docs.length
+                                            },
+                                            localLanguage: res.locals.localLanguage
+                                        },
+                                        page: 'api',
+                                        messages: {
+                                            type: null,
+                                            title: null,
+                                            text: null
+                                        }
+                                    });
                                 });
-                            });
                         });
                     });
                 });
@@ -1806,26 +1872,26 @@ router.post('/api/webhooks/:application_id/details', (req, res) => {
             user_id: user_id,
             application_id: application_id
         }, {
-            endpoint,
-            api_version,
-            events
-        }, (err => {
-            if (err) {
-                res.json({
-                    'Error': 'Error during data update.',
-                    'title': 'Oops!',
-                    'text': 'Error during data update.'
-                });
-            } else {
-                res.json({
-                    'Status': 'done',
-                    'messages': {
-                        'title': 'Well!',
-                        'text': 'Endpoint specifications updated.'
-                    }
-                });
-            }
-        }));
+                endpoint,
+                api_version,
+                events
+            }, (err => {
+                if (err) {
+                    res.json({
+                        'Error': 'Error during data update.',
+                        'title': 'Oops!',
+                        'text': 'Error during data update.'
+                    });
+                } else {
+                    res.json({
+                        'Status': 'done',
+                        'messages': {
+                            'title': 'Well!',
+                            'text': 'Endpoint specifications updated.'
+                        }
+                    });
+                }
+            }));
     } else {
         res.json({
             'Error': 'Missing required data.',
@@ -1989,36 +2055,36 @@ router.post('/settings/avatar/update', (req, res) => {
             db.User.updateOne({
                 _id: req.session.user._id
             }, {
-                avatar: req.fileupload.name
-            }).then(confirm => {
-                if (confirm.n > 0) {
-                    // Update session information
-                    req.session.user.avatar = `/img/avatars/${req.session.user._id}/${req.fileupload.name}`;
-                    // Send the response
-                    res.json({
-                        'Status': 'done',
-                        'messages': {
-                            'title': 'Well!',
-                            'text': 'Avatar uploaded successfully.'
-                        },
-                        'path': `${config.host}/${req.fileupload.avatar}`
-                    });
-                } else {
-                    console.log(confirm);
+                    avatar: req.fileupload.name
+                }).then(confirm => {
+                    if (confirm.n > 0) {
+                        // Update session information
+                        req.session.user.avatar = `/img/avatars/${req.session.user._id}/${req.fileupload.name}`;
+                        // Send the response
+                        res.json({
+                            'Status': 'done',
+                            'messages': {
+                                'title': 'Well!',
+                                'text': 'Avatar uploaded successfully.'
+                            },
+                            'path': `${config.host}/${req.fileupload.avatar}`
+                        });
+                    } else {
+                        console.log(confirm);
+                        res.json({
+                            'Error': 'Internal server error.',
+                            'title': 'Oops!',
+                            'text': 'Internal server error.'
+                        });
+                    }
+                }).catch(err => {
+                    console.log(err);
                     res.json({
                         'Error': 'Internal server error.',
                         'title': 'Oops!',
                         'text': 'Internal server error.'
                     });
-                }
-            }).catch(err => {
-                console.log(err);
-                res.json({
-                    'Error': 'Internal server error.',
-                    'title': 'Oops!',
-                    'text': 'Internal server error.'
                 });
-            });
         }
     });
 
@@ -2055,35 +2121,35 @@ router.post('/fbavatar/update', (req, res) => {
                 db.User.updateOne({
                     _id: req.session.user._id
                 }, {
-                    avatar: avatar_name
-                }).then(confirm => {
-                    if (confirm.n > 0) {
-                        // Update session information
-                        req.session.user.avatar = `/img/avatars/${req.session.user._id}/${avatar_name}`;
-                        // Send the response
-                        res.json({
-                            'Status': 'done',
-                            'messages': {
-                                'title': 'Well!',
-                                'text': 'Avatar uploaded successfully.'
-                            },
-                            'path': `/img/avatars/${req.session.user._id}/${avatar_name}`
-                        });
-                    } else {
+                        avatar: avatar_name
+                    }).then(confirm => {
+                        if (confirm.n > 0) {
+                            // Update session information
+                            req.session.user.avatar = `/img/avatars/${req.session.user._id}/${avatar_name}`;
+                            // Send the response
+                            res.json({
+                                'Status': 'done',
+                                'messages': {
+                                    'title': 'Well!',
+                                    'text': 'Avatar uploaded successfully.'
+                                },
+                                'path': `/img/avatars/${req.session.user._id}/${avatar_name}`
+                            });
+                        } else {
+                            res.json({
+                                'Error': 'Internal server error.',
+                                'title': 'Oops!',
+                                'text': 'Internal server error.'
+                            });
+                        }
+                    }).catch(err => {
+                        console.log(err);
                         res.json({
                             'Error': 'Internal server error.',
                             'title': 'Oops!',
                             'text': 'Internal server error.'
                         });
-                    }
-                }).catch(err => {
-                    console.log(err);
-                    res.json({
-                        'Error': 'Internal server error.',
-                        'title': 'Oops!',
-                        'text': 'Internal server error.'
                     });
-                });
             }
         });
     } else {
