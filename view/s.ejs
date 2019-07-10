@@ -18,11 +18,18 @@
         <? if(url.page_seotags) { ?>
         <?- url.head_html ?>
         <? } ?>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-5830567594848195",
+                enable_page_level_ads: true
+            });
+        </script>
     </head>
 
     <body>
         <? if(env != 'staging') { ?>
-            <iframe src="<?= iframe ?>" style="display:none;"></iframe>
+            <!-- <iframe src="<?= iframe ?>" style="display:none;"></iframe> -->
         <? } ?> 
 
         <?- include(`./blocks/landing/${url.landing_page}.ejs`) -?>

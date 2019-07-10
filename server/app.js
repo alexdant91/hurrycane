@@ -157,10 +157,10 @@ module.exports.init = function init() {
     app.use(csp({
         directives: {
             defaultSrc: ["'self'", 'localhost', 'hycn.it', '*.hycn.it', 'data:', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
-            scriptSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
-            styleSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
-            frameSrc: ["'self'", '*.facebook.net', 'hycn.it', '*.hycn.it', 'hurrycane.it', '*.hurrycane.it', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
-            imgSrc: ['*', "'self'", 'hycn.it', '*.hycn.it', 'data:'],
+            scriptSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', 'https://*.googletagservices.com', 'https://www.googletagservices.com', 'https://*.google.com', 'https://adservice.google.com', 'https://adservice.google.it', 'https://*.google.it', 'https://*.googlesyndication.com', 'https://pagead2.googlesyndication.com', 'localhost', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'], // (req, res) => `'nonce-${res.locals.nonce}'`],
+            styleSrc: ["'self'", "'unsafe-inline'", 'hycn.it', '*.hycn.it', 'https://*.googletagservices.com', 'https://www.googletagservices.com', 'https://*.google.com', 'https://adservice.google.com', 'https://adservice.google.it', 'https://*.google.it', 'https://*.googlesyndication.com', 'https://pagead2.googlesyndication.com', '*.stripe.com', 'stripe.com', '*.fontawesome.com', 'fontawesome.com', '*.cloudflare.com', 'cloudflare.com', '*.googleapis.com', '*.jquery.com', '*.jsdelivr.net', '*.gstatic.com', '*.facebook.net', '*.facebook.com'],
+            frameSrc: ["'self'", '*.facebook.net', 'hycn.it', '*.hycn.it', 'https://*.googletagservices.com', 'https://www.googletagservices.com', 'https://*.google.com', 'https://adservice.google.com', 'https://googleads.g.doubleclick.net', 'https://adservice.google.it', 'https://*.google.it', 'https://*.googlesyndication.com', 'https://pagead2.googlesyndication.com', 'hurrycane.it', '*.hurrycane.it', '*.stripe.com', 'stripe.com', '*.facebook.com', 'https://*.facebook.com/'],
+            imgSrc: ['*', "'self'", 'hycn.it', '*.hycn.it', 'data:', 'https://*.googletagservices.com', 'https://www.googletagservices.com', 'https://*.google.com', 'https://adservice.google.com', 'https://adservice.google.it', 'https://*.google.it', 'https://*.googlesyndication.com', 'https://pagead2.googlesyndication.com',],
             //sandbox: ['allow-forms', 'allow-scripts'],
             //reportUri: '/report-violation',
             objectSrc: ["'none'"],
@@ -1227,138 +1227,157 @@ module.exports.init = function init() {
             }, (err, docs) => {
                 if (err) res.redirect('/?error=alias_not_founded');
                 
-                let isOwner = false;
-                
-                if (req.isAuthenticated()) {
-                    const id_owner = docs[0].user_id;
-                    const id_session = req.session.user._id;
-                    isOwner = id_owner == id_session;
-                }
+                if (docs.length > 0) {
+                    // First location
+                    const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
+                    // Then device
+                    const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
+            
+                    let isOwner = false;
+            
+                    if (req.isAuthenticated()) {
+                        const id_owner = docs[0].user_id;
+                        const id_session = req.session.user._id;
+                        isOwner = id_owner == id_session;
+                    }
 
-                if (!isOwner) {
-                    // Update the clicks general counter
-                    // Register the new referer if there's no one
-                    // Update the referer if there's one
-                    const clicks = docs[0].clicks + 1;
-                    db.Url.updateOne({
-                        _id: docs[0]._id
-                    }, {
-                            clicks: clicks
-                        }, (err, confirm) => {
-                            if (err) console.log(err);
-                            if (confirm) {
+                    if (!isOwner) {
+                        // Update the clicks general counter
+                        // Register the new referer if there's no one
+                        // Update the referer if there's one
+                        const clicks = docs[0].clicks + 1;
+                        db.Url.updateOne({
+                            _id: docs[0]._id
+                        }, {
+                                clicks: clicks
+                            }, (err, confirm) => {
+                                if (err) console.log(err);
+                                if (confirm) {
 
-                                const password = docs[0].password;
-                                if (password != null) {
-                                    res.sendStatus(200);
-                                } else {
+                                    const password = docs[0].password;
+                                    if (password != null) {
+                                        res.sendStatus(200);
+                                    } else {
 
-                                    // First location 
-                                    const long_url_location = docs[0].geo_select.indexOf(location) !== -1 ? docs[0].geotag_url : docs[0].long_url;
-                                    // Then device
-                                    const long_url = docs[0].device_select.indexOf(req.device.type) !== -1 ? docs[0].devicetag_url : long_url_location;
-
-                                    // Async analytics and wallet
-                                    db.Analytic.find({
-                                        url_id: docs[0]._id,
-                                        user_id: docs[0].user_id,
-                                        device: req.device.type,
-                                        referer: referer,
-                                        language: language,
-                                        timestamp: {
-                                            $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
-                                        }
-                                    }, (err, items) => {
-                                        if (items.length > 0) {
-                                            // The row exist so update the clicks value from the same referer
-                                            const click = items[0].clicks + 1;
-                                            const uniq_key = req.cookies.uniqueVisitor;
-                                            const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
-                                            db.Analytic.updateOne({
-                                                url_id: docs[0]._id,
-                                                user_id: docs[0].user_id,
-                                                device: req.device.type,
-                                                referer: referer,
-                                                language: language
-                                            }, {
-                                                    clicks: click,
-                                                    uniq_views: uniq_views
-                                                }, (err, confirm) => { });
+                                        // Async analytics and wallet
+                                        db.Analytic.find({
+                                            url_id: docs[0]._id,
+                                            user_id: docs[0].user_id,
+                                            device: req.device.type,
+                                            referer: referer,
+                                            language: language,
+                                            timestamp: {
+                                                $gt: Math.round(new Date().setHours(0, 0, 0, 0) / 1000)
+                                            }
+                                        }, (err, items) => {
+                                            if (items.length > 0) {
+                                                // The row exist so update the clicks value from the same referer
+                                                const click = items[0].clicks + 1;
+                                                const uniq_key = req.cookies.uniqueVisitor;
+                                                const uniq_views = items[0].uniq_views != undefined && items[0].uniq_views != null ? (items[0].uniq_views.indexOf(uniq_key) !== -1 ? items[0].uniq_views : items[0].uniq_views.push(req.cookies.uniqueVisitor)) : [req.cookies.uniqueVisitor];
+                                                db.Analytic.updateOne({
+                                                    url_id: docs[0]._id,
+                                                    user_id: docs[0].user_id,
+                                                    device: req.device.type,
+                                                    referer: referer,
+                                                    language: language
+                                                }, {
+                                                        clicks: click,
+                                                        uniq_views: uniq_views
+                                                    }, (err, confirm) => { });
 
 
-                                            if (items[0].uniq_views != undefined && items[0].uniq_views != null) {
-                                                // Uniq key retrieved
-                                                if (items[0].uniq_views.indexOf(uniq_key) === -1) {
-                                                    // It's a new uniq view for the current day
-                                                    if (docs[0].landing_page == 'standard') {
-                                                        db.Wallet({
-                                                            user_id: docs[0].user_id,
-                                                            application_id: docs[0].application_id,
-                                                            url_id: docs[0]._id,
-                                                            amount: config.wallet.single_transaction
-                                                        }).save(err => { });
-                                                        db.User.find({
-                                                            _id: docs[0].user_id,
-                                                        }, (err, user) => {
-                                                            if (!err && user.length > 0) {
-                                                                db.User.updateOne({
-                                                                    _id: user[0]._id
-                                                                }, {
-                                                                        wallet_amount: (user[0].wallet_amount + 0.00025)
-                                                                    }, (err, confirm) => { });
-                                                            }
-                                                        });
+                                                if (items[0].uniq_views != undefined && items[0].uniq_views != null) {
+                                                    // Uniq key retrieved
+                                                    if (items[0].uniq_views.indexOf(uniq_key) === -1) {
+                                                        // It's a new uniq view for the current day
+                                                        if (docs[0].landing_page == 'standard') {
+                                                            db.Wallet({
+                                                                user_id: docs[0].user_id,
+                                                                application_id: docs[0].application_id,
+                                                                url_id: docs[0]._id,
+                                                                amount: config.wallet.single_transaction
+                                                            }).save(err => { });
+                                                            db.User.find({
+                                                                _id: docs[0].user_id,
+                                                            }, (err, user) => {
+                                                                if (!err && user.length > 0) {
+                                                                    db.User.updateOne({
+                                                                        _id: user[0]._id
+                                                                    }, {
+                                                                            wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                                        }, (err, confirm) => { });
+                                                                }
+                                                            });
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                        } else {
+                                            } else {
 
-                                            db.Analytic({
-                                                url_id: docs[0]._id,
-                                                user_id: docs[0].user_id,
-                                                uniq_views: [req.cookies.uniqueVisitor],
-                                                clicks: 1,
-                                                device: req.device.type,
-                                                referer: referer,
-                                                language: language
-                                            }).save(err => { });
-
-                                            if (docs[0].landing_page == 'standard') {
-                                                db.Wallet({
-                                                    user_id: docs[0].user_id,
-                                                    application_id: docs[0].application_id,
+                                                db.Analytic({
                                                     url_id: docs[0]._id,
-                                                    amount: config.wallet.single_transaction
+                                                    user_id: docs[0].user_id,
+                                                    uniq_views: [req.cookies.uniqueVisitor],
+                                                    clicks: 1,
+                                                    device: req.device.type,
+                                                    referer: referer,
+                                                    language: language
                                                 }).save(err => { });
-                                                db.User.find({
-                                                    _id: docs[0].user_id,
-                                                }, (err, user) => {
-                                                    if (!err && user.length > 0) {
-                                                        db.User.updateOne({
-                                                            _id: user[0]._id
-                                                        }, {
-                                                                wallet_amount: (user[0].wallet_amount + 0.00025)
-                                                            }, (err, confirm) => { });
-                                                    }
-                                                });
+
+                                                if (docs[0].landing_page == 'standard') {
+                                                    db.Wallet({
+                                                        user_id: docs[0].user_id,
+                                                        application_id: docs[0].application_id,
+                                                        url_id: docs[0]._id,
+                                                        amount: config.wallet.single_transaction
+                                                    }).save(err => { });
+                                                    db.User.find({
+                                                        _id: docs[0].user_id,
+                                                    }, (err, user) => {
+                                                        if (!err && user.length > 0) {
+                                                            db.User.updateOne({
+                                                                _id: user[0]._id
+                                                            }, {
+                                                                    wallet_amount: (user[0].wallet_amount + 0.00025)
+                                                                }, (err, confirm) => { });
+                                                        }
+                                                    });
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
 
-                                    res.sendStatus(200);
-                                    // res.redirect(docs[0].long_url);
+                                        // res.sendStatus(200);
+                                        // res.redirect(docs[0].long_url);
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                } else {
-                    res.send('error=is_owner');
+                    }
+                
+                    res.render('s', {
+                        // session: req.isAuthenticated(),
+                        // user: req.session.user,
+                        translation: req.translation,
+                        page: 's',
+                        iframe: `${config.host}/s/${alias}`,
+                        env: process.env.NODE_ENV,
+                        alias: alias,
+                        long_url: long_url,
+                        url: docs[0],
+                        messages: {
+                            type: null,
+                            title: null,
+                            text: null
+                        }
+                    });
+                } else { 
+                    res.render('empty-alias');
                 }
 
             });
         } else {
-            res.send('error=empty_alias');
+            res.render('empty-alias');
         }
     });
 

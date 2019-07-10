@@ -1486,6 +1486,20 @@ h1.url-title {
     }
 }
 
+.menu-top-mobile-dashboard.inverse {
+    color: #ffffff;
+    background-color: #4153AF;
+}
+
+.menu-top-mobile-dashboard.inverse button {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.menu-top-mobile-dashboard.inverse i {
+    color: #ffffff;
+}
+
 @media screen and (min-width: 1180px) and (max-width: 1487px) {
     form.url-input {
         width: 80%;
